@@ -3,6 +3,8 @@
   assign subtitle = section.settings.subtitle | default: 'Premium shapewear for every body.'
   assign button_label = section.settings.button_label | default: 'SHOP NOW'
   assign button_link = section.settings.button_link | default: routes.all_products_collection_url
+  assign hero_image_alt = section.settings.hero_image_alt | default: 'Zalva Shape campaign'
+  assign hero_image_url = 'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=80'
 %}
 
 <div class="main-hero full-width">
@@ -12,8 +14,17 @@
       <p class="main-hero__subtitle">{{ subtitle }}</p>
       <a class="main-hero__cta" href="{{ button_link }}">{{ button_label }}</a>
     </div>
-    <div class="main-hero__visual" role="presentation">
-      <span class="main-hero__visual-label">{{ section.settings.placeholder_label | default: 'Campaign imagery' }}</span>
+    <div class="main-hero__visual">
+      <img
+        class="main-hero__image"
+        src="{{ hero_image_url }}"
+        alt="{{ hero_image_alt | escape }}"
+        width="1200"
+        height="1500"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      >
     </div>
   </div>
 </div>
@@ -21,12 +32,10 @@
 {% stylesheet %}
   .main-hero {
     --zalva-ivory: #faf8f5;
-    --zalva-blush-nude: #d4b5a0;
     --zalva-champagne: #c8a96e;
     --zalva-warm-taupe: #a07060;
     --zalva-deep-brown: #3d2b24;
     --zalva-noir: #1a1a1a;
-    --zalva-placeholder-surface: #ebddd4;
 
     min-height: 100dvh;
     min-height: 100vh;
@@ -122,13 +131,10 @@
   }
 
   .main-hero__visual {
-    background-color: var(--zalva-placeholder-surface);
-    border: 1px solid rgba(212, 181, 160, 0.45);
-    min-height: clamp(220px, 38vh, 520px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
+    overflow: hidden;
+    min-height: clamp(280px, 42vh, 560px);
+    background-color: var(--zalva-ivory);
   }
 
   @media (min-width: 900px) {
@@ -138,14 +144,13 @@
     }
   }
 
-  .main-hero__visual-label {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--zalva-warm-taupe);
-    opacity: 0.72;
+  .main-hero__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 {% endstylesheet %}
 
@@ -180,9 +185,9 @@
     },
     {
       "type": "text",
-      "id": "placeholder_label",
-      "label": "Image placeholder label",
-      "default": "Campaign imagery"
+      "id": "hero_image_alt",
+      "label": "Hero image alt text",
+      "default": "Zalva Shape campaign"
     }
   ],
   "presets": [

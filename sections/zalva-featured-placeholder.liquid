@@ -1,0 +1,208 @@
+{% liquid
+  assign shop_url = routes.all_products_collection_url
+  assign card_1_img = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80'
+  assign card_2_img = 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600&q=80'
+  assign card_3_img = 'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=600&q=80'
+%}
+
+<div class="zalva-featured full-width">
+  <div class="zalva-featured__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="zalva-featured__title">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <ul class="zalva-featured__grid" role="list">
+      <li class="zalva-featured__card">
+        <div class="zalva-featured__media">
+          <img
+            src="{{ card_1_img }}"
+            alt="Contour bodysuit — product placeholder"
+            width="600"
+            height="750"
+            loading="lazy"
+            decoding="async"
+          >
+        </div>
+        <div class="zalva-featured__body">
+          <h3 class="zalva-featured__name">Contour bodysuit</h3>
+          <p class="zalva-featured__price">$89.00</p>
+          <a class="zalva-featured__link" href="{{ shop_url }}">Shop Now</a>
+        </div>
+      </li>
+      <li class="zalva-featured__card">
+        <div class="zalva-featured__media">
+          <img
+            src="{{ card_2_img }}"
+            alt="Sculpt high-waist brief — product placeholder"
+            width="600"
+            height="750"
+            loading="lazy"
+            decoding="async"
+          >
+        </div>
+        <div class="zalva-featured__body">
+          <h3 class="zalva-featured__name">Sculpt high-waist brief</h3>
+          <p class="zalva-featured__price">$65.00</p>
+          <a class="zalva-featured__link" href="{{ shop_url }}">Shop Now</a>
+        </div>
+      </li>
+      <li class="zalva-featured__card">
+        <div class="zalva-featured__media">
+          <img
+            src="{{ card_3_img }}"
+            alt="Silhouette tank — product placeholder"
+            width="600"
+            height="750"
+            loading="lazy"
+            decoding="async"
+          >
+        </div>
+        <div class="zalva-featured__body">
+          <h3 class="zalva-featured__name">Silhouette tank</h3>
+          <p class="zalva-featured__price">$72.00</p>
+          <a class="zalva-featured__link" href="{{ shop_url }}">Shop Now</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .zalva-featured {
+    --zalva-ivory: #faf8f5;
+    --zalva-champagne: #c8a96e;
+    --zalva-warm-taupe: #a07060;
+    --zalva-deep-brown: #3d2b24;
+    --zalva-noir: #1a1a1a;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(2.75rem, 7vw, 4.5rem);
+  }
+
+  .zalva-featured__inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .zalva-featured__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(1.75rem, 3vw + 1rem, 2.25rem);
+    letter-spacing: -0.02em;
+    color: var(--zalva-deep-brown);
+    text-align: center;
+    margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .zalva-featured__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 2rem);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 700px) {
+    .zalva-featured__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .zalva-featured__card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--zalva-ivory);
+  }
+
+  .zalva-featured__media {
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background-color: #ebddd4;
+  }
+
+  .zalva-featured__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.35s ease;
+  }
+
+  .zalva-featured__media:hover img,
+  .zalva-featured__media:focus-visible img {
+    transform: scale(1.03);
+  }
+
+  .zalva-featured__body {
+    padding-top: 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    align-items: flex-start;
+  }
+
+  .zalva-featured__name {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    color: var(--zalva-noir);
+    margin: 0;
+  }
+
+  .zalva-featured__price {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--zalva-noir);
+    margin: 0;
+  }
+
+  .zalva-featured__link {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--zalva-champagne);
+    margin-top: 0.5rem;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .zalva-featured__link:hover {
+    color: var(--zalva-warm-taupe);
+    border-bottom-color: currentcolor;
+  }
+
+  .zalva-featured__link:focus-visible {
+    outline: 2px solid var(--zalva-deep-brown);
+    outline-offset: 2px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Zalva featured products",
+  "tag": "section",
+  "class": "section-zalva-featured-placeholder",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zalva featured products"
+    }
+  ]
+}
+{% endschema %}
