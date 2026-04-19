@@ -11,7 +11,12 @@
   "sections": {
     "main": {
       "type": "main-hero",
-      "settings": {}
+      "settings": {
+        "headline": "Sculpted for you.",
+        "subtitle": "Premium shapewear for every body.",
+        "button_label": "SHOP NOW",
+        "placeholder_label": "Campaign imagery"
+      }
     }
   },
   "order": [
