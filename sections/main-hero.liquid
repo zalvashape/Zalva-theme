@@ -1,0 +1,201 @@
+{% liquid
+  assign headline = section.settings.headline | default: 'Sculpted for you.'
+  assign subtitle = section.settings.subtitle | default: 'Premium shapewear for every body.'
+  assign button_label = section.settings.button_label | default: 'SHOP NOW'
+  assign button_link = section.settings.button_link | default: routes.all_products_collection_url
+%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Jost:wght@400;500;600&display=swap"
+  rel="stylesheet"
+>
+
+<div class="main-hero full-width">
+  <div class="main-hero__grid">
+    <div class="main-hero__copy">
+      <h1 class="main-hero__headline">{{ headline }}</h1>
+      <p class="main-hero__subtitle">{{ subtitle }}</p>
+      <a class="main-hero__cta" href="{{ button_link }}">{{ button_label }}</a>
+    </div>
+    <div class="main-hero__visual" role="presentation">
+      <span class="main-hero__visual-label">{{ section.settings.placeholder_label | default: 'Campaign imagery' }}</span>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .main-hero {
+    --zalva-ivory: #faf8f5;
+    --zalva-blush-nude: #d4b5a0;
+    --zalva-champagne: #c8a96e;
+    --zalva-warm-taupe: #a07060;
+    --zalva-deep-brown: #3d2b24;
+    --zalva-noir: #1a1a1a;
+    --zalva-placeholder-surface: #ebddd4;
+
+    min-height: 100dvh;
+    min-height: 100vh;
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    display: flex;
+    align-items: stretch;
+  }
+
+  .main-hero__grid {
+    display: grid;
+    width: 100%;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    grid-template-columns: 1fr;
+    min-height: inherit;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 900px) {
+    .main-hero__grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+      gap: clamp(2rem, 6vw, 5rem);
+    }
+  }
+
+  .main-hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding-block: clamp(2.5rem, 8vh, 5rem);
+  }
+
+  @media (min-width: 900px) {
+    .main-hero__copy {
+      align-items: flex-start;
+      text-align: left;
+      padding-block: clamp(3rem, 12vh, 6rem);
+    }
+  }
+
+  .main-hero__headline {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(2.75rem, 6vw + 1rem, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--zalva-deep-brown);
+    max-width: 14ch;
+  }
+
+  .main-hero__subtitle {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 400;
+    font-size: clamp(1rem, 1.2vw + 0.85rem, 1.25rem);
+    line-height: 1.55;
+    color: var(--zalva-warm-taupe);
+    margin-top: 1.25rem;
+    max-width: 32ch;
+  }
+
+  .main-hero__cta {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 1rem 2.25rem;
+    min-height: 3rem;
+    background-color: var(--zalva-champagne);
+    color: var(--zalva-noir);
+    border: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .main-hero__cta:hover {
+    background-color: var(--zalva-warm-taupe);
+    color: var(--zalva-ivory);
+  }
+
+  .main-hero__cta:focus-visible {
+    outline: 2px solid var(--zalva-deep-brown);
+    outline-offset: 3px;
+  }
+
+  .main-hero__visual {
+    background-color: var(--zalva-placeholder-surface);
+    border: 1px solid rgba(212, 181, 160, 0.45);
+    min-height: clamp(220px, 38vh, 520px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  @media (min-width: 900px) {
+    .main-hero__visual {
+      min-height: 100%;
+      align-self: stretch;
+    }
+  }
+
+  .main-hero__visual-label {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--zalva-warm-taupe);
+    opacity: 0.72;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Zalva hero",
+  "tag": "section",
+  "class": "section-main-hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Sculpted for you."
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Premium shapewear for every body."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_label",
+      "label": "Image placeholder label",
+      "default": "Campaign imagery"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zalva hero"
+    }
+  ]
+}
+{% endschema %}
