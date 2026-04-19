@@ -1,0 +1,48 @@
+{% doc %}
+  Maps a product option value (color name) to a display hex for swatches. Fallback for unknown names.
+{% enddoc %}
+{% liquid
+  assign n = color_name | strip | downcase | replace: ' ', '-'
+  assign hex = '#b0b0b0'
+
+  if n == 'black' or n == 'noir' or n == 'jet'
+    assign hex = '#1a1a1a'
+  elsif n == 'white' or n == 'bright-white'
+    assign hex = '#ffffff'
+  elsif n == 'ivory' or n == 'off-white'
+    assign hex = '#faf8f5'
+  elsif n == 'nude' or n == 'skin' or n == 'natural'
+    assign hex = '#e8d5c8'
+  elsif n == 'blush' or n == 'blush-nude' or n == 'rose-nude'
+    assign hex = '#d4b5a0'
+  elsif n == 'beige' or n == 'sand' or n == 'tan'
+    assign hex = '#d4c4b0'
+  elsif n == 'champagne' or n == 'gold'
+    assign hex = '#c8a96e'
+  elsif n == 'taupe' or n == 'warm-taupe' or n == 'mocha'
+    assign hex = '#a07060'
+  elsif n == 'brown' or n == 'chocolate' or n == 'espresso' or n == 'cocoa'
+    assign hex = '#5c4033'
+  elsif n == 'navy' or n == 'midnight'
+    assign hex = '#1e2a3a'
+  elsif n == 'red' or n == 'crimson'
+    assign hex = '#a12c2c'
+  elsif n == 'pink' or n == 'dusty-rose'
+    assign hex = '#d4a5a5'
+  elsif n == 'burgundy' or n == 'wine'
+    assign hex = '#6b2d3c'
+  elsif n == 'grey' or n == 'gray' or n == 'heather'
+    assign hex = '#9a9a9a'
+  elsif n == 'charcoal'
+    assign hex = '#4a4a4a'
+  elsif n == 'cream'
+    assign hex = '#f5f0e8'
+  elsif n == 'sage' or n == 'olive'
+    assign hex = '#8b9a7c'
+  elsif n == 'lilac' or n == 'lavender'
+    assign hex = '#c4b8d4'
+  elsif n == 'blue' or n == 'cobalt'
+    assign hex = '#2d4f7c'
+  endif
+%}
+{{- hex -}}
