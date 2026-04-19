@@ -1,0 +1,80 @@
+{% liquid
+  assign statement = section.settings.statement | default: 'Every body deserves to feel sculpted, supported, and seen.'
+%}
+
+<div class="brand-statement full-width">
+  <div class="brand-statement__inner">
+    <p class="brand-statement__text">{{ statement }}</p>
+    <hr class="brand-statement__rule" aria-hidden="true">
+  </div>
+</div>
+
+{% stylesheet %}
+  .brand-statement {
+    --zalva-ivory: #faf8f5;
+    --zalva-champagne: #c8a96e;
+    --zalva-noir: #1a1a1a;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(2.5rem, 8vw, 5rem);
+  }
+
+  .brand-statement__inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .brand-statement__text {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    max-width: 28ch;
+    margin: 0;
+  }
+
+  @media (min-width: 750px) {
+    .brand-statement__text {
+      font-size: 48px;
+      max-width: 22ch;
+    }
+  }
+
+  .brand-statement__rule {
+    border: none;
+    width: min(120px, 40%);
+    height: 1px;
+    margin: clamp(1.5rem, 4vw, 2.25rem) 0 0;
+    background-color: var(--zalva-champagne);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Brand statement",
+  "tag": "section",
+  "class": "section-brand-statement",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "statement",
+      "label": "Statement",
+      "default": "Every body deserves to feel sculpted, supported, and seen."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand statement"
+    }
+  ]
+}
+{% endschema %}

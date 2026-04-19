@@ -18,6 +18,10 @@
         "hero_image_alt": "Zalva Shape campaign"
       }
     },
+    "brand_statement": {
+      "type": "brand-statement",
+      "settings": {}
+    },
     "featured_products": {
       "type": "zalva-featured-placeholder",
       "settings": {
@@ -27,6 +31,7 @@
   },
   "order": [
     "main",
+    "brand_statement",
     "featured_products"
   ]
 }
