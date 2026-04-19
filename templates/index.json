@@ -22,6 +22,10 @@
       "type": "brand-statement",
       "settings": {}
     },
+    "category_grid": {
+      "type": "category-grid",
+      "settings": {}
+    },
     "featured_products": {
       "type": "zalva-featured-placeholder",
       "settings": {
@@ -32,6 +36,7 @@
   "order": [
     "main",
     "brand_statement",
+    "category_grid",
     "featured_products"
   ]
 }

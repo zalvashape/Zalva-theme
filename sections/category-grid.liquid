@@ -1,0 +1,184 @@
+{% liquid
+  assign eyebrow = section.settings.eyebrow | default: 'SHOP BY CATEGORY'
+  assign col1_img = 'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=600&q=80'
+  assign col2_img = 'https://images.unsplash.com/photo-1571513722275-4b41940f54b8?w=600&q=80'
+  assign col3_img = 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600&q=80'
+%}
+
+<div class="category-grid full-width">
+  <div class="category-grid__inner">
+    <p class="category-grid__eyebrow">{{ eyebrow }}</p>
+
+    <ul class="category-grid__grid" role="list">
+      <li>
+        <a class="category-grid__card" href="/collections/bodysuits">
+          <div class="category-grid__media">
+            <img
+              src="{{ col1_img }}"
+              alt="Bodysuits"
+              width="600"
+              height="750"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
+          <span class="category-grid__label">Bodysuits</span>
+        </a>
+      </li>
+      <li>
+        <a class="category-grid__card" href="/collections/waist-trainers">
+          <div class="category-grid__media">
+            <img
+              src="{{ col2_img }}"
+              alt="Waist Trainers"
+              width="600"
+              height="750"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
+          <span class="category-grid__label">Waist Trainers</span>
+        </a>
+      </li>
+      <li>
+        <a class="category-grid__card" href="/collections/fajas">
+          <div class="category-grid__media">
+            <img
+              src="{{ col3_img }}"
+              alt="Fajas"
+              width="600"
+              height="750"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
+          <span class="category-grid__label">Fajas</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .category-grid {
+    --zalva-ivory: #faf8f5;
+    --zalva-champagne: #c8a96e;
+    --zalva-noir: #1a1a1a;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(2.75rem, 7vw, 4.5rem);
+  }
+
+  .category-grid__inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .category-grid__eyebrow {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--zalva-deep-brown);
+    margin: 0 0 clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .category-grid__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 900px) {
+    .category-grid__grid {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  .category-grid__card {
+    display: grid;
+    grid-template-rows: 7fr 3fr;
+    min-height: min(52vh, 520px);
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+  }
+
+  .category-grid__media {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    background-color: #ebddd4;
+  }
+
+  .category-grid__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.4s ease;
+  }
+
+  .category-grid__card:hover .category-grid__media img,
+  .category-grid__card:focus-visible .category-grid__media img {
+    transform: scale(1.04);
+  }
+
+  .category-grid__label {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(1.25rem, 2vw + 0.75rem, 1.625rem);
+    line-height: 1.2;
+    color: var(--zalva-noir);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+  }
+
+  .category-grid__card:hover .category-grid__label,
+  .category-grid__card:focus-visible .category-grid__label {
+    border-bottom-color: var(--zalva-champagne);
+  }
+
+  .category-grid__card:focus-visible {
+    outline: 2px solid var(--zalva-deep-brown);
+    outline-offset: 3px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Category grid",
+  "tag": "section",
+  "class": "section-category-grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "SHOP BY CATEGORY"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category grid"
+    }
+  ]
+}
+{% endschema %}
