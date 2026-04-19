@@ -1,0 +1,503 @@
+{% comment %}
+  Premium collection grid — collection.products with pagination and sort.
+{% endcomment %}
+
+{% liquid
+  assign products_per_page = section.settings.products_per_page | default: 12
+%}
+
+<div class="main-collection full-width">
+  <div class="main-collection__banner">
+    <div class="main-collection__banner-inner">
+      <h1 class="main-collection__title">{{ collection.title }}</h1>
+      {% if collection.description != blank %}
+        <div class="main-collection__description rte">{{ collection.description }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="main-collection__toolbar">
+    <div class="main-collection__toolbar-inner">
+      <p class="main-collection__count">
+        {{ collection.products_count }}
+        {% if collection.products_count == 1 %}product{% else %}products{% endif %}
+      </p>
+
+      {% if collection.sort_options.size > 0 %}
+        <form class="main-collection__sort" method="get" action="{{ collection.url }}" id="CollectionSort-{{ section.id }}">
+          <label class="visually-hidden" for="SortBy-{{ section.id }}">Sort by</label>
+          <select
+            class="main-collection__select"
+            name="sort_by"
+            id="SortBy-{{ section.id }}"
+            aria-label="Sort products"
+          >
+            {% for option in collection.sort_options %}
+              <option
+                value="{{ option.value | escape }}"
+                {% if option.value == collection.sort_by %}selected="selected"{% endif %}
+              >
+                {{ option.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  {% paginate collection.products by products_per_page %}
+    {% if collection.products.size == 0 %}
+      <div class="main-collection__empty">
+        <p class="main-collection__empty-text">No products in this collection yet.</p>
+      </div>
+    {% else %}
+    <div class="main-collection__grid-wrap">
+      <ul class="main-collection__grid" role="list">
+        {% for product in collection.products %}
+          <li class="main-collection__item">
+            <article class="main-collection__card">
+              <div class="main-collection__card-visual">
+                <a href="{{ product.url }}" class="main-collection__card-media" tabindex="-1" aria-hidden="true">
+                  {% if product.featured_image %}
+                    {% assign card_img_alt = product.featured_image.alt | default: product.title %}
+                    {{
+                      product.featured_image
+                      | image_url: width: 800
+                      | image_tag:
+                        loading: 'lazy',
+                        sizes: '(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw',
+                        widths: '300, 450, 600, 800',
+                        alt: card_img_alt
+                    }}
+                  {% else %}
+                    <div class="main-collection__card-placeholder"></div>
+                  {% endif %}
+                </a>
+                <div class="main-collection__card-overlay" aria-hidden="true">
+                  {% form 'product', product, class: 'main-collection__quick-form' %}
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button
+                      type="submit"
+                      name="add"
+                      class="main-collection__overlay-cta"
+                      {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+                    >
+                      ADD TO CART
+                    </button>
+                  {% endform %}
+                </div>
+              </div>
+              <div class="main-collection__card-body">
+                <a href="{{ product.url }}" class="main-collection__card-title">{{ product.title }}</a>
+                <div class="main-collection__card-price">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="main-collection__price-current">{{ product.price | money }}</span>
+                    <span class="main-collection__price-compare">{{ product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span class="main-collection__price-current">{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if paginate.pages > 1 %}
+      <nav class="main-collection__pagination" aria-label="Pagination">
+        {{ paginate | default_pagination }}
+      </nav>
+    {% endif %}
+  {% endpaginate %}
+</div>
+
+<script>
+  (function () {
+    var sel = document.getElementById('SortBy-{{ section.id }}');
+    var form = document.getElementById('CollectionSort-{{ section.id }}');
+    if (sel && form) {
+      sel.addEventListener('change', function () {
+        form.submit();
+      });
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .main-collection {
+    --zalva-ivory: #faf8f5;
+    --zalva-noir: #1a1a1a;
+    --zalva-champagne: #c8a96e;
+    --zalva-warm-taupe: #a07060;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .main-collection__banner {
+    width: 100%;
+    background-color: var(--zalva-ivory);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+  }
+
+  .main-collection__banner-inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    text-align: center;
+  }
+
+  .main-collection__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 48px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--zalva-deep-brown);
+    margin: 0;
+  }
+
+  @media (max-width: 749px) {
+    .main-collection__title {
+      font-size: clamp(2rem, 8vw, 2.75rem);
+    }
+  }
+
+  .main-collection__description {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--zalva-noir);
+    opacity: 0.88;
+    max-width: 52ch;
+    margin: 1.25rem auto 0;
+  }
+
+  .main-collection__description p {
+    margin: 0 0 0.75em;
+  }
+
+  .main-collection__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  .main-collection__toolbar {
+    width: 100%;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+  }
+
+  .main-collection__toolbar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: 1rem var(--page-margin);
+  }
+
+  .main-collection__count {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(26, 26, 26, 0.65);
+    margin: 0;
+  }
+
+  .main-collection__sort {
+    margin: 0;
+  }
+
+  .main-collection__select {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    min-height: 2.5rem;
+    border: 1px solid var(--zalva-noir);
+    border-radius: 0;
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231a1a1a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m19 9-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+  }
+
+  .main-collection__select:focus-visible {
+    outline: 2px solid var(--zalva-champagne);
+    outline-offset: 2px;
+  }
+
+  .main-collection__empty {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: clamp(2.5rem, 6vw, 4rem) var(--page-margin);
+    text-align: center;
+  }
+
+  .main-collection__empty-text {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.9375rem;
+    color: rgba(26, 26, 26, 0.65);
+    margin: 0;
+  }
+
+  .main-collection__grid-wrap {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: clamp(1.75rem, 4vw, 2.5rem) var(--page-margin) 0;
+  }
+
+  .main-collection__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 600px) {
+    .main-collection__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .main-collection__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .main-collection__card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .main-collection__card-visual {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: #f0ebe4;
+  }
+
+  .main-collection__card-media {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .main-collection__card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.45s ease;
+  }
+
+  .main-collection__card:hover .main-collection__card-media img {
+    transform: scale(1.03);
+  }
+
+  .main-collection__card-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0ebe4, #e8ddd4);
+  }
+
+  .main-collection__card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(250, 248, 245, 0);
+    opacity: 0;
+    transition: background-color 0.35s ease, opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  .main-collection__card:hover .main-collection__card-overlay,
+  .main-collection__card-visual:focus-within .main-collection__card-overlay {
+    background-color: rgba(26, 26, 26, 0.35);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .main-collection__quick-form {
+    margin: 0;
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 14rem;
+  }
+
+  .main-collection__overlay-cta {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--zalva-ivory);
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .main-collection__overlay-cta:hover:not(:disabled) {
+    background-color: transparent;
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+
+  .main-collection__overlay-cta:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .main-collection__card-body {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1 1 auto;
+  }
+
+  .main-collection__card-title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.35;
+    color: var(--zalva-noir);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease, color 0.25s ease;
+    align-self: flex-start;
+  }
+
+  .main-collection__card:hover .main-collection__card-title {
+    border-bottom-color: var(--zalva-champagne);
+  }
+
+  .main-collection__card-title:focus-visible {
+    outline: 2px solid var(--zalva-champagne);
+    outline-offset: 3px;
+  }
+
+  .main-collection__card-price {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .main-collection__price-current {
+    color: var(--zalva-noir);
+  }
+
+  .main-collection__price-compare {
+    text-decoration: line-through;
+    color: var(--zalva-warm-taupe);
+    font-weight: 400;
+    font-size: 0.8125rem;
+  }
+
+  .main-collection__pagination {
+    max-width: var(--page-width);
+    margin: clamp(2rem, 5vw, 3rem) auto 0;
+    padding-inline: var(--page-margin);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.8125rem;
+  }
+
+  .main-collection__pagination,
+  .main-collection__pagination .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .main-collection__pagination a,
+  .main-collection__pagination .page,
+  .main-collection__pagination .deco {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0.25rem 0.5rem;
+    text-decoration: none;
+    color: var(--zalva-noir);
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .main-collection__pagination a:hover {
+    border-color: var(--zalva-champagne);
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-collection__pagination .current,
+  .main-collection__pagination .page.current {
+    border-color: var(--zalva-noir);
+    font-weight: 600;
+  }
+
+  .main-collection__pagination .deco {
+    border: none;
+    color: rgba(26, 26, 26, 0.35);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection",
+  "tag": "section",
+  "class": "section-main-collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 6,
+      "max": 36,
+      "step": 3,
+      "default": 12,
+      "label": "Products per page"
+    }
+  ]
+}
+{% endschema %}
