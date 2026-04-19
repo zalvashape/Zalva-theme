@@ -1,50 +1,660 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_media = current_variant.featured_media | default: product.featured_media
+  assign product_form_id = 'ProductForm-' | append: section.id
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+<div class="main-product full-width" data-section-id="{{ section.id }}">
+  <div class="main-product__inner">
+    <div class="main-product__gallery">
+      {% if product.media.size > 0 %}
+        <div class="main-product__main" id="MainMedia-{{ section.id }}">
+          {% for media in product.media %}
+            {% liquid
+              assign slide_active = false
+              if featured_media and media.id == featured_media.id
+                assign slide_active = true
+              elsif featured_media == nil and forloop.first
+                assign slide_active = true
+              endif
+            %}
+            <div
+              class="main-product__main-slide{% if slide_active %} is-active{% endif %}"
+              data-media-id="{{ media.id }}"
+              data-media-type="{{ media.media_type }}"
+            >
+              {% case media.media_type %}
+                {% when 'image' %}
+                  {% assign img_alt = media.alt | default: product.title %}
+                  {{
+                    media
+                    | image_url: width: 1400
+                    | image_tag:
+                      loading: 'eager',
+                      sizes: '(min-width: 990px) 50vw, 100vw',
+                      widths: '375, 550, 750, 1100, 1400',
+                      alt: img_alt
+                  }}
+                {% when 'video' %}
+                  {{ media | video_tag: image_size: '1400x', controls: true, class: 'main-product__video' }}
+                {% when 'external_video' %}
+                  {{ media | external_video_tag: image_size: '1400x', class: 'main-product__video' }}
+                {% when 'model' %}
+                  <div class="main-product__model">
+                    {{ media | model_viewer_tag: image_size: '1400x', reveal: 'interaction', toggleable: true }}
+                  </div>
+                {% else %}
+                  <div class="main-product__media-fallback"></div>
+              {% endcase %}
+            </div>
+          {% endfor %}
+        </div>
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+        {% if product.media.size > 1 %}
+          <div class="main-product__thumbs" role="tablist" aria-label="Product images">
+            {% for media in product.media %}
+              {% liquid
+                assign thumb_active = false
+                if featured_media and media.id == featured_media.id
+                  assign thumb_active = true
+                elsif featured_media == nil and forloop.first
+                  assign thumb_active = true
+                endif
+              %}
+              <button
+                type="button"
+                class="main-product__thumb{% if thumb_active %} is-active{% endif %}"
+                data-media-id="{{ media.id }}"
+                data-target-main
+                aria-label="View image {{ forloop.index }}"
+              >
+                {{
+                  media.preview_image
+                  | image_url: width: 160
+                  | image_tag: loading: 'lazy', sizes: '80px', widths: '80, 160', alt: ''
+                }}
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="main-product__placeholder">No images</div>
+      {% endif %}
+    </div>
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+    <div class="main-product__panel">
+      <div class="main-product__panel-inner">
+        <h1 class="main-product__title">{{ product.title }}</h1>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
+        <div
+          class="main-product__price"
+          id="Price-{{ section.id }}"
+          data-money-format="{{ shop.money_format | escape }}"
         >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+          {% if current_variant.compare_at_price > current_variant.price %}
+            <span class="main-product__price-current">{{ current_variant.price | money }}</span>
+            <span class="main-product__price-compare">{{ current_variant.compare_at_price | money }}</span>
+          {% else %}
+            <span class="main-product__price-current">{{ current_variant.price | money }}</span>
+          {% endif %}
+        </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+        <hr class="main-product__rule">
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
+        {% if product.description != blank %}
+          <div class="main-product__description rte">{{ product.description }}</div>
+        {% endif %}
+
+        {% form 'product', product, id: product_form_id, class: 'main-product__form' %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" id="VariantId-{{ section.id }}">
+
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              <fieldset class="main-product__option">
+                <legend class="main-product__option-label">{{ option.name }}</legend>
+                <div class="main-product__pills" role="radiogroup" aria-label="{{ option.name }}">
+                  {% for value in option.values %}
+                    {% liquid
+                      assign option_index = forloop.parentloop.index0
+                      assign current_opt = current_variant.options[option_index]
+                      assign checked = false
+                      if current_opt == value
+                        assign checked = true
+                      endif
+                    %}
+                    <button
+                      type="button"
+                      class="main-product__pill{% if checked %} is-selected{% endif %}"
+                      data-option-index="{{ option_index }}"
+                      data-value="{{ value | escape }}"
+                      aria-pressed="{% if checked %}true{% else %}false{% endif %}"
+                    >
+                      {{ value }}
+                    </button>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            {% endfor %}
+          {% endunless %}
+
+          <input type="hidden" name="quantity" value="1">
+
+          <button type="submit" name="add" class="main-product__submit" {% unless current_variant.available %}disabled{% endunless %}>
+            {% if current_variant.available %}
+              ADD TO CART
+            {% else %}
+              Sold out
+            {% endif %}
+          </button>
+
+          {{ form | payment_button }}
+        {% endform %}
+
+        {% if section.settings.size_guide_url != blank %}
+          <a class="main-product__size-guide" href="{{ section.settings.size_guide_url }}">Size Guide</a>
+        {% else %}
+          <a class="main-product__size-guide" href="/pages/size-guide">Size Guide</a>
+        {% endif %}
+
+        <ul class="main-product__trust" role="list">
+          <li class="main-product__trust-item">
+            <span class="main-product__trust-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" aria-hidden="true" focusable="false">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125v-1.5c0-1.036.84-1.875 1.875-1.875h3.75a1.125 1.125 0 0 1 1.125 1.125v3.75m8.25-3.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h3.375c.621 0 1.125.504 1.125 1.125v4.125c0 .621-.504 1.125-1.125 1.125H15.75a1.125 1.125 0 0 1-1.125-1.125v-4.125a1.125 1.125 0 0 1 1.125-1.125Z" />
+              </svg>
+            </span>
+            <span>Free Shipping over $75</span>
+          </li>
+          <li class="main-product__trust-sep" aria-hidden="true">·</li>
+          <li class="main-product__trust-item">
+            <span class="main-product__trust-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" aria-hidden="true" focusable="false">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 6 6v9" />
+              </svg>
+            </span>
+            <span>Free Returns</span>
+          </li>
+          <li class="main-product__trust-sep" aria-hidden="true">·</li>
+          <li class="main-product__trust-item">
+            <span class="main-product__trust-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" aria-hidden="true" focusable="false">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              </svg>
+            </span>
+            <span>Secure Checkout</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script type="application/json" id="ProductJson-{{ section.id }}">{{ product | json }}</script>
+<script type="application/json" id="ProductSelectedOptions-{{ section.id }}">{{ current_variant.options | json }}</script>
+
+<script>
+  (function () {
+    var sectionId = {{ section.id | json }};
+    var root = document.querySelector('.main-product[data-section-id="' + sectionId + '"]');
+    if (!root) return;
+
+    var productJsonEl = document.getElementById('ProductJson-' + sectionId);
+    var selectedEl = document.getElementById('ProductSelectedOptions-' + sectionId);
+    if (!productJsonEl) return;
+
+    var product;
+    try {
+      product = JSON.parse(productJsonEl.textContent);
+    } catch (e) {
+      return;
+    }
+
+    var selectedOptions = [];
+    if (selectedEl) {
+      try {
+        selectedOptions = JSON.parse(selectedEl.textContent);
+      } catch (e) {
+        selectedOptions = [];
+      }
+    }
+
+    var variantInput = document.getElementById('VariantId-' + sectionId);
+    var priceEl = document.getElementById('Price-' + sectionId);
+    var moneyFormat = priceEl ? priceEl.getAttribute('data-money-format') || '${{amount}}' : '${{amount}}';
+
+    function formatMoney(cents) {
+      if (typeof cents !== 'number') return '';
+      if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
+        return Shopify.formatMoney(cents, moneyFormat);
+      }
+      var amount = (cents / 100).toFixed(2);
+      return moneyFormat.replace(/\{\{\s*amount\s*\}\}/, amount);
+    }
+
+    var thumbButtons = root.querySelectorAll('[data-target-main][data-media-id]');
+    thumbButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-media-id');
+        setActiveMedia(root, id);
+        thumbButtons.forEach(function (b) {
+          b.classList.toggle('is-active', b === btn);
+        });
+      });
+    });
+
+    function setActiveMedia(rootEl, mediaId) {
+      rootEl.querySelectorAll('.main-product__main-slide').forEach(function (slide) {
+        var match = slide.getAttribute('data-media-id') === String(mediaId);
+        slide.classList.toggle('is-active', match);
+      });
+    }
+
+    var pills = root.querySelectorAll('.main-product__pill[data-option-index]');
+
+    function findVariant() {
+      return product.variants.find(function (v) {
+        return selectedOptions.every(function (opt, i) {
+          return v['option' + (i + 1)] === opt;
+        });
+      });
+    }
+
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        var idx = parseInt(pill.getAttribute('data-option-index'), 10);
+        var val = pill.getAttribute('data-value');
+        if (val === null) return;
+        selectedOptions[idx] = val;
+
+        var group = pill.closest('.main-product__pills');
+        if (group) {
+          group.querySelectorAll('.main-product__pill').forEach(function (p) {
+            var sameRow = parseInt(p.getAttribute('data-option-index'), 10) === idx;
+            var isSel = sameRow && p.getAttribute('data-value') === val;
+            p.classList.toggle('is-selected', isSel);
+            if (sameRow) {
+              p.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+            }
+          });
+        }
+
+        var variant = findVariant();
+        if (!variant || !variantInput) return;
+
+        variantInput.value = variant.id;
+
+        if (priceEl) {
+          var html = '';
+          if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+            html =
+              '<span class="main-product__price-current">' +
+              formatMoney(variant.price) +
+              '</span>' +
+              '<span class="main-product__price-compare">' +
+              formatMoney(variant.compare_at_price) +
+              '</span>';
+          } else {
+            html = '<span class="main-product__price-current">' + formatMoney(variant.price) + '</span>';
+          }
+          priceEl.innerHTML = html;
+        }
+
+        var submit = root.querySelector('.main-product__submit');
+        if (submit) {
+          submit.disabled = !variant.available;
+          submit.textContent = variant.available ? 'ADD TO CART' : 'Sold out';
+        }
+
+        var fm = variant.featured_media && variant.featured_media.id ? variant.featured_media.id : null;
+        if (fm) {
+          setActiveMedia(root, String(fm));
+          thumbButtons.forEach(function (b) {
+            b.classList.toggle('is-active', b.getAttribute('data-media-id') === String(fm));
+          });
+        }
+      });
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .main-product {
+    --zalva-ivory: #faf8f5;
+    --zalva-noir: #1a1a1a;
+    --zalva-champagne: #c8a96e;
+    --zalva-warm-taupe: #a07060;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .main-product__inner {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    width: 100%;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 990px) {
+    .main-product__inner {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .main-product__gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+  }
+
+  .main-product__main {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background-color: #f0ebe4;
+    overflow: hidden;
+  }
+
+  .main-product__main-slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .main-product__main-slide.is-active {
+    display: flex;
+  }
+
+  .main-product__main-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .main-product__video,
+  .main-product__main-slide video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .main-product__model {
+    width: 100%;
+    height: 100%;
+  }
+
+  .main-product__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .main-product__thumb {
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: 0;
+    border: 1px solid rgba(26, 26, 26, 0.15);
+    background: var(--zalva-ivory);
+    cursor: pointer;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .main-product__thumb.is-active {
+    border-color: var(--zalva-noir);
+    box-shadow: 0 0 0 1px var(--zalva-noir);
+  }
+
+  .main-product__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .main-product__placeholder {
+    aspect-ratio: 4 / 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0ebe4;
+    color: var(--zalva-warm-taupe);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+  }
+
+  .main-product__panel {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+  }
+
+  .main-product__panel-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 32rem;
+  }
+
+  .main-product__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 36px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--zalva-noir);
+    margin: 0;
+  }
+
+  .main-product__price {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 1.125rem;
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .main-product__price-current {
+    color: var(--zalva-noir);
+  }
+
+  .main-product__price-compare {
+    text-decoration: line-through;
+    color: var(--zalva-warm-taupe);
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  .main-product__rule {
+    border: none;
+    height: 1px;
+    margin: 0;
+    background-color: var(--zalva-champagne);
+    opacity: 0.85;
+  }
+
+  .main-product__description {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--zalva-noir);
+  }
+
+  .main-product__description p {
+    margin: 0 0 1em;
+  }
+
+  .main-product__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  .main-product__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .main-product__option {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .main-product__option-label {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.625rem;
+    color: var(--zalva-noir);
+  }
+
+  .main-product__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .main-product__pill {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.625rem 1.125rem;
+    min-height: 2.75rem;
+    border: 1px solid var(--zalva-noir);
+    background-color: transparent;
+    color: var(--zalva-noir);
+    cursor: pointer;
+    border-radius: 999px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .main-product__pill.is-selected {
+    background-color: var(--zalva-noir);
+    color: #ffffff;
+    border-color: var(--zalva-noir);
+  }
+
+  .main-product__pill:hover:not(.is-selected) {
+    border-color: var(--zalva-deep-brown);
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-product__pill:focus-visible {
+    outline: 2px solid var(--zalva-champagne);
+    outline-offset: 2px;
+  }
+
+  .main-product__submit {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    min-height: 3.25rem;
+    border: none;
+    cursor: pointer;
+    background-color: var(--zalva-champagne);
+    color: var(--zalva-noir);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .main-product__submit:hover:not(:disabled) {
+    background-color: var(--zalva-deep-brown);
+    color: #ffffff;
+  }
+
+  .main-product__submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .main-product__form .shopify-payment-button {
+    margin-top: 0.5rem;
+  }
+
+  .main-product__size-guide {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--zalva-noir);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--zalva-champagne);
+    align-self: flex-start;
+  }
+
+  .main-product__size-guide:hover {
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-product__trust {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem 0.5rem;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: rgba(26, 26, 26, 0.75);
+  }
+
+  .main-product__trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .main-product__trust-sep {
+    color: var(--zalva-champagne);
+    user-select: none;
+  }
+
+  .main-product__trust-icon {
+    display: inline-flex;
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: var(--zalva-noir);
+  }
+
+  .main-product__trust-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.product",
-  "settings": [],
+  "tag": "section",
+  "class": "section-main-product",
+  "settings": [
+    {
+      "type": "url",
+      "id": "size_guide_url",
+      "label": "Size guide link"
+    }
+  ],
   "disabled_on": {
     "groups": ["header", "footer"]
   }
