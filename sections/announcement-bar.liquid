@@ -1,0 +1,44 @@
+{% liquid
+  assign message = section.settings.message | default: 'FREE SHIPPING ON ORDERS OVER $75 · FREE RETURNS'
+%}
+
+<div class="announcement-bar full-width">
+  <p class="announcement-bar__text">{{ message }}</p>
+</div>
+
+{% stylesheet %}
+  .announcement-bar {
+    --zalva-noir: #1a1a1a;
+
+    background-color: var(--zalva-noir);
+    color: #ffffff;
+    padding-block: 0.5rem;
+    text-align: center;
+  }
+
+  .announcement-bar__text {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.4;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": "section",
+  "class": "section-announcement-bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "message",
+      "label": "Message",
+      "default": "FREE SHIPPING ON ORDERS OVER $75 · FREE RETURNS"
+    }
+  ]
+}
+{% endschema %}

@@ -35,10 +35,12 @@
   </head>
 
   <body>
+    {% section 'announcement-bar' %}
+
     {% sections 'header-group' %}
 
     {{ content_for_layout }}
 
-    {% sections 'footer-group' %}
+    {% section 'footer' %}
   </body>
 </html>
