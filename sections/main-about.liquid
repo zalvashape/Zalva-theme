@@ -1,0 +1,219 @@
+{% liquid
+  assign hero_url = 'https://images.unsplash.com/photo-1536766768598-e09213fdcf22?w=1400&q=80'
+  assign side_url = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80'
+%}
+
+<div class="main-about full-width">
+  <div class="main-about__hero">
+    <img
+      class="main-about__hero-img"
+      src="{{ hero_url }}"
+      alt=""
+      width="1400"
+      height="788"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    >
+    <div class="main-about__hero-overlay"></div>
+    <h1 class="main-about__hero-title">Our Story</h1>
+  </div>
+
+  <div class="main-about__inner">
+    <div class="main-about__split">
+      <div class="main-about__copy">
+        <p class="main-about__mission">
+          Zalva Shape was born from a simple belief: every woman deserves to feel confident, supported, and beautiful in
+          her own skin. We design premium shapewear that celebrates your curves — not hides them.
+        </p>
+      </div>
+      <div class="main-about__figure">
+        <img
+          src="{{ side_url }}"
+          alt=""
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+        >
+      </div>
+    </div>
+
+    <ul class="main-about__pillars" role="list">
+      <li class="main-about__pillar">
+        <span class="main-about__pillar-label">Premium Quality</span>
+      </li>
+      <li class="main-about__pillar-sep" aria-hidden="true">·</li>
+      <li class="main-about__pillar">
+        <span class="main-about__pillar-label">Size Inclusive</span>
+      </li>
+      <li class="main-about__pillar-sep" aria-hidden="true">·</li>
+      <li class="main-about__pillar">
+        <span class="main-about__pillar-label">Designed for You</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .main-about {
+    --zalva-ivory: #faf8f5;
+    --zalva-champagne: #c8a96e;
+    --zalva-noir: #1a1a1a;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+  }
+
+  .main-about__hero {
+    position: relative;
+    width: 100%;
+    min-height: min(70vh, 520px);
+    max-height: 640px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .main-about__hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .main-about__hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(26, 26, 26, 0.45), rgba(26, 26, 26, 0.55));
+  }
+
+  .main-about__hero-title {
+    position: relative;
+    z-index: 1;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-align: center;
+    margin: 0;
+    padding-inline: var(--page-margin);
+  }
+
+  @media (max-width: 749px) {
+    .main-about__hero-title {
+      font-size: clamp(2.25rem, 10vw, 3rem);
+    }
+  }
+
+  .main-about__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: clamp(3rem, 8vw, 5rem) var(--page-margin);
+  }
+
+  .main-about__split {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .main-about__split {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .main-about__mission {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    margin: 0;
+    color: var(--zalva-noir);
+    max-width: 42ch;
+  }
+
+  @media (min-width: 900px) {
+    .main-about__mission {
+      margin-inline: 0;
+    }
+  }
+
+  .main-about__figure {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background-color: #f0ebe4;
+  }
+
+  .main-about__figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .main-about__pillars {
+    list-style: none;
+    margin: clamp(3rem, 8vw, 5rem) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.75rem 1.25rem;
+    text-align: center;
+  }
+
+  .main-about__pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--zalva-champagne);
+    min-width: min(100%, 12rem);
+  }
+
+  .main-about__pillar-label {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 1.25rem;
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-about__pillar-sep {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
+    color: var(--zalva-champagne);
+    align-self: center;
+    padding-top: 0.75rem;
+  }
+
+  @media (max-width: 599px) {
+    .main-about__pillar-sep {
+      display: none;
+    }
+
+    .main-about__pillars {
+      flex-direction: column;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "About",
+  "tag": "section",
+  "class": "section-main-about",
+  "settings": [],
+  "presets": [{ "name": "About" }]
+}
+{% endschema %}

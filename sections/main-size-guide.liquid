@@ -1,0 +1,157 @@
+<div class="main-size-guide full-width">
+  <div class="main-size-guide__inner">
+    <h1 class="main-size-guide__title">Size Guide</h1>
+    <p class="main-size-guide__subtitle">Measurements are in inches. For the best fit, measure over undergarments.</p>
+
+    <div class="main-size-guide__table-wrap">
+      <table class="main-size-guide__table">
+        <thead>
+          <tr>
+            <th scope="col">Size</th>
+            <th scope="col">Bust</th>
+            <th scope="col">Waist</th>
+            <th scope="col">Hips</th>
+            <th scope="col">US Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">XS</th>
+            <td>32–33</td>
+            <td>24–25</td>
+            <td>34–35</td>
+            <td>0–2</td>
+          </tr>
+          <tr>
+            <th scope="row">S</th>
+            <td>34–35</td>
+            <td>26–27</td>
+            <td>36–37</td>
+            <td>4–6</td>
+          </tr>
+          <tr>
+            <th scope="row">M</th>
+            <td>36–37</td>
+            <td>28–29</td>
+            <td>38–39</td>
+            <td>8–10</td>
+          </tr>
+          <tr>
+            <th scope="row">L</th>
+            <td>38–40</td>
+            <td>30–32</td>
+            <td>40–42</td>
+            <td>12–14</td>
+          </tr>
+          <tr>
+            <th scope="row">XL</th>
+            <td>41–43</td>
+            <td>33–35</td>
+            <td>43–45</td>
+            <td>16–18</td>
+          </tr>
+          <tr>
+            <th scope="row">XXL</th>
+            <td>44–46</td>
+            <td>36–38</td>
+            <td>46–48</td>
+            <td>20–22</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .main-size-guide {
+    --zalva-ivory: #faf8f5;
+    --zalva-champagne: #c8a96e;
+    --zalva-noir: #1a1a1a;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .main-size-guide__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .main-size-guide__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    text-align: center;
+    color: var(--zalva-deep-brown);
+    margin: 0 0 0.75rem;
+  }
+
+  .main-size-guide__subtitle {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    text-align: center;
+    color: rgba(26, 26, 26, 0.75);
+    max-width: 40rem;
+    margin: 0 auto 2.5rem;
+  }
+
+  .main-size-guide__table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(26, 26, 26, 0.12);
+  }
+
+  .main-size-guide__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+  }
+
+  .main-size-guide__table thead th {
+    background-color: var(--zalva-champagne);
+    color: var(--zalva-noir);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.6875rem;
+    padding: 0.875rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.15);
+  }
+
+  .main-size-guide__table tbody th,
+  .main-size-guide__table tbody td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    text-align: left;
+  }
+
+  .main-size-guide__table tbody th {
+    font-weight: 600;
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-size-guide__table tbody tr:last-child th,
+  .main-size-guide__table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .main-size-guide__table tbody tr:hover {
+    background-color: rgba(200, 169, 110, 0.08);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Size guide",
+  "tag": "section",
+  "class": "section-main-size-guide",
+  "settings": [],
+  "presets": [{ "name": "Size guide" }]
+}
+{% endschema %}

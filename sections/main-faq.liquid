@@ -1,0 +1,149 @@
+<div class="main-faq full-width">
+  <div class="main-faq__inner">
+    <h1 class="main-faq__title">Frequently Asked Questions</h1>
+
+    <div class="main-faq__list">
+      <details class="main-faq__item">
+        <summary class="main-faq__question">What is your return policy?</summary>
+        <div class="main-faq__answer">
+          <p>We offer free returns within 30 days of purchase.</p>
+        </div>
+      </details>
+      <details class="main-faq__item">
+        <summary class="main-faq__question">How do I choose my size?</summary>
+        <div class="main-faq__answer">
+          <p>We recommend measuring your waist and hips and referring to our size guide.</p>
+        </div>
+      </details>
+      <details class="main-faq__item">
+        <summary class="main-faq__question">How long does shipping take?</summary>
+        <div class="main-faq__answer">
+          <p>Standard shipping 5–7 business days. Express 2–3 business days.</p>
+        </div>
+      </details>
+      <details class="main-faq__item">
+        <summary class="main-faq__question">Is shapewear comfortable for all-day wear?</summary>
+        <div class="main-faq__answer">
+          <p>Yes, our shapewear is designed with breathable fabrics for all-day comfort.</p>
+        </div>
+      </details>
+      <details class="main-faq__item">
+        <summary class="main-faq__question">Do you ship internationally?</summary>
+        <div class="main-faq__answer">
+          <p>Currently we ship within the United States.</p>
+        </div>
+      </details>
+      <details class="main-faq__item">
+        <summary class="main-faq__question">How do I care for my shapewear?</summary>
+        <div class="main-faq__answer">
+          <p>Hand wash in cold water and lay flat to dry.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .main-faq {
+    --zalva-ivory: #faf8f5;
+    --zalva-champagne: #c8a96e;
+    --zalva-noir: #1a1a1a;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .main-faq__inner {
+    max-width: 42rem;
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .main-faq__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 4.5vw, 2.75rem);
+    text-align: center;
+    color: var(--zalva-deep-brown);
+    margin: 0 0 2.5rem;
+    line-height: 1.15;
+  }
+
+  .main-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .main-faq__item {
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    background-color: var(--zalva-ivory);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .main-faq__item[open] {
+    border-color: var(--zalva-champagne);
+    box-shadow: 0 0 0 1px var(--zalva-champagne);
+  }
+
+  .main-faq__question {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding-right: 2.5rem;
+  }
+
+  .main-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .main-faq__question::after {
+    content: '+';
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--zalva-champagne);
+    line-height: 1;
+  }
+
+  .main-faq__item[open] .main-faq__question::after {
+    content: '−';
+  }
+
+  .main-faq__answer {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: rgba(26, 26, 26, 0.85);
+    padding: 0 1.25rem 1.25rem;
+    border-top: 1px solid rgba(26, 26, 26, 0.08);
+  }
+
+  .main-faq__answer p {
+    margin: 1rem 0 0;
+  }
+
+  .main-faq__question:focus-visible {
+    outline: 2px solid var(--zalva-champagne);
+    outline-offset: 2px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "section-main-faq",
+  "settings": [],
+  "presets": [{ "name": "FAQ" }]
+}
+{% endschema %}
