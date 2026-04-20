@@ -1,0 +1,496 @@
+{% comment %}
+  Premium cart — native cart object, line updates via /cart/change, checkout via cart form.
+{% endcomment %}
+
+<div class="main-cart full-width">
+  <h1 class="main-cart__title">Your Bag</h1>
+
+  {% if cart.item_count == 0 %}
+    <div class="main-cart__empty">
+      <p class="main-cart__empty-message">Your bag is empty.</p>
+      <a class="main-cart__empty-cta" href="{{ routes.all_products_collection_url }}">Shop Now</a>
+    </div>
+  {% else %}
+    <div class="main-cart__layout">
+      <div class="main-cart__items" role="region" aria-label="Cart items">
+        <ul class="main-cart__list" role="list">
+          {% for item in cart.items %}
+            <li class="main-cart__line">
+              <a class="main-cart__thumb" href="{{ item.url }}" aria-hidden="true" tabindex="-1">
+                {% if item.image %}
+                  {{
+                    item.image
+                    | image_url: width: 160
+                    | image_tag: loading: 'lazy', sizes: '80px', widths: '80, 160', alt: ''
+                  }}
+                {% else %}
+                  <span class="main-cart__thumb-placeholder"></span>
+                {% endif %}
+              </a>
+              <div class="main-cart__line-body">
+                <a class="main-cart__product-title" href="{{ item.url }}">{{ item.product.title }}</a>
+                {% if item.variant.title != 'Default Title' %}
+                  <p class="main-cart__variant">{{ item.variant.title }}</p>
+                {% endif %}
+                <div class="main-cart__line-meta">
+                  <span class="main-cart__line-price">
+                    {% liquid
+                      assign show_compare = false
+                      if item.variant.compare_at_price and item.variant.compare_at_price > item.variant.price
+                        assign show_compare = true
+                      endif
+                    %}
+                    {% if show_compare %}
+                      {% assign compare_line = item.variant.compare_at_price | times: item.quantity %}
+                      <span class="main-cart__price-current">{{ item.final_line_price | money }}</span>
+                      <span class="main-cart__price-compare">{{ compare_line | money }}</span>
+                    {% else %}
+                      <span class="main-cart__price-current">{{ item.final_line_price | money }}</span>
+                    {% endif %}
+                  </span>
+                  <div class="main-cart__qty" role="group" aria-label="Quantity for {{ item.product.title | escape }}">
+                    {% liquid
+                      assign minus_qty = item.quantity | minus: 1
+                      assign plus_qty = item.quantity | plus: 1
+                      assign change_base = routes.cart_url | append: '/change'
+                    %}
+                    <a
+                      class="main-cart__qty-btn"
+                      href="{{ change_base }}?line={{ item.index }}&quantity={{ minus_qty }}"
+                      aria-label="{% if item.quantity == 1 %}Remove from bag{% else %}Decrease quantity{% endif %}"
+                    >
+                      −
+                    </a>
+                    <span class="main-cart__qty-value" aria-live="polite">{{ item.quantity }}</span>
+                    <a
+                      class="main-cart__qty-btn"
+                      href="{{ change_base }}?line={{ item.index }}&quantity={{ plus_qty }}"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </a>
+                  </div>
+                </div>
+                <a class="main-cart__remove" href="{{ item.url_to_remove }}">Remove</a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <aside class="main-cart__summary" aria-labelledby="OrderSummaryHeading">
+        <div class="main-cart__summary-card">
+          <h2 class="main-cart__summary-title" id="OrderSummaryHeading">Order Summary</h2>
+          <dl class="main-cart__summary-rows">
+            <div class="main-cart__summary-row">
+              <dt>Subtotal</dt>
+              <dd>{{ cart.items_subtotal_price | money }}</dd>
+            </div>
+            <div class="main-cart__summary-row main-cart__summary-row--note">
+              <dt>Shipping</dt>
+              <dd>Calculated at checkout</dd>
+            </div>
+          </dl>
+          <hr class="main-cart__summary-rule">
+          <div class="main-cart__summary-total">
+            <span>Total</span>
+            <span class="main-cart__summary-total-value">{{ cart.total_price | money }}</span>
+          </div>
+          {% form 'cart', cart, class: 'main-cart__checkout-form' %}
+            <button type="submit" name="checkout" class="main-cart__checkout">CHECKOUT</button>
+          {% endform %}
+          <a class="main-cart__continue" href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
+        </div>
+      </aside>
+    </div>
+  {% endif %}
+
+  <div class="main-cart__trust" role="region" aria-label="Trust badges">
+    <span>Secure Checkout</span>
+    <span class="main-cart__trust-sep" aria-hidden="true">·</span>
+    <span>Free Returns</span>
+    <span class="main-cart__trust-sep" aria-hidden="true">·</span>
+    <span>Free Shipping over $75</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .main-cart {
+    --zalva-ivory: #faf8f5;
+    --zalva-noir: #1a1a1a;
+    --zalva-champagne: #c8a96e;
+    --zalva-warm-taupe: #a07060;
+    --zalva-deep-brown: #3d2b24;
+
+    background-color: var(--zalva-ivory);
+    color: var(--zalva-noir);
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+    padding-inline: var(--page-margin);
+    max-width: var(--page-width);
+    margin-inline: auto;
+  }
+
+  .main-cart__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--zalva-deep-brown);
+    text-align: center;
+    margin: 0 0 clamp(2rem, 5vw, 3rem);
+  }
+
+  @media (max-width: 749px) {
+    .main-cart__title {
+      font-size: clamp(2rem, 9vw, 2.625rem);
+    }
+  }
+
+  .main-cart__empty {
+    text-align: center;
+    padding: clamp(3rem, 10vw, 6rem) 1rem;
+  }
+
+  .main-cart__empty-message {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-style: italic;
+    color: var(--zalva-noir);
+    margin: 0 0 1.25rem;
+  }
+
+  .main-cart__empty-cta {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--zalva-champagne);
+    border-bottom: 1px solid var(--zalva-champagne);
+    padding-bottom: 2px;
+  }
+
+  .main-cart__empty-cta:hover {
+    color: var(--zalva-deep-brown);
+    border-bottom-color: var(--zalva-deep-brown);
+  }
+
+  .main-cart__layout {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .main-cart__layout {
+      grid-template-columns: minmax(0, 65fr) minmax(0, 35fr);
+    }
+  }
+
+  .main-cart__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .main-cart__line {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 1.25rem;
+    padding-bottom: clamp(1.5rem, 3vw, 2rem);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+  }
+
+  .main-cart__line:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .main-cart__thumb {
+    display: block;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #f0ebe4;
+  }
+
+  .main-cart__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .main-cart__thumb-placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0ebe4, #e8ddd4);
+  }
+
+  .main-cart__line-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .main-cart__product-title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 1.125rem;
+    line-height: 1.3;
+    color: var(--zalva-noir);
+    text-decoration: none;
+  }
+
+  .main-cart__product-title:hover {
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-cart__variant {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--zalva-warm-taupe);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .main-cart__line-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .main-cart__line-price {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .main-cart__price-current {
+    color: var(--zalva-noir);
+  }
+
+  .main-cart__price-compare {
+    text-decoration: line-through;
+    color: var(--zalva-warm-taupe);
+    font-weight: 400;
+    font-size: 0.8125rem;
+  }
+
+  .main-cart__qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--zalva-noir);
+  }
+
+  .main-cart__qty-btn {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--zalva-noir);
+    background-color: var(--zalva-ivory);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .main-cart__qty-btn:hover:not(.is-disabled) {
+    background-color: var(--zalva-noir);
+    color: #ffffff;
+  }
+
+  .main-cart__qty-value {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-width: 2rem;
+    text-align: center;
+    padding-inline: 0.25rem;
+  }
+
+  .main-cart__remove {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(26, 26, 26, 0.55);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-top: 0.25rem;
+  }
+
+  .main-cart__remove:hover {
+    color: var(--zalva-noir);
+  }
+
+  .main-cart__summary-card {
+    background-color: var(--zalva-ivory);
+    border: 1px solid var(--zalva-noir);
+    padding: clamp(1.5rem, 4vw, 2rem);
+    position: sticky;
+    top: 1rem;
+  }
+
+  .main-cart__summary-title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 1.375rem;
+    color: var(--zalva-deep-brown);
+    margin: 0 0 1.25rem;
+  }
+
+  .main-cart__summary-rows {
+    margin: 0;
+  }
+
+  .main-cart__summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .main-cart__summary-row dt {
+    font-weight: 500;
+    color: rgba(26, 26, 26, 0.75);
+    margin: 0;
+  }
+
+  .main-cart__summary-row dd {
+    margin: 0;
+    font-weight: 500;
+    color: var(--zalva-noir);
+  }
+
+  .main-cart__summary-row--note dd {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--zalva-warm-taupe);
+  }
+
+  .main-cart__summary-rule {
+    border: none;
+    height: 1px;
+    margin: 1.25rem 0;
+    background-color: var(--zalva-champagne);
+    opacity: 0.85;
+  }
+
+  .main-cart__summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+
+  .main-cart__summary-total-value {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 1.5rem;
+    color: var(--zalva-noir);
+  }
+
+  .main-cart__checkout-form {
+    margin: 0;
+  }
+
+  .main-cart__checkout {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    min-height: 3.25rem;
+    border: none;
+    cursor: pointer;
+    background-color: var(--zalva-champagne);
+    color: var(--zalva-noir);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .main-cart__checkout:hover {
+    background-color: var(--zalva-deep-brown);
+    color: #ffffff;
+  }
+
+  .main-cart__continue {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--zalva-noir);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--zalva-champagne);
+  }
+
+  .main-cart__continue:hover {
+    color: var(--zalva-deep-brown);
+  }
+
+  .main-cart__trust {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: clamp(1.5rem, 4vw, 2rem);
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    color: rgba(26, 26, 26, 0.7);
+  }
+
+  .main-cart__trust-sep {
+    color: var(--zalva-champagne);
+    user-select: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart",
+  "tag": "section",
+  "class": "section-main-cart",
+  "settings": []
+}
+{% endschema %}
