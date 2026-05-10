@@ -7,16 +7,17 @@
   assign hero_image_url = 'https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=1200&q=80'
 %}
 
-<div class="main-hero full-width">
+<div class="main-hero full-width" data-main-hero>
   <div class="main-hero__grid">
     <div class="main-hero__copy">
-      <h1 class="main-hero__headline">{{ headline }}</h1>
-      <p class="main-hero__subtitle">{{ subtitle }}</p>
-      <a class="main-hero__cta" href="{{ button_link }}">{{ button_label }}</a>
+      <h1 class="main-hero__headline" data-hero-headline>{{ headline }}</h1>
+      <p class="main-hero__subtitle" data-hero-subtitle>{{ subtitle }}</p>
+      <a class="main-hero__cta" data-hero-cta href="{{ button_link }}"><span class="main-hero__cta-label">{{ button_label }}</span></a>
     </div>
     <div class="main-hero__visual">
       <img
         class="main-hero__image"
+        data-hero-parallax
         src="{{ hero_image_url }}"
         alt="{{ hero_image_alt | escape }}"
         width="1200"
@@ -92,6 +93,19 @@
     max-width: 14ch;
   }
 
+  .main-hero__headline .main-hero__word {
+    display: inline-block;
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: opacity, transform;
+  }
+
+  .main-hero__headline .main-hero__word.is-revealed {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
   .main-hero__subtitle {
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
     font-weight: 400;
@@ -100,6 +114,20 @@
     color: var(--zalva-warm-taupe);
     margin-top: 1.25rem;
     max-width: 32ch;
+  }
+
+  .main-hero__subtitle,
+  .main-hero__cta {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: opacity, transform;
+  }
+
+  .main-hero__subtitle.is-revealed,
+  .main-hero__cta.is-revealed {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .main-hero__cta {
@@ -114,15 +142,37 @@
     margin-top: 2rem;
     padding: 1rem 2.25rem;
     min-height: 3rem;
-    background-color: var(--zalva-champagne);
     color: var(--zalva-noir);
-    border: none;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    background-color: transparent;
+    border: 1px solid var(--zalva-champagne);
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.25s ease;
+  }
+
+  .main-hero__cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--zalva-champagne);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: 0;
+  }
+
+  .main-hero__cta > * {
+    position: relative;
+    z-index: 1;
   }
 
   .main-hero__cta:hover {
-    background-color: var(--zalva-warm-taupe);
-    color: var(--zalva-ivory);
+    transform: scale(1.02);
+  }
+
+  .main-hero__cta:hover::before {
+    transform: scaleX(1);
   }
 
   .main-hero__cta:focus-visible {
@@ -151,8 +201,110 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-hero__headline .main-hero__word,
+    .main-hero__subtitle,
+    .main-hero__cta {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+
+    .main-hero__cta::before {
+      transition: none !important;
+    }
   }
 {% endstylesheet %}
+
+<script>
+  (() => {
+    const hero = document.querySelector('[data-main-hero]');
+    if (!hero) return;
+
+    const prefersReducedMotion =
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const headlineEl = hero.querySelector('[data-hero-headline]');
+    const subtitleEl = hero.querySelector('[data-hero-subtitle]');
+    const ctaEl = hero.querySelector('[data-hero-cta]');
+
+    if (headlineEl) {
+      const original = headlineEl.textContent || '';
+      const words = original.trim().split(/\s+/).filter(Boolean);
+
+      if (!prefersReducedMotion && words.length > 0) {
+        headlineEl.setAttribute('aria-label', original.trim());
+        headlineEl.textContent = '';
+
+        const spans = words.map((word, idx) => {
+          const span = document.createElement('span');
+          span.className = 'main-hero__word';
+          span.textContent = word;
+          span.setAttribute('aria-hidden', 'true');
+          headlineEl.appendChild(span);
+          if (idx < words.length - 1) headlineEl.appendChild(document.createTextNode(' '));
+          return span;
+        });
+
+        window.requestAnimationFrame(() => {
+          spans.forEach((span, index) => {
+            window.setTimeout(() => span.classList.add('is-revealed'), index * 300);
+          });
+
+          const headlineDurationMs = (spans.length - 1) * 300 + 600;
+          window.setTimeout(() => subtitleEl && subtitleEl.classList.add('is-revealed'), headlineDurationMs);
+          window.setTimeout(() => ctaEl && ctaEl.classList.add('is-revealed'), headlineDurationMs + 600);
+        });
+      } else {
+        subtitleEl && subtitleEl.classList.add('is-revealed');
+        ctaEl && ctaEl.classList.add('is-revealed');
+      }
+    } else {
+      subtitleEl && subtitleEl.classList.add('is-revealed');
+      ctaEl && ctaEl.classList.add('is-revealed');
+    }
+
+    if (prefersReducedMotion) return;
+
+    const imageEl = hero.querySelector('[data-hero-parallax]');
+    if (!imageEl) return;
+
+    let rafId = 0;
+    let latestScrollY = window.scrollY || 0;
+
+    const update = () => {
+      rafId = 0;
+
+      const rect = hero.getBoundingClientRect();
+      const heroTop = latestScrollY + rect.top;
+      const heroHeight = rect.height || 1;
+      const heroBottom = heroTop + heroHeight;
+      const viewportTop = latestScrollY;
+      const viewportBottom = viewportTop + window.innerHeight;
+
+      if (viewportBottom < heroTop || viewportTop > heroBottom) return;
+
+      const relativeScroll = latestScrollY - heroTop;
+      const translateY = Math.round(relativeScroll * -0.5);
+      imageEl.style.transform = `translate3d(0, ${translateY}px, 0)`;
+    };
+
+    const onScroll = () => {
+      latestScrollY = window.scrollY || 0;
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
 
 {% schema %}
 {
