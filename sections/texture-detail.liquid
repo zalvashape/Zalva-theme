@@ -1,0 +1,547 @@
+{% liquid
+  assign eyebrow_text = section.settings.eyebrow_text | default: 'THE MATERIAL STORY'
+  assign main_title = section.settings.main_title | default: 'Crafted to disappear.'
+  assign subtitle = section.settings.subtitle | default: 'Every seam, every stitch, every fabric — chosen with intention.'
+  assign closing_statement = section.settings.closing_statement | default: 'Nothing about this is mass-produced.'
+
+  assign url_1 = 'https://images.unsplash.com/photo-1582719188393-bb71ca45dbb9?w=800&q=85'
+  assign url_2 = 'https://images.unsplash.com/photo-1588117305388-c2631a279f82?w=800&q=85'
+  assign url_3 = 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=85'
+  assign url_4 = 'https://images.unsplash.com/photo-1611042553365-9b101441c135?w=800&q=85'
+
+  if section.settings.texture_image_1 != blank
+    assign src_1 = section.settings.texture_image_1 | image_url: width: 1200
+  else
+    assign src_1 = url_1
+  endif
+  if section.settings.texture_image_2 != blank
+    assign src_2 = section.settings.texture_image_2 | image_url: width: 1200
+  else
+    assign src_2 = url_2
+  endif
+  if section.settings.texture_image_3 != blank
+    assign src_3 = section.settings.texture_image_3 | image_url: width: 1200
+  else
+    assign src_3 = url_3
+  endif
+  if section.settings.texture_image_4 != blank
+    assign src_4 = section.settings.texture_image_4 | image_url: width: 1200
+  else
+    assign src_4 = url_4
+  endif
+
+  assign cap_1 = section.settings.texture_caption_1 | default: 'Sourced in Italy'
+  assign cap_2 = section.settings.texture_caption_2 | default: 'Double seams'
+  assign cap_3 = section.settings.texture_caption_3 | default: 'Hand-finished'
+  assign cap_4 = section.settings.texture_caption_4 | default: 'Tested on real bodies'
+%}
+
+<div class="texture-detail full-width" data-texture-detail>
+  <div class="texture-detail__inner">
+    <header class="texture-detail__header">
+      <p class="texture-detail__eyebrow" data-texture-header-el>{{ eyebrow_text }}</p>
+      <h2 class="texture-detail__title" data-texture-header-el>{{ main_title }}</h2>
+      <p class="texture-detail__subtitle" data-texture-header-el>{{ subtitle }}</p>
+    </header>
+
+    <div class="texture-detail__grid">
+      <div class="texture-detail__cell" data-texture-cell>
+        <div class="texture-detail__media">
+          <img
+            class="texture-detail__img"
+            src="{{ src_1 }}"
+            alt="{{ cap_1 | escape }}"
+            width="800"
+            height="800"
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="texture-detail__caption-wrap">
+            <span class="texture-detail__caption">{{ cap_1 }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="texture-detail__cell" data-texture-cell>
+        <div class="texture-detail__media">
+          <img
+            class="texture-detail__img"
+            src="{{ src_2 }}"
+            alt="{{ cap_2 | escape }}"
+            width="800"
+            height="800"
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="texture-detail__caption-wrap">
+            <span class="texture-detail__caption">{{ cap_2 }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="texture-detail__cell" data-texture-cell>
+        <div class="texture-detail__media">
+          <img
+            class="texture-detail__img"
+            src="{{ src_3 }}"
+            alt="{{ cap_3 | escape }}"
+            width="800"
+            height="800"
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="texture-detail__caption-wrap">
+            <span class="texture-detail__caption">{{ cap_3 }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="texture-detail__cell" data-texture-cell>
+        <div class="texture-detail__media">
+          <img
+            class="texture-detail__img"
+            src="{{ src_4 }}"
+            alt="{{ cap_4 | escape }}"
+            width="800"
+            height="800"
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="texture-detail__caption-wrap">
+            <span class="texture-detail__caption">{{ cap_4 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="texture-detail__footer">
+      <div class="texture-detail__rule" aria-hidden="true" data-texture-footer-el></div>
+      <p class="texture-detail__closing" data-texture-footer-el>{{ closing_statement }}</p>
+    </footer>
+  </div>
+</div>
+
+{% stylesheet %}
+  .texture-detail {
+    --td-ivory: #faf8f5;
+    --td-champagne: #c8a96e;
+    --td-noir: #1a1a1a;
+    --td-warm-taupe: #a07060;
+    --td-deep-brown: #3d2b24;
+
+    width: 100%;
+    background-color: var(--td-ivory);
+    padding-block: 80px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .texture-detail {
+      padding-block: 140px;
+    }
+  }
+
+  .texture-detail__inner {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: 20px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .texture-detail__inner {
+      padding-inline: 40px;
+    }
+  }
+
+  .texture-detail__header {
+    text-align: center;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @media (min-width: 990px) {
+    .texture-detail__header {
+      margin-bottom: 80px;
+    }
+  }
+
+  .texture-detail__eyebrow {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--td-champagne);
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    will-change: opacity, transform;
+  }
+
+  .texture-detail__title {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.2;
+    color: var(--td-noir);
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    will-change: opacity, transform;
+  }
+
+  .texture-detail__subtitle {
+    margin: 18px 0 0;
+    max-width: 480px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--td-warm-taupe);
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    will-change: opacity, transform;
+  }
+
+  .texture-detail__grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 750px) {
+    .texture-detail__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .texture-detail__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .texture-detail__cell {
+    min-width: 0;
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .texture-detail__media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 0;
+    background-color: #ebe4dc;
+  }
+
+  .texture-detail__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transform: scale(1);
+    transition: transform 0.8s ease;
+  }
+
+  .texture-detail__media:hover .texture-detail__img,
+  .texture-detail__media:focus-within .texture-detail__img {
+    transform: scale(1.03);
+  }
+
+  .texture-detail__caption-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: stretch;
+    padding: 12px 14px;
+    background: linear-gradient(to top, rgba(26, 26, 26, 0.7), transparent 55%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .texture-detail__media:hover .texture-detail__caption-wrap,
+  .texture-detail__media:focus-within .texture-detail__caption-wrap {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .texture-detail__caption-wrap {
+      opacity: 1;
+    }
+  }
+
+  .texture-detail__caption {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--td-ivory);
+    display: block;
+    width: 100%;
+  }
+
+  .texture-detail__footer {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 990px) {
+    .texture-detail__footer {
+      margin-top: 80px;
+    }
+  }
+
+  .texture-detail__rule {
+    width: 60px;
+    height: 1px;
+    margin: 0 0 32px;
+    background-color: var(--td-champagne);
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    will-change: opacity, transform;
+  }
+
+  .texture-detail__closing {
+    margin: 0;
+    max-width: 36rem;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    color: var(--td-deep-brown);
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    will-change: opacity, transform;
+  }
+
+  /* Header stagger: 0, 0.15s, 0.3s — duration 0.8s */
+  .texture-detail.is-visible .texture-detail__header [data-texture-header-el]:nth-child(1) {
+    animation: texture-detail-fade-up 0.8s ease forwards;
+    animation-delay: 0s;
+  }
+
+  .texture-detail.is-visible .texture-detail__header [data-texture-header-el]:nth-child(2) {
+    animation: texture-detail-fade-up 0.8s ease forwards;
+    animation-delay: 0.15s;
+  }
+
+  .texture-detail.is-visible .texture-detail__header [data-texture-header-el]:nth-child(3) {
+    animation: texture-detail-fade-up 0.8s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  /* Cells after header: header ends ~1.1s; cells at 1.1 + n×0.1s */
+  .texture-detail.is-visible .texture-detail__grid .texture-detail__cell:nth-child(1) {
+    animation: texture-detail-fade-up-cell 0.8s ease forwards;
+    animation-delay: 1.1s;
+  }
+
+  .texture-detail.is-visible .texture-detail__grid .texture-detail__cell:nth-child(2) {
+    animation: texture-detail-fade-up-cell 0.8s ease forwards;
+    animation-delay: 1.2s;
+  }
+
+  .texture-detail.is-visible .texture-detail__grid .texture-detail__cell:nth-child(3) {
+    animation: texture-detail-fade-up-cell 0.8s ease forwards;
+    animation-delay: 1.3s;
+  }
+
+  .texture-detail.is-visible .texture-detail__grid .texture-detail__cell:nth-child(4) {
+    animation: texture-detail-fade-up-cell 0.8s ease forwards;
+    animation-delay: 1.4s;
+  }
+
+  /* Footer: after last cell animation completes (1.4 + 0.8 = 2.2s) + 0.5s gap */
+  .texture-detail.is-visible .texture-detail__footer [data-texture-footer-el]:nth-child(1) {
+    animation: texture-detail-fade-up 0.8s ease forwards;
+    animation-delay: 2.7s;
+  }
+
+  .texture-detail.is-visible .texture-detail__footer [data-texture-footer-el]:nth-child(2) {
+    animation: texture-detail-fade-up 0.8s ease forwards;
+    animation-delay: 3.2s;
+  }
+
+  @keyframes texture-detail-fade-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes texture-detail-fade-up-cell {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 30px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .texture-detail__header [data-texture-header-el],
+    .texture-detail__grid .texture-detail__cell,
+    .texture-detail__footer [data-texture-footer-el] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .texture-detail__img {
+      transition: none !important;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-texture-detail]');
+    if (!root) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          root.classList.add('is-visible');
+          io.disconnect();
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    io.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Texture & detail",
+  "tag": "section",
+  "class": "section-texture-detail",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow",
+      "default": "THE MATERIAL STORY"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Main title",
+      "default": "Crafted to disappear."
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Every seam, every stitch, every fabric — chosen with intention."
+    },
+    {
+      "type": "textarea",
+      "id": "closing_statement",
+      "label": "Closing statement",
+      "default": "Nothing about this is mass-produced."
+    },
+    {
+      "type": "header",
+      "content": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "texture_image_1",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "texture_caption_1",
+      "label": "Caption",
+      "default": "Sourced in Italy"
+    },
+    {
+      "type": "header",
+      "content": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "texture_image_2",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "texture_caption_2",
+      "label": "Caption",
+      "default": "Double seams"
+    },
+    {
+      "type": "header",
+      "content": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "texture_image_3",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "texture_caption_3",
+      "label": "Caption",
+      "default": "Hand-finished"
+    },
+    {
+      "type": "header",
+      "content": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "texture_image_4",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "texture_caption_4",
+      "label": "Caption",
+      "default": "Tested on real bodies"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Texture & detail"
+    }
+  ]
+}
+{% endschema %}
