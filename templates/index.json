@@ -15,7 +15,9 @@
         "headline": "Sculpted for you.",
         "subtitle": "Premium shapewear for every body.",
         "button_label": "SHOP NOW",
-        "hero_image_alt": "Zalva Shape campaign"
+        "hero_image_alt": "Zalva Shape campaign",
+        "featured_heading": "Featured",
+        "featured_products_limit": 4
       }
     },
     "brand_statement": {
@@ -25,18 +27,11 @@
     "category_grid": {
       "type": "category-grid",
       "settings": {}
-    },
-    "featured_products": {
-      "type": "zalva-featured-placeholder",
-      "settings": {
-        "heading": "Featured"
-      }
     }
   },
   "order": [
     "main",
     "brand_statement",
-    "category_grid",
-    "featured_products"
+    "category_grid"
   ]
 }

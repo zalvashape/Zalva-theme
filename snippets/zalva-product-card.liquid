@@ -1,0 +1,303 @@
+{% comment %}
+  Premium product card: dual-image crossfade, bottom quick add, hover lift.
+  Expects: product (required)
+{% endcomment %}
+
+{% liquid
+  assign quick_variant = product.first_available_variant
+  if routes.cart_add_url != blank
+    assign zalva_cart_add_js = routes.cart_add_url | append: '.js'
+  else
+    assign zalva_cart_add_js = '/cart/add.js'
+  endif
+%}
+
+<article class="zalva-pcard">
+  <div class="zalva-pcard__visual">
+    <a href="{{ product.url }}" class="zalva-pcard__media-link" tabindex="-1" aria-hidden="true">
+      <div class="zalva-pcard__media">
+        {% if product.images.size > 0 %}
+          {% assign img_primary = product.images.first %}
+          {% assign primary_alt = img_primary.alt | default: product.title %}
+          {{
+            img_primary
+            | image_url: width: 800
+            | image_tag:
+              loading: 'lazy',
+              class: 'zalva-pcard__img zalva-pcard__img--primary',
+              sizes: '(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw',
+              widths: '300, 450, 600, 800',
+              alt: primary_alt
+          }}
+          {% if product.images.size > 1 %}
+            {% assign img_secondary = product.images[1] %}
+            {% assign secondary_alt = img_secondary.alt | default: product.title %}
+            {{
+              img_secondary
+              | image_url: width: 800
+              | image_tag:
+                loading: 'lazy',
+                class: 'zalva-pcard__img zalva-pcard__img--secondary',
+                sizes: '(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw',
+                widths: '300, 450, 600, 800',
+                alt: secondary_alt
+            }}
+          {% endif %}
+        {% else %}
+          <div class="zalva-pcard__placeholder"></div>
+        {% endif %}
+      </div>
+    </a>
+    <button
+      type="button"
+      class="zalva-pcard__quick-add"
+      data-zalva-quick-add
+      {% if quick_variant %}data-variant-id="{{ quick_variant.id }}"{% endif %}
+      {% unless quick_variant %}disabled aria-disabled="true"{% endunless %}
+    >
+      QUICK ADD
+    </button>
+  </div>
+  <div class="zalva-pcard__body">
+    <a href="{{ product.url }}" class="zalva-pcard__title">{{ product.title }}</a>
+    <div class="zalva-pcard__price-row">
+      {% if product.compare_at_price > product.price %}
+        <span class="zalva-pcard__price-current">{{ product.price | money }}</span>
+        <span class="zalva-pcard__price-compare">{{ product.compare_at_price | money }}</span>
+      {% else %}
+        <span class="zalva-pcard__price-current">{{ product.price | money }}</span>
+      {% endif %}
+    </div>
+  </div>
+</article>
+
+{% stylesheet %}
+  .zalva-pcard {
+    --zalva-ivory: #faf8f5;
+    --zalva-noir: #1a1a1a;
+    --zalva-champagne: #c8a96e;
+    --zalva-warm-taupe: #a07060;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transform: translate3d(0, 0, 0);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .zalva-pcard:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .zalva-pcard__visual {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: #f0ebe4;
+  }
+
+  .zalva-pcard__media-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .zalva-pcard__media {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .zalva-pcard__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .zalva-pcard__img--secondary {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .zalva-pcard:hover .zalva-pcard__img--secondary,
+  .zalva-pcard:focus-within .zalva-pcard__img--secondary {
+    opacity: 1;
+  }
+
+  .zalva-pcard__placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0ebe4, #e8ddd4);
+  }
+
+  .zalva-pcard__quick-add {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 44px;
+    margin: 0;
+    padding: 0 0.75rem;
+    border: none;
+    cursor: pointer;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background-color: var(--zalva-noir);
+    color: var(--zalva-ivory);
+    transform: translate3d(0, 100%, 0);
+    transition: transform 0.3s ease, opacity 0.2s ease;
+    z-index: 2;
+  }
+
+  .zalva-pcard:hover .zalva-pcard__quick-add,
+  .zalva-pcard:focus-within .zalva-pcard__quick-add {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .zalva-pcard__quick-add:hover:not(:disabled) {
+    opacity: 0.92;
+  }
+
+  .zalva-pcard__quick-add:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .zalva-pcard__body {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1 1 auto;
+  }
+
+  .zalva-pcard__title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.35;
+    color: var(--zalva-noir);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease, color 0.25s ease;
+    align-self: flex-start;
+  }
+
+  .zalva-pcard:hover .zalva-pcard__title {
+    border-bottom-color: var(--zalva-champagne);
+  }
+
+  .zalva-pcard__title:focus-visible {
+    outline: 2px solid var(--zalva-champagne);
+    outline-offset: 3px;
+  }
+
+  .zalva-pcard__price-row {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .zalva-pcard__price-current {
+    color: var(--zalva-noir);
+  }
+
+  .zalva-pcard__price-compare {
+    text-decoration: line-through;
+    color: var(--zalva-warm-taupe);
+    font-weight: 400;
+    font-size: 0.8125rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zalva-pcard,
+    .zalva-pcard__img--secondary,
+    .zalva-pcard__quick-add {
+      transition: none !important;
+    }
+
+    .zalva-pcard:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .zalva-pcard:hover .zalva-pcard__img--secondary,
+    .zalva-pcard:focus-within .zalva-pcard__img--secondary {
+      opacity: 1;
+    }
+
+    .zalva-pcard:hover .zalva-pcard__quick-add,
+    .zalva-pcard:focus-within .zalva-pcard__quick-add {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (function () {
+    if (window.__zalvaQuickAddBound) return;
+    window.__zalvaQuickAddBound = true;
+
+    document.addEventListener(
+      'click',
+      function (e) {
+        var btn = e.target.closest('[data-zalva-quick-add]');
+        if (!btn || btn.disabled) return;
+        var variantId = btn.getAttribute('data-variant-id');
+        if (!variantId) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (btn.getAttribute('data-loading') === 'true') return;
+        btn.setAttribute('data-loading', 'true');
+        var prevText = btn.textContent;
+        btn.textContent = 'ADDING…';
+
+        fetch({{ zalva_cart_add_js | json }}, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            items: [{ id: Number(variantId), quantity: 1 }],
+          }),
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              if (!res.ok) throw new Error((data && data.description) || data.message || 'Add failed');
+              return data;
+            });
+          })
+          .then(function () {
+            btn.textContent = 'ADDED';
+            window.setTimeout(function () {
+              btn.textContent = prevText;
+            }, 1600);
+          })
+          .catch(function () {
+            btn.textContent = 'ERROR';
+            window.setTimeout(function () {
+              btn.textContent = prevText;
+            }, 2000);
+          })
+          .finally(function () {
+            btn.removeAttribute('data-loading');
+          });
+      }
+    );
+  })();
+</script>
