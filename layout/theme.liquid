@@ -34,49 +34,24 @@
     {{ content_for_header }}
 
     <style>
-      :root {
-        --zalva-ivory: #faf8f5;
-        --zalva-noir: #1a1a1a;
-      }
-
       header {
         position: sticky;
         top: 0;
-        z-index: 60;
-        background-color: var(--zalva-ivory);
-        color: var(--zalva-noir);
-        transform: translate3d(0, 0, 0);
-        transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-        will-change: transform;
+        z-index: 100;
+        width: 100%;
+        background-color: #faf8f5;
+        color: #1a1a1a;
+        box-sizing: border-box;
       }
 
       header a {
-        transition: color 0.3s ease;
+        color: #1a1a1a;
       }
 
-      .zalva-home header.zalva-nav--transparent {
-        background-color: transparent;
-        color: #ffffff;
-      }
-
-      .zalva-home header.zalva-nav--transparent a {
-        color: #ffffff;
-      }
-
-      .zalva-home header.zalva-nav--transparent svg,
-      .zalva-home header.zalva-nav--transparent svg * {
-        fill: currentColor !important;
-        stroke: currentColor !important;
-      }
-
-      header.zalva-nav--hidden {
-        transform: translate3d(0, -100%, 0);
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        header {
-          transition: none !important;
-        }
+      header svg,
+      header svg * {
+        fill: currentColor;
+        stroke: currentColor;
       }
     </style>
   </head>
@@ -89,65 +64,5 @@
     {{ content_for_layout }}
 
     {% section 'footer' %}
-
-    <script>
-      (() => {
-        const header = document.querySelector('header');
-        if (!header) return;
-
-        const prefersReducedMotion =
-          window.matchMedia &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        const isHome = document.body.classList.contains('zalva-home');
-        const hero = isHome ? document.querySelector('[data-main-hero]') : null;
-
-        let lastY = window.scrollY || 0;
-        let lastToggleY = lastY;
-        let rafId = 0;
-
-        const setTransparentState = (scrollY) => {
-          if (!isHome || !hero) return;
-          const rect = hero.getBoundingClientRect();
-          const heroTop = scrollY + rect.top;
-          const heroBottom = heroTop + rect.height;
-          const headerHeight = header.offsetHeight || 0;
-          const pastHero = scrollY >= Math.max(0, heroBottom - headerHeight);
-          header.classList.toggle('zalva-nav--transparent', !pastHero);
-        };
-
-        const update = () => {
-          rafId = 0;
-
-          const y = window.scrollY || 0;
-          const delta = y - lastY;
-
-          if (!prefersReducedMotion) {
-            if (Math.abs(y - lastToggleY) >= 50) {
-              if (delta > 0) {
-                header.classList.add('zalva-nav--hidden');
-                lastToggleY = y;
-              } else if (delta < 0) {
-                header.classList.remove('zalva-nav--hidden');
-                lastToggleY = y;
-              }
-            }
-          }
-
-          setTransparentState(y);
-          lastY = y;
-        };
-
-        const onScroll = () => {
-          if (rafId) return;
-          rafId = window.requestAnimationFrame(update);
-        };
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll, { passive: true });
-
-        setTransparentState(lastY);
-      })();
-    </script>
   </body>
 </html>
