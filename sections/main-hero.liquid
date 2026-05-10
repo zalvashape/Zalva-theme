@@ -5,8 +5,6 @@
   assign button_link = section.settings.button_link | default: routes.all_products_collection_url
   assign hero_image_alt = section.settings.hero_image_alt | default: 'Zalva Shape campaign'
   assign hero_image_url = 'https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=1200&q=80'
-  assign featured_collection = section.settings.featured_collection
-  assign featured_limit = section.settings.featured_products_limit | default: 4
 %}
 
 <div class="main-hero full-width" data-main-hero>
@@ -31,23 +29,6 @@
     </div>
   </div>
 </div>
-
-{% if featured_collection != blank %}
-  <div class="main-hero__featured full-width">
-    <div class="main-hero__featured-inner">
-      {% if section.settings.featured_heading != blank %}
-        <h2 class="main-hero__featured-heading">{{ section.settings.featured_heading }}</h2>
-      {% endif %}
-      <ul class="main-hero__featured-grid" role="list">
-        {% for product in featured_collection.products limit: featured_limit %}
-          <li class="main-hero__featured-item">
-            {% render 'zalva-product-card', product: product %}
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-{% endif %}
 
 {% stylesheet %}
   .main-hero {
@@ -237,63 +218,6 @@
       transition: none !important;
     }
   }
-
-  .main-hero__featured {
-    background-color: var(--zalva-ivory);
-    padding-block: clamp(2.5rem, 6vw, 4rem);
-    border-top: 1px solid rgba(26, 26, 26, 0.08);
-  }
-
-  .main-hero__featured-inner {
-    width: 100%;
-    max-width: var(--page-width);
-    margin-inline: auto;
-    padding-inline: var(--page-margin);
-  }
-
-  .main-hero__featured-heading {
-    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
-    font-weight: 300;
-    font-size: clamp(1.75rem, 4vw + 0.5rem, 2.25rem);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--zalva-deep-brown);
-    margin: 0 0 clamp(1.5rem, 3vw, 2rem);
-    text-align: center;
-  }
-
-  @media (min-width: 900px) {
-    .main-hero__featured-heading {
-      text-align: left;
-    }
-  }
-
-  .main-hero__featured-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: clamp(1.5rem, 3vw, 2.25rem);
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 600px) {
-    .main-hero__featured-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 990px) {
-    .main-hero__featured-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .main-hero__featured-item {
-    margin: 0;
-    padding: 0;
-    min-width: 0;
-  }
 {% endstylesheet %}
 
 <script>
@@ -416,26 +340,6 @@
       "id": "hero_image_alt",
       "label": "Hero image alt text",
       "default": "Zalva Shape campaign"
-    },
-    {
-      "type": "text",
-      "id": "featured_heading",
-      "label": "Featured products heading",
-      "default": "Featured"
-    },
-    {
-      "type": "collection",
-      "id": "featured_collection",
-      "label": "Featured collection"
-    },
-    {
-      "type": "range",
-      "id": "featured_products_limit",
-      "min": 2,
-      "max": 8,
-      "step": 1,
-      "default": 4,
-      "label": "Featured products to show"
     }
   ],
   "presets": [

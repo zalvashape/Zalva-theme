@@ -2,9 +2,9 @@
   assign statement = section.settings.statement | default: 'Every body deserves to feel sculpted, supported, and seen.'
 %}
 
-<div class="brand-statement full-width" data-brand-statement>
+<div class="brand-statement full-width">
   <div class="brand-statement__inner">
-    <p class="brand-statement__text" data-brand-statement-text>{{ statement }}</p>
+    <p class="brand-statement__text">{{ statement }}</p>
     <hr class="brand-statement__rule" aria-hidden="true">
   </div>
 </div>
@@ -42,18 +42,6 @@
     margin: 0;
   }
 
-  .brand-statement__line {
-    display: block;
-    opacity: 0;
-    transform: translate3d(0, 18px, 0);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-
-  .brand-statement__line.is-visible {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-
   @media (min-width: 750px) {
     .brand-statement__text {
       font-size: 48px;
@@ -68,98 +56,7 @@
     margin: clamp(1.5rem, 4vw, 2.25rem) 0 0;
     background-color: var(--zalva-champagne);
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .brand-statement__line {
-      transition: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-    }
-  }
 {% endstylesheet %}
-
-<script>
-  (() => {
-    const root = document.querySelector('[data-brand-statement]');
-    if (!root) return;
-
-    const prefersReducedMotion =
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const textEl = root.querySelector('[data-brand-statement-text]');
-    if (!textEl) return;
-
-    const original = (textEl.textContent || '').trim();
-    if (!original) return;
-
-    if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
-
-    // Split into rendered lines by wrapping words and grouping by their top offset.
-    const words = original.split(/\s+/).filter(Boolean);
-    textEl.setAttribute('aria-label', original);
-    textEl.textContent = '';
-
-    const wordSpans = words.map((w, idx) => {
-      const s = document.createElement('span');
-      s.textContent = w;
-      s.style.display = 'inline-block';
-      s.style.whiteSpace = 'pre';
-      s.setAttribute('aria-hidden', 'true');
-      textEl.appendChild(s);
-      if (idx < words.length - 1) textEl.appendChild(document.createTextNode(' '));
-      return s;
-    });
-
-    const buildLines = () => {
-      const tops = new Map();
-      wordSpans.forEach((s) => {
-        const r = s.getBoundingClientRect();
-        const key = Math.round(r.top);
-        if (!tops.has(key)) tops.set(key, []);
-        tops.get(key).push(s);
-      });
-
-      const sortedKeys = Array.from(tops.keys()).sort((a, b) => a - b);
-      const lines = sortedKeys.map((k) => tops.get(k));
-
-      const frag = document.createDocumentFragment();
-      lines.forEach((lineWords, idx) => {
-        const line = document.createElement('span');
-        line.className = 'brand-statement__line';
-        line.setAttribute('aria-hidden', 'true');
-        lineWords.forEach((w, j) => {
-          line.appendChild(document.createTextNode(w.textContent));
-          if (j < lineWords.length - 1) line.appendChild(document.createTextNode(' '));
-        });
-        frag.appendChild(line);
-      });
-
-      textEl.textContent = '';
-      textEl.appendChild(frag);
-
-      return Array.from(textEl.querySelectorAll('.brand-statement__line'));
-    };
-
-    // Wait one frame so layout is stable before measuring.
-    window.requestAnimationFrame(() => {
-      const lines = buildLines();
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            lines.forEach((line, i) => {
-              window.setTimeout(() => line.classList.add('is-visible'), i * 500);
-            });
-            io.disconnect();
-          });
-        },
-        { threshold: 0.15 }
-      );
-      io.observe(root);
-    });
-  })();
-</script>
 
 {% schema %}
 {
