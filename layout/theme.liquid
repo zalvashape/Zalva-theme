@@ -194,7 +194,9 @@
 
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    <main id="MainContent" role="main">
+      {{ content_for_layout }}
+    </main>
 
     {% section 'footer' %}
 
@@ -254,6 +256,7 @@
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('resize', onScroll, { passive: true });
 
+        header.classList.remove('zalva-nav--hidden');
         setTransparentState(lastY);
       })();
     </script>
@@ -266,11 +269,10 @@
 
         // Scroll fade-in for sections
         if (!prefersReducedMotion && 'IntersectionObserver' in window) {
-          const sectionCandidates = Array.from(
-            document.querySelectorAll(
-              'main > section, main > .shopify-section, [id^=\"shopify-section-\"]'
-            )
-          );
+          const main = document.getElementById('MainContent');
+          const sectionCandidates = main
+            ? Array.from(main.querySelectorAll(':scope > section, :scope > .shopify-section, :scope > [id^="shopify-section-"]'))
+            : [];
 
           sectionCandidates.forEach((el) => el.classList.add('animate-on-scroll'));
 

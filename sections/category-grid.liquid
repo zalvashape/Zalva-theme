@@ -21,8 +21,8 @@
               loading="lazy"
               decoding="async"
             >
+            <span class="category-grid__label">Bodysuits</span>
           </div>
-          <span class="category-grid__label">Bodysuits</span>
         </a>
       </li>
       <li>
@@ -36,8 +36,8 @@
               loading="lazy"
               decoding="async"
             >
+            <span class="category-grid__label">Waist Trainers</span>
           </div>
-          <span class="category-grid__label">Waist Trainers</span>
         </a>
       </li>
       <li>
@@ -51,8 +51,8 @@
               loading="lazy"
               decoding="async"
             >
+            <span class="category-grid__label">Fajas</span>
           </div>
-          <span class="category-grid__label">Fajas</span>
         </a>
       </li>
     </ul>
@@ -106,8 +106,7 @@
   }
 
   .category-grid__card {
-    display: grid;
-    grid-template-rows: 7fr 3fr;
+    display: block;
     min-height: min(52vh, 520px);
     text-decoration: none;
     color: inherit;
@@ -116,9 +115,20 @@
 
   .category-grid__media {
     position: relative;
-    min-height: 0;
+    height: 100%;
     overflow: hidden;
     background-color: #ebddd4;
+  }
+
+  .category-grid__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .category-grid__media img {
@@ -136,24 +146,32 @@
     transform: scale(1.04);
   }
 
+  .category-grid__card:hover .category-grid__media::after,
+  .category-grid__card:focus-visible .category-grid__media::after {
+    opacity: 1;
+  }
+
   .category-grid__label {
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
     font-size: clamp(1.25rem, 2vw + 0.75rem, 1.625rem);
     line-height: 1.2;
-    color: var(--zalva-noir);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--zalva-ivory);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    z-index: 2;
     text-align: center;
-    padding: clamp(0.75rem, 2vw, 1.25rem);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.25s ease;
+    padding: 0.75rem 1rem;
+    letter-spacing: -0.01em;
+    transition: transform 0.3s ease, color 0.3s ease;
   }
 
   .category-grid__card:hover .category-grid__label,
   .category-grid__card:focus-visible .category-grid__label {
-    border-bottom-color: var(--zalva-champagne);
+    transform: translate3d(-50%, -50%, 0) scale(1.05);
+    color: #ffffff;
   }
 
   .category-grid__card:focus-visible {
