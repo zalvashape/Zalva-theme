@@ -1,62 +1,170 @@
 {% liquid
-  assign statement = section.settings.statement | default: 'Every body deserves to feel sculpted, supported, and seen.'
+  assign line_1 = section.settings.line_1 | default: "This isn't about hiding."
+  assign line_2 = section.settings.line_2 | default: "It's about feeling held."
+  assign accent_color = section.settings.accent_color | default: '#c8a96e'
+  assign text_color_1 = section.settings.text_color_1 | default: '#1a1a1a'
+  assign text_color_2 = section.settings.text_color_2 | default: '#a07060'
 %}
 
-<div class="brand-statement full-width">
+<div
+  class="brand-statement full-width"
+  data-brand-statement
+  style="
+    --bs-accent: {{ accent_color }};
+    --bs-text-1: {{ text_color_1 }};
+    --bs-text-2: {{ text_color_2 }};
+  "
+>
   <div class="brand-statement__inner">
-    <p class="brand-statement__text">{{ statement }}</p>
-    <hr class="brand-statement__rule" aria-hidden="true">
+    <div class="brand-statement__accent" aria-hidden="true"></div>
+    <p class="brand-statement__line brand-statement__line--1">{{ line_1 }}</p>
+    <p class="brand-statement__line brand-statement__line--2">{{ line_2 }}</p>
   </div>
 </div>
 
 {% stylesheet %}
   .brand-statement {
-    --zalva-ivory: #faf8f5;
-    --zalva-champagne: #c8a96e;
-    --zalva-noir: #1a1a1a;
+    --bs-ivory: #faf8f5;
 
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    padding-block: clamp(2.5rem, 8vw, 5rem);
+    width: 100%;
+    background-color: var(--bs-ivory);
+    padding-block: 80px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .brand-statement {
+      padding-block: 140px;
+    }
   }
 
   .brand-statement__inner {
     width: 100%;
-    max-width: var(--page-width);
+    max-width: 880px;
     margin-inline: auto;
     padding-inline: var(--page-margin);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
-  .brand-statement__text {
+  .brand-statement__accent {
+    width: 40px;
+    height: 1px;
+    margin: 0 0 48px;
+    background-color: var(--bs-accent);
+    transform: scaleX(0);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .brand-statement__line {
+    margin: 0;
+    max-width: 100%;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
     font-style: italic;
-    font-size: 28px;
-    line-height: 1.35;
-    letter-spacing: -0.01em;
-    max-width: 28ch;
-    margin: 0;
+    font-size: clamp(28px, 4.5vw, 56px);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    will-change: opacity, transform;
   }
 
-  @media (min-width: 750px) {
-    .brand-statement__text {
-      font-size: 48px;
-      max-width: 22ch;
+  .brand-statement__line--1 {
+    color: var(--bs-text-1);
+  }
+
+  .brand-statement__line--2 {
+    color: var(--bs-text-2);
+    margin-top: 0;
+  }
+
+  .brand-statement.is-visible .brand-statement__accent {
+    animation: brand-statement-accent-grow 1s ease forwards;
+  }
+
+  .brand-statement.is-visible .brand-statement__line--1 {
+    animation: brand-statement-line-reveal 0.8s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .brand-statement.is-visible .brand-statement__line--2 {
+    animation: brand-statement-line-reveal 0.8s ease forwards;
+    animation-delay: 0.7s;
+  }
+
+  @keyframes brand-statement-accent-grow {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
     }
   }
 
-  .brand-statement__rule {
-    border: none;
-    width: min(120px, 40%);
-    height: 1px;
-    margin: clamp(1.5rem, 4vw, 2.25rem) 0 0;
-    background-color: var(--zalva-champagne);
+  @keyframes brand-statement-line-reveal {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 20px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-statement__accent {
+      animation: none !important;
+      transform: scaleX(1) !important;
+    }
+
+    .brand-statement__line {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 {% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-brand-statement]');
+    if (!root) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          root.classList.add('is-visible');
+          io.disconnect();
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    io.observe(root);
+  })();
+</script>
 
 {% schema %}
 {
@@ -65,10 +173,34 @@
   "class": "section-brand-statement",
   "settings": [
     {
-      "type": "textarea",
-      "id": "statement",
-      "label": "Statement",
-      "default": "Every body deserves to feel sculpted, supported, and seen."
+      "type": "text",
+      "id": "line_1",
+      "label": "Line 1",
+      "default": "This isn't about hiding."
+    },
+    {
+      "type": "text",
+      "id": "line_2",
+      "label": "Line 2",
+      "default": "It's about feeling held."
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent line color",
+      "default": "#C8A96E"
+    },
+    {
+      "type": "color",
+      "id": "text_color_1",
+      "label": "Line 1 color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "text_color_2",
+      "label": "Line 2 color",
+      "default": "#A07060"
     }
   ],
   "presets": [
