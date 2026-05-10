@@ -108,25 +108,34 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 12px;
-        height: 12px;
+        width: 20px;
+        height: 20px;
         border-radius: 999px;
-        border: 1.5px solid var(--zalva-champagne);
+        border: 2px solid var(--zalva-champagne);
         background: transparent;
+        box-shadow: 0 0 6px rgba(200, 169, 110, 0.5);
         pointer-events: none;
         transform: translate3d(-999px, -999px, 0) scale(1);
+        transform-origin: center center;
         opacity: 0;
         z-index: 2147483646;
-        transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
-        will-change: transform;
+        transition: opacity 0.15s ease;
+      }
+
+      #zalva-cursor::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        margin: -2px 0 0 -2px;
+        border-radius: 50%;
+        background-color: var(--zalva-champagne);
       }
 
       #zalva-cursor.is-visible {
         opacity: 1;
-      }
-
-      #zalva-cursor.is-hover {
-        background-color: rgba(200, 169, 110, 0.3);
       }
 
       @media (hover: hover) and (pointer: fine) {
@@ -284,30 +293,21 @@
           cursor.id = 'zalva-cursor';
           document.body.appendChild(cursor);
 
-          let targetX = 0;
-          let targetY = 0;
-          let currentX = 0;
-          let currentY = 0;
+          const half = 10;
+          let clientX = 0;
+          let clientY = 0;
           let isHover = false;
-          let rafId = 0;
 
-          const lerp = (a, b, t) => a + (b - a) * t;
-
-          const render = () => {
-            currentX = lerp(currentX, targetX, 0.15);
-            currentY = lerp(currentY, targetY, 0.15);
-
-            const scale = isHover ? 2 : 1;
-            cursor.style.transform = `translate3d(${currentX - 6}px, ${currentY - 6}px, 0) scale(${scale})`;
-
-            rafId = window.requestAnimationFrame(render);
+          const paint = () => {
+            const scale = isHover ? 2.5 : 1;
+            cursor.style.transform = `translate3d(${clientX - half}px, ${clientY - half}px, 0) scale(${scale})`;
           };
 
           const onMove = (e) => {
-            targetX = e.clientX;
-            targetY = e.clientY;
+            clientX = e.clientX;
+            clientY = e.clientY;
+            paint();
             cursor.classList.add('is-visible');
-            if (!rafId) rafId = window.requestAnimationFrame(render);
           };
 
           const interactiveSelector =
@@ -317,6 +317,7 @@
             if (isHover === next) return;
             isHover = next;
             cursor.classList.toggle('is-hover', next);
+            paint();
           };
 
           document.addEventListener('mousemove', onMove, { passive: true });
