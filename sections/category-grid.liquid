@@ -1,58 +1,147 @@
 {% liquid
-  assign eyebrow = section.settings.eyebrow | default: 'SHOP BY CATEGORY'
-  assign col1_img = 'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=600&q=80'
-  assign col2_img = 'https://images.unsplash.com/photo-1571513722275-4b41940f54b8?w=600&q=80'
-  assign col3_img = 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600&q=80'
+  assign eyebrow_text = section.settings.eyebrow_text | default: 'EXPLORE THE COLLECTION'
+  assign main_title = section.settings.main_title | default: 'Find your shape.'
+
+  assign img_def_1 = 'https://images.unsplash.com/photo-1564859228273-274232fdb516?w=900&q=85'
+  assign img_def_2 = 'https://images.unsplash.com/photo-1571513722275-4b41940f54b8?w=900&q=85'
+  assign img_def_3 = 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=900&q=85'
+
+  assign tone_def_1 = '#d4b5a0'
+  assign tone_def_2 = '#a07060'
+  assign tone_def_3 = '#3d2b24'
+
+  assign tone_1 = section.settings.card_1_tone | default: tone_def_1
+  assign tone_2 = section.settings.card_2_tone | default: tone_def_2
+  assign tone_3 = section.settings.card_3_tone | default: tone_def_3
+
+  assign tone_1_top = tone_1 | color_modify: 'alpha', 0.3
+  assign tone_1_deep = tone_1 | color_modify: 'alpha', 0.39
+  assign tone_2_top = tone_2 | color_modify: 'alpha', 0.4
+  assign tone_2_deep = tone_2 | color_modify: 'alpha', 0.52
+  assign tone_3_top = tone_3 | color_modify: 'alpha', 0.5
+  assign tone_3_deep = tone_3 | color_modify: 'alpha', 0.65
+
+  assign title_1 = section.settings.card_1_title | default: 'Bodysuits'
+  assign title_2 = section.settings.card_2_title | default: 'Waist Trainers'
+  assign title_3 = section.settings.card_3_title | default: 'Fajas'
+
+  assign link_1 = section.settings.card_1_link | default: '/collections/bodysuits'
+  assign link_2 = section.settings.card_2_link | default: '/collections/waist-trainers'
+  assign link_3 = section.settings.card_3_link | default: '/collections/fajas'
+
+  if section.settings.card_1_image != blank
+    assign src_1 = section.settings.card_1_image | image_url: width: 1400
+  else
+    assign src_1 = img_def_1
+  endif
+  if section.settings.card_2_image != blank
+    assign src_2 = section.settings.card_2_image | image_url: width: 1400
+  else
+    assign src_2 = img_def_2
+  endif
+  if section.settings.card_3_image != blank
+    assign src_3 = section.settings.card_3_image | image_url: width: 1400
+  else
+    assign src_3 = img_def_3
+  endif
 %}
 
-<div class="category-grid full-width">
+<div class="category-grid full-width" data-category-grid>
   <div class="category-grid__inner">
-    <p class="category-grid__eyebrow">{{ eyebrow }}</p>
+    <header class="category-grid__header">
+      <p class="category-grid__eyebrow" data-category-grid-header>{{ eyebrow_text }}</p>
+      <h2 class="category-grid__title" data-category-grid-header>{{ main_title }}</h2>
+    </header>
 
     <ul class="category-grid__grid" role="list">
-      <li>
-        <a class="category-grid__card" href="/collections/bodysuits">
-          <div class="category-grid__media">
+      <li class="category-grid__item" data-category-grid-card>
+        <a class="category-grid__card" href="{{ link_1 }}" aria-label="{{ title_1 }} — Shop now">
+          <span class="category-grid__media">
             <img
-              src="{{ col1_img }}"
-              alt="Bodysuits"
-              width="600"
-              height="750"
+              class="category-grid__img"
+              src="{{ src_1 }}"
+              alt=""
+              width="900"
+              height="1125"
               loading="lazy"
               decoding="async"
             >
-          </div>
-          <span class="category-grid__label">Bodysuits</span>
+          </span>
+          <span
+            class="category-grid__tone category-grid__tone--base"
+            style="background: linear-gradient(to top, transparent, {{ tone_1_top }});"
+            aria-hidden="true"
+          ></span>
+          <span
+            class="category-grid__tone category-grid__tone--deep"
+            style="background: linear-gradient(to top, transparent, {{ tone_1_deep }});"
+            aria-hidden="true"
+          ></span>
+          <span class="category-grid__body">
+            <span class="category-grid__name">{{ title_1 }}</span>
+            <span class="category-grid__rule" aria-hidden="true"></span>
+            <span class="category-grid__shop">Shop now →</span>
+          </span>
         </a>
       </li>
-      <li>
-        <a class="category-grid__card" href="/collections/waist-trainers">
-          <div class="category-grid__media">
+      <li class="category-grid__item" data-category-grid-card>
+        <a class="category-grid__card" href="{{ link_2 }}" aria-label="{{ title_2 }} — Shop now">
+          <span class="category-grid__media">
             <img
-              src="{{ col2_img }}"
-              alt="Waist Trainers"
-              width="600"
-              height="750"
+              class="category-grid__img"
+              src="{{ src_2 }}"
+              alt=""
+              width="900"
+              height="1125"
               loading="lazy"
               decoding="async"
             >
-          </div>
-          <span class="category-grid__label">Waist Trainers</span>
+          </span>
+          <span
+            class="category-grid__tone category-grid__tone--base"
+            style="background: linear-gradient(to top, transparent, {{ tone_2_top }});"
+            aria-hidden="true"
+          ></span>
+          <span
+            class="category-grid__tone category-grid__tone--deep"
+            style="background: linear-gradient(to top, transparent, {{ tone_2_deep }});"
+            aria-hidden="true"
+          ></span>
+          <span class="category-grid__body">
+            <span class="category-grid__name">{{ title_2 }}</span>
+            <span class="category-grid__rule" aria-hidden="true"></span>
+            <span class="category-grid__shop">Shop now →</span>
+          </span>
         </a>
       </li>
-      <li>
-        <a class="category-grid__card" href="/collections/fajas">
-          <div class="category-grid__media">
+      <li class="category-grid__item" data-category-grid-card>
+        <a class="category-grid__card" href="{{ link_3 }}" aria-label="{{ title_3 }} — Shop now">
+          <span class="category-grid__media">
             <img
-              src="{{ col3_img }}"
-              alt="Fajas"
-              width="600"
-              height="750"
+              class="category-grid__img"
+              src="{{ src_3 }}"
+              alt=""
+              width="900"
+              height="1125"
               loading="lazy"
               decoding="async"
             >
-          </div>
-          <span class="category-grid__label">Fajas</span>
+          </span>
+          <span
+            class="category-grid__tone category-grid__tone--base"
+            style="background: linear-gradient(to top, transparent, {{ tone_3_top }});"
+            aria-hidden="true"
+          ></span>
+          <span
+            class="category-grid__tone category-grid__tone--deep"
+            style="background: linear-gradient(to top, transparent, {{ tone_3_deep }});"
+            aria-hidden="true"
+          ></span>
+          <span class="category-grid__body">
+            <span class="category-grid__name">{{ title_3 }}</span>
+            <span class="category-grid__rule" aria-hidden="true"></span>
+            <span class="category-grid__shop">Shop now →</span>
+          </span>
         </a>
       </li>
     </ul>
@@ -61,32 +150,70 @@
 
 {% stylesheet %}
   .category-grid {
-    --zalva-ivory: #faf8f5;
-    --zalva-champagne: #c8a96e;
-    --zalva-noir: #1a1a1a;
-    --zalva-deep-brown: #3d2b24;
+    --cg-ivory: #faf8f5;
+    --cg-noir: #1a1a1a;
+    --cg-champagne: #c8a96e;
 
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    padding-block: clamp(2.75rem, 7vw, 4.5rem);
+    width: 100%;
+    background-color: var(--cg-ivory);
+    padding-block: 70px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .category-grid {
+      padding-block: 120px;
+    }
   }
 
   .category-grid__inner {
     width: 100%;
-    max-width: var(--page-width);
+    max-width: 1320px;
     margin-inline: auto;
-    padding-inline: var(--page-margin);
+    padding-inline: 20px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .category-grid__inner {
+      padding-inline: 40px;
+    }
+  }
+
+  .category-grid__header {
+    text-align: left;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 990px) {
+    .category-grid__header {
+      margin-bottom: 60px;
+    }
   }
 
   .category-grid__eyebrow {
+    margin: 0;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.6875rem;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    text-align: center;
-    color: var(--zalva-deep-brown);
-    margin: 0 0 clamp(1.75rem, 4vw, 2.5rem);
+    color: var(--cg-champagne);
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    will-change: opacity, transform;
+  }
+
+  .category-grid__title {
+    margin: 12px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(36px, 4.5vw, 64px);
+    line-height: 1.1;
+    color: var(--cg-noir);
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    will-change: opacity, transform;
   }
 
   .category-grid__grid {
@@ -94,73 +221,259 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: clamp(1.25rem, 3vw, 2rem);
+    gap: 16px;
     grid-template-columns: 1fr;
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 990px) {
     .category-grid__grid {
       grid-template-columns: repeat(3, 1fr);
-      align-items: stretch;
+      gap: 8px;
     }
   }
 
+  .category-grid__item {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+    will-change: opacity, transform;
+  }
+
   .category-grid__card {
-    display: grid;
-    grid-template-rows: 7fr 3fr;
-    min-height: min(52vh, 520px);
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 0;
     text-decoration: none;
     color: inherit;
-    overflow: hidden;
+    cursor: pointer;
+    isolation: isolate;
+  }
+
+  .category-grid__card:focus-visible {
+    outline: 2px solid var(--cg-champagne);
+    outline-offset: 4px;
   }
 
   .category-grid__media {
-    position: relative;
-    min-height: 0;
-    overflow: hidden;
-    background-color: #ebddd4;
-  }
-
-  .category-grid__media img {
     position: absolute;
     inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .category-grid__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transition: transform 0.4s ease;
+    display: block;
+    transform: scale(1);
+    transition: transform 1.2s ease;
+    will-change: transform;
   }
 
-  .category-grid__card:hover .category-grid__media img,
-  .category-grid__card:focus-visible .category-grid__media img {
-    transform: scale(1.04);
+  .category-grid__card:hover .category-grid__img,
+  .category-grid__card:focus-visible .category-grid__img {
+    transform: scale(1.06);
   }
 
-  .category-grid__label {
+  .category-grid__tone {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .category-grid__tone--deep {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+
+  .category-grid__card:hover .category-grid__tone--deep,
+  .category-grid__card:focus-within .category-grid__tone--deep {
+    opacity: 1;
+  }
+
+  .category-grid__body {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    pointer-events: none;
+  }
+
+  .category-grid__name {
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
-    font-size: clamp(1.25rem, 2vw + 0.75rem, 1.625rem);
-    line-height: 1.2;
-    color: var(--zalva-noir);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: clamp(0.75rem, 2vw, 1.25rem);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.25s ease;
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.1;
+    color: var(--cg-ivory);
   }
 
-  .category-grid__card:hover .category-grid__label,
-  .category-grid__card:focus-visible .category-grid__label {
-    border-bottom-color: var(--zalva-champagne);
+  .category-grid__rule {
+    display: block;
+    width: 24px;
+    height: 1px;
+    margin-top: 12px;
+    background-color: var(--cg-champagne);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
   }
 
-  .category-grid__card:focus-visible {
-    outline: 2px solid var(--zalva-deep-brown);
-    outline-offset: 3px;
+  .category-grid__shop {
+    margin-top: 14px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cg-ivory);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .category-grid__card:hover .category-grid__rule,
+  .category-grid__card:focus-visible .category-grid__rule,
+  .category-grid__card:hover .category-grid__shop,
+  .category-grid__card:focus-visible .category-grid__shop {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (hover: none) {
+    .category-grid__tone--deep {
+      opacity: 0 !important;
+    }
+
+    .category-grid__rule,
+    .category-grid__shop {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .category-grid__img {
+      transform: scale(1);
+    }
+  }
+
+  .category-grid.is-visible .category-grid__header [data-category-grid-header]:nth-child(1) {
+    animation: category-grid-rise 0.9s ease forwards;
+    animation-delay: 0s;
+  }
+
+  .category-grid.is-visible .category-grid__header [data-category-grid-header]:nth-child(2) {
+    animation: category-grid-rise 0.9s ease forwards;
+    animation-delay: 0.15s;
+  }
+
+  .category-grid.is-visible .category-grid__grid .category-grid__item:nth-child(1) {
+    animation: category-grid-rise-card 0.9s ease forwards;
+    animation-delay: 1.05s;
+  }
+
+  .category-grid.is-visible .category-grid__grid .category-grid__item:nth-child(2) {
+    animation: category-grid-rise-card 0.9s ease forwards;
+    animation-delay: 1.2s;
+  }
+
+  .category-grid.is-visible .category-grid__grid .category-grid__item:nth-child(3) {
+    animation: category-grid-rise-card 0.9s ease forwards;
+    animation-delay: 1.35s;
+  }
+
+  @keyframes category-grid-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes category-grid-rise-card {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .category-grid__eyebrow,
+    .category-grid__title,
+    .category-grid__item {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .category-grid__img {
+      transition: none !important;
+    }
+
+    .category-grid__tone--deep {
+      transition: none !important;
+      opacity: 0 !important;
+    }
+
+    .category-grid__rule,
+    .category-grid__shop {
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 {% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-category-grid]');
+    if (!root) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          root.classList.add('is-visible');
+          io.disconnect();
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    io.observe(root);
+  })();
+</script>
 
 {% schema %}
 {
@@ -170,9 +483,94 @@
   "settings": [
     {
       "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow label",
-      "default": "SHOP BY CATEGORY"
+      "id": "eyebrow_text",
+      "label": "Eyebrow",
+      "default": "EXPLORE THE COLLECTION"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Main title",
+      "default": "Find your shape."
+    },
+    {
+      "type": "header",
+      "content": "Card 1 — Bodysuits"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Bodysuits"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "card_1_tone",
+      "label": "Tone overlay color",
+      "default": "#D4B5A0",
+      "info": "Blush Nude tint at top of gradient."
+    },
+    {
+      "type": "header",
+      "content": "Card 2 — Waist trainers"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Waist Trainers"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "card_2_tone",
+      "label": "Tone overlay color",
+      "default": "#A07060"
+    },
+    {
+      "type": "header",
+      "content": "Card 3 — Fajas"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Fajas"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "card_3_tone",
+      "label": "Tone overlay color",
+      "default": "#3D2B24"
     }
   ],
   "presets": [
