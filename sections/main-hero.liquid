@@ -1,308 +1,324 @@
 {% liquid
-  assign headline = section.settings.headline | default: 'Sculpted for you.'
-  assign subtitle = section.settings.subtitle | default: 'Premium shapewear for every body.'
-  assign button_label = section.settings.button_label | default: 'SHOP NOW'
-  assign button_link = section.settings.button_link | default: routes.all_products_collection_url
-  assign hero_image_alt = section.settings.hero_image_alt | default: 'Zalva Shape campaign'
-  assign hero_image_url = 'https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=1200&q=80'
+  assign default_image_url = 'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=2000&q=85'
+  if section.settings.hero_image != blank
+    assign hero_src = section.settings.hero_image | image_url: width: 3840
+  else
+    assign hero_src = default_image_url
+  endif
+
+  assign top_text = section.settings.top_text | default: 'FREE SHIPPING ON ORDERS OVER $75'
+  assign w1 = section.settings.headline_word_1 | default: 'She'
+  assign w2 = section.settings.headline_word_2 | default: 'wears'
+  assign w3 = section.settings.headline_word_3 | default: 'herself.'
+  assign subtitle = section.settings.subtitle | default: 'Premium shapewear · Designed in the US'
+  assign hero_alt = section.settings.hero_image_alt | default: 'Zalva Shape'
+  assign explore_href = section.settings.explore_link | default: routes.all_products_collection_url
 %}
 
-<div class="main-hero full-width" data-main-hero>
-  <div class="main-hero__grid">
-    <div class="main-hero__copy">
-      <h1 class="main-hero__headline" data-hero-headline>{{ headline }}</h1>
-      <p class="main-hero__subtitle" data-hero-subtitle>{{ subtitle }}</p>
-      <a class="main-hero__cta" data-hero-cta href="{{ button_link }}"><span class="main-hero__cta-label">{{ button_label }}</span></a>
-    </div>
-    <div class="main-hero__visual">
-      <img
-        class="main-hero__image"
-        data-hero-parallax
-        src="{{ hero_image_url }}"
-        alt="{{ hero_image_alt | escape }}"
-        width="1200"
-        height="1500"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async"
-      >
-    </div>
+<div class="main-hero full-width" data-main-hero-section>
+  <img
+    class="main-hero__bg"
+    src="{{ hero_src }}"
+    alt="{{ hero_alt | escape }}"
+    width="2000"
+    height="3000"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+  >
+  <div class="main-hero__overlay" aria-hidden="true"></div>
+
+  <div class="main-hero__content">
+    <p class="main-hero__top">{{ top_text }}</p>
+
+    <h1 class="main-hero__headline">
+      <span class="main-hero__word main-hero__word--1">{{ w1 }}</span><span class="main-hero__space"> </span><span class="main-hero__word main-hero__word--2">{{ w2 }}</span><span class="main-hero__space"> </span><span class="main-hero__word main-hero__word--3">{{ w3 }}</span>
+    </h1>
+
+    <p class="main-hero__subtitle">{{ subtitle }}</p>
+
+    <a
+      class="main-hero__explore"
+      href="{{ explore_href }}"
+      data-main-hero-explore
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      EXPLORE
+    </a>
+  </div>
+
+  <div class="main-hero__scroll-indicator" aria-hidden="true">
+    <span class="main-hero__scroll-line"></span>
   </div>
 </div>
 
 {% stylesheet %}
   .main-hero {
-    --zalva-ivory: #faf8f5;
-    --zalva-champagne: #c8a96e;
-    --zalva-warm-taupe: #a07060;
-    --zalva-deep-brown: #3d2b24;
-    --zalva-noir: #1a1a1a;
+    --hero-champagne: #c8a96e;
+    --hero-ivory: #faf8f5;
+    --hero-blush: #d4b5a0;
+    --hero-overlay-dark: rgba(26, 26, 26, 0.65);
 
-    min-height: 100dvh;
-    min-height: 100vh;
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    display: flex;
-    align-items: stretch;
-  }
-
-  .main-hero__grid {
-    display: grid;
+    position: relative;
+    isolation: isolate;
     width: 100%;
-    max-width: var(--page-width);
-    margin-inline: auto;
-    padding-inline: var(--page-margin);
-    grid-template-columns: 1fr;
-    min-height: inherit;
-    align-items: center;
-    gap: clamp(2rem, 5vw, 4rem);
-  }
-
-  @media (min-width: 900px) {
-    .main-hero__grid {
-      grid-template-columns: 1fr 1fr;
-      align-items: stretch;
-      gap: clamp(2rem, 6vw, 5rem);
-    }
-  }
-
-  .main-hero__copy {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    padding-block: clamp(2.5rem, 8vh, 5rem);
-  }
-
-  @media (min-width: 900px) {
-    .main-hero__copy {
-      align-items: flex-start;
-      text-align: left;
-      padding-block: clamp(3rem, 12vh, 6rem);
-    }
-  }
-
-  .main-hero__headline {
-    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
-    font-weight: 300;
-    font-size: clamp(2.75rem, 6vw + 1rem, 4.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--zalva-deep-brown);
-    max-width: 14ch;
-  }
-
-  .main-hero__headline .main-hero__word {
-    display: inline-block;
-    opacity: 0;
-    transform: translate3d(0, 12px, 0);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    will-change: opacity, transform;
-  }
-
-  .main-hero__headline .main-hero__word.is-revealed {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .main-hero__subtitle {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-weight: 400;
-    font-size: clamp(1rem, 1.2vw + 0.85rem, 1.25rem);
-    line-height: 1.55;
-    color: var(--zalva-warm-taupe);
-    margin-top: 1.25rem;
-    max-width: 32ch;
-  }
-
-  .main-hero__subtitle,
-  .main-hero__cta {
-    opacity: 0;
-    transform: translate3d(0, 10px, 0);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    will-change: opacity, transform;
-  }
-
-  .main-hero__subtitle.is-revealed,
-  .main-hero__cta.is-revealed {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .main-hero__cta {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-weight: 500;
-    font-size: 0.8125rem;
-    letter-spacing: 0.14em;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2rem;
-    padding: 1rem 2.25rem;
-    min-height: 3rem;
-    color: var(--zalva-noir);
-    background-color: transparent;
-    border: 1px solid var(--zalva-champagne);
-    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
     overflow: hidden;
-    transform: translate3d(0, 0, 0);
-    transition: transform 0.25s ease;
+    background-color: #141414;
+    color: var(--hero-ivory);
   }
 
-  .main-hero__cta::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--zalva-champagne);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-    z-index: 0;
-  }
-
-  .main-hero__cta > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .main-hero__cta:hover {
-    transform: scale(1.02);
-  }
-
-  .main-hero__cta:hover::before {
-    transform: scaleX(1);
-  }
-
-  .main-hero__cta:focus-visible {
-    outline: 2px solid var(--zalva-deep-brown);
-    outline-offset: 3px;
-  }
-
-  .main-hero__visual {
-    position: relative;
-    overflow: hidden;
-    min-height: clamp(280px, 42vh, 560px);
-    background-color: var(--zalva-ivory);
-  }
-
-  @media (min-width: 900px) {
-    .main-hero__visual {
-      min-height: 100%;
-      align-self: stretch;
-    }
-  }
-
-  .main-hero__image {
+  .main-hero__bg {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transform: translate3d(0, 0, 0);
-    will-change: transform;
+    z-index: 0;
+  }
+
+  .main-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to top, var(--hero-overlay-dark) 0%, transparent 50%);
+  }
+
+  .main-hero__content {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: min(92vw, 56rem);
+    padding-inline: clamp(1rem, 4vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .main-hero__top {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--hero-champagne);
+    opacity: 0;
+    animation: main-hero-fade-eyebrow 0.8s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .main-hero__headline {
+    margin: clamp(0.85rem, 2.5vw, 1.25rem) 0 0;
+    padding: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 200;
+    font-size: clamp(48px, 12vw, 88px);
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+    color: var(--hero-ivory);
+    text-align: center;
+  }
+
+  .main-hero__word {
+    display: inline-block;
+    opacity: 0;
+    animation: main-hero-word-in 0.6s ease forwards;
+  }
+
+  .main-hero__word--1 {
+    animation-delay: 1.1s;
+  }
+
+  .main-hero__word--2 {
+    animation-delay: 1.3s;
+  }
+
+  .main-hero__word--3 {
+    animation-delay: 1.5s;
+  }
+
+  .main-hero__subtitle {
+    margin: 24px 0 0;
+    padding: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--hero-blush);
+    opacity: 0;
+    max-width: 42ch;
+    animation: main-hero-fade-subtitle 0.8s ease forwards;
+    animation-delay: 1.6s;
+  }
+
+  .main-hero__explore {
+    margin-top: clamp(1.75rem, 5vw, 2.5rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 36px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--hero-ivory);
+    background-color: transparent;
+    border: 1px solid var(--hero-ivory);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.45s ease, visibility 0.45s ease, background-color 0.25s ease, border-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .main-hero__explore.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .main-hero__explore:focus-visible {
+    outline: 2px solid var(--hero-champagne);
+    outline-offset: 4px;
+  }
+
+  .main-hero__explore:hover {
+    background-color: var(--hero-champagne);
+    border-color: var(--hero-champagne);
+    color: var(--hero-ivory);
+  }
+
+  .main-hero__scroll-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(1.25rem, 4vh, 2rem);
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .main-hero__scroll-line {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background-color: var(--hero-blush);
+    animation: main-hero-scroll-pulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes main-hero-fade-eyebrow {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes main-hero-fade-subtitle {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes main-hero-word-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 20px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes main-hero-scroll-pulse {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0.3;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .main-hero__headline .main-hero__word,
-    .main-hero__subtitle,
-    .main-hero__cta {
-      transition: none !important;
-      transform: none !important;
+    .main-hero__top,
+    .main-hero__subtitle {
+      animation: none !important;
       opacity: 1 !important;
     }
 
-    .main-hero__cta::before {
-      transition: none !important;
+    .main-hero__top {
+      opacity: 0.9 !important;
+    }
+
+    .main-hero__word {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .main-hero__scroll-line {
+      animation: none !important;
+      opacity: 0.65 !important;
+    }
+
+    .main-hero__explore {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
     }
   }
 {% endstylesheet %}
 
 <script>
   (() => {
-    const hero = document.querySelector('[data-main-hero]');
-    if (!hero) return;
+    const root = document.querySelector('[data-main-hero-section]');
+    if (!root) return;
+
+    const btn = root.querySelector('[data-main-hero-explore]');
+    if (!btn) return;
 
     const prefersReducedMotion =
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const headlineEl = hero.querySelector('[data-hero-headline]');
-    const subtitleEl = hero.querySelector('[data-hero-subtitle]');
-    const ctaEl = hero.querySelector('[data-hero-cta]');
-
-    if (headlineEl) {
-      const original = headlineEl.textContent || '';
-      const words = original.trim().split(/\s+/).filter(Boolean);
-
-      if (!prefersReducedMotion && words.length > 0) {
-        headlineEl.setAttribute('aria-label', original.trim());
-        headlineEl.textContent = '';
-
-        const spans = words.map((word, idx) => {
-          const span = document.createElement('span');
-          span.className = 'main-hero__word';
-          span.textContent = word;
-          span.setAttribute('aria-hidden', 'true');
-          headlineEl.appendChild(span);
-          if (idx < words.length - 1) headlineEl.appendChild(document.createTextNode(' '));
-          return span;
-        });
-
-        window.requestAnimationFrame(() => {
-          spans.forEach((span, index) => {
-            window.setTimeout(() => span.classList.add('is-revealed'), index * 300);
-          });
-
-          const headlineDurationMs = (spans.length - 1) * 300 + 600;
-          window.setTimeout(() => subtitleEl && subtitleEl.classList.add('is-revealed'), headlineDurationMs);
-          window.setTimeout(() => ctaEl && ctaEl.classList.add('is-revealed'), headlineDurationMs + 600);
-        });
-      } else {
-        subtitleEl && subtitleEl.classList.add('is-revealed');
-        ctaEl && ctaEl.classList.add('is-revealed');
-      }
-    } else {
-      subtitleEl && subtitleEl.classList.add('is-revealed');
-      ctaEl && ctaEl.classList.add('is-revealed');
+    if (prefersReducedMotion) {
+      btn.removeAttribute('tabindex');
+      btn.removeAttribute('aria-hidden');
+      return;
     }
 
-    if (prefersReducedMotion) return;
-
-    const imageEl = hero.querySelector('[data-hero-parallax]');
-    if (!imageEl) return;
-
-    let rafId = 0;
-    let latestScrollY = window.scrollY || 0;
-
-    const update = () => {
-      rafId = 0;
-
-      const rect = hero.getBoundingClientRect();
-      const heroTop = latestScrollY + rect.top;
-      const heroHeight = rect.height || 1;
-      const heroBottom = heroTop + heroHeight;
-      const viewportTop = latestScrollY;
-      const viewportBottom = viewportTop + window.innerHeight;
-
-      if (viewportBottom < heroTop || viewportTop > heroBottom) return;
-
-      const relativeScroll = latestScrollY - heroTop;
-      const translateY = Math.round(relativeScroll * -0.5);
-      imageEl.style.transform = `translate3d(0, ${translateY}px, 0)`;
+    const toggle = () => {
+      const visible = window.scrollY >= 100;
+      btn.classList.toggle('is-visible', visible);
+      if (visible) {
+        btn.removeAttribute('tabindex');
+        btn.removeAttribute('aria-hidden');
+      } else {
+        btn.setAttribute('tabindex', '-1');
+        btn.setAttribute('aria-hidden', 'true');
+      }
     };
 
-    const onScroll = () => {
-      latestScrollY = window.scrollY || 0;
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(update);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', toggle, { passive: true });
+    toggle();
   })();
 </script>
 
@@ -313,33 +329,51 @@
   "class": "section-main-hero",
   "settings": [
     {
-      "type": "text",
-      "id": "headline",
-      "label": "Headline",
-      "default": "Sculpted for you."
-    },
-    {
-      "type": "textarea",
-      "id": "subtitle",
-      "label": "Subtitle",
-      "default": "Premium shapewear for every body."
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "default": "SHOP NOW"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button link"
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image",
+      "info": "Optional — defaults to a placeholder URL when empty."
     },
     {
       "type": "text",
       "id": "hero_image_alt",
       "label": "Hero image alt text",
-      "default": "Zalva Shape campaign"
+      "default": "Zalva Shape"
+    },
+    {
+      "type": "text",
+      "id": "top_text",
+      "label": "Top line",
+      "default": "FREE SHIPPING ON ORDERS OVER $75"
+    },
+    {
+      "type": "text",
+      "id": "headline_word_1",
+      "label": "Headline word 1",
+      "default": "She"
+    },
+    {
+      "type": "text",
+      "id": "headline_word_2",
+      "label": "Headline word 2",
+      "default": "wears"
+    },
+    {
+      "type": "text",
+      "id": "headline_word_3",
+      "label": "Headline word 3",
+      "default": "herself."
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Premium shapewear · Designed in the US"
+    },
+    {
+      "type": "url",
+      "id": "explore_link",
+      "label": "Explore button link"
     }
   ],
   "presets": [
