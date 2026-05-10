@@ -36,6 +36,53 @@
       "type": "category-grid",
       "settings": {}
     },
+    "real_women": {
+      "type": "real-women",
+      "settings": {},
+      "blocks": {
+        "rw_maya": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I forgot I was wearing it. I just felt like myself, but better.",
+            "author_name": "Maya R.",
+            "author_city": "Houston"
+          }
+        },
+        "rw_andrea": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "It's the first thing that makes me feel held, not squeezed.",
+            "author_name": "Andrea P.",
+            "author_city": "Miami"
+          }
+        },
+        "rw_jessica": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I bought it for an event. I wear it every week now.",
+            "author_name": "Jessica T.",
+            "author_city": "Austin"
+          }
+        },
+        "rw_sofia": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I didn't know shapewear could feel like this.",
+            "author_name": "Sofia L.",
+            "author_city": "Los Angeles"
+          }
+        },
+        "rw_elena": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "It's the underwear I never knew I needed.",
+            "author_name": "Elena M.",
+            "author_city": "New York"
+          }
+        }
+      },
+      "block_order": ["rw_maya", "rw_andrea", "rw_jessica", "rw_sofia", "rw_elena"]
+    },
     "featured_products": {
       "type": "zalva-featured-placeholder",
       "settings": {
@@ -49,6 +96,7 @@
     "featured_signature",
     "texture_detail",
     "category_grid",
+    "real_women",
     "featured_products"
   ]
 }

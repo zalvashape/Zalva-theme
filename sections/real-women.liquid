@@ -1,0 +1,544 @@
+{% liquid
+  assign eyebrow_text = section.settings.eyebrow_text | default: 'WORN BY WOMEN LIKE YOU'
+%}
+
+<div class="real-women full-width" data-real-women data-real-women-duration="6000">
+  <div class="real-women__inner">
+    <div class="real-women__ornament" data-real-women-reveal aria-hidden="true">
+      <span class="real-women__ornament-line"></span>
+      <span class="real-women__ornament-dot"></span>
+      <span class="real-women__ornament-line"></span>
+    </div>
+
+    <p class="real-women__eyebrow" data-real-women-reveal>{{ eyebrow_text }}</p>
+
+    <div
+      class="real-women__viewport"
+      data-real-women-reveal
+      data-real-women-viewport
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'testimonial' %}
+              <blockquote
+                class="real-women__slide{% if forloop.first %} is-active{% endif %}"
+                data-real-women-slide
+                {{ block.shopify_attributes }}
+                {% unless forloop.first %}aria-hidden="true"{% endunless %}
+              >
+                <span class="real-women__mark" aria-hidden="true">“</span>
+                <p class="real-women__quote">{{ block.settings.quote }}</p>
+                <cite class="real-women__author">
+                  {{- block.settings.author_name -}}
+                  ,
+                  {{ block.settings.author_city -}}
+                </cite>
+              </blockquote>
+          {% endcase %}
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% if section.blocks.size > 1 %}
+      <div class="real-women__dots" data-real-women-reveal role="tablist" aria-label="Testimonials">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'testimonial' %}
+              <button
+                type="button"
+                class="real-women__dot{% if forloop.first %} is-active{% endif %}"
+                data-real-women-dot
+                data-index="{{ forloop.index0 }}"
+                role="tab"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-label="Show testimonial {{ forloop.index }}"
+              ></button>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .real-women {
+    --rw-linen: #f0e8df;
+    --rw-champagne: #c8a96e;
+    --rw-noir: #1a1a1a;
+    --rw-warm-taupe: #a07060;
+    --rw-blush: #d4b5a0;
+
+    width: 100%;
+    background-color: var(--rw-linen);
+    padding-block: 90px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .real-women {
+      padding-block: 140px;
+    }
+  }
+
+  .real-women__inner {
+    width: 100%;
+    max-width: 880px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 5vw, 40px);
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .real-women__ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0 auto 40px;
+    opacity: 0;
+    transform: scale(0.5);
+    will-change: opacity, transform;
+  }
+
+  .real-women__ornament-line {
+    width: 24px;
+    height: 1px;
+    background-color: var(--rw-champagne);
+  }
+
+  .real-women__ornament-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--rw-champagne);
+    flex-shrink: 0;
+  }
+
+  .real-women__eyebrow {
+    margin: 0 0 50px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rw-warm-taupe);
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  .real-women__viewport {
+    position: relative;
+    width: 100%;
+    min-height: 240px;
+    margin-inline: auto;
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  .real-women__slide {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 100%;
+    max-width: 720px;
+    margin: 0;
+    padding: 0;
+    transform: translateX(-50%);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .real-women__slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  .real-women__mark {
+    display: block;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 80px;
+    line-height: 0.5;
+    color: var(--rw-champagne);
+    opacity: 0.4;
+    margin-bottom: 8px;
+  }
+
+  .real-women__quote {
+    margin: 0 auto;
+    max-width: 720px;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(22px, 3vw, 36px);
+    line-height: 1.4;
+    color: var(--rw-noir);
+  }
+
+  .real-women__author {
+    display: block;
+    margin-top: 32px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--rw-warm-taupe);
+  }
+
+  .real-women__dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 60px;
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  .real-women__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--rw-blush);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+  }
+
+  .real-women__dot.is-active {
+    background-color: var(--rw-noir);
+    opacity: 1;
+  }
+
+  .real-women__dot:focus-visible {
+    outline: 2px solid var(--rw-champagne);
+    outline-offset: 3px;
+  }
+
+  /* Scroll reveal (threshold applied via JS class .is-revealed) */
+  .real-women.is-revealed [data-real-women-reveal]:nth-child(1) {
+    animation: real-women-ornament-in 0.8s ease forwards;
+  }
+
+  .real-women.is-revealed [data-real-women-reveal]:nth-child(2) {
+    animation: real-women-fade-in 0.8s ease forwards;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+  }
+
+  .real-women.is-revealed [data-real-women-reveal]:nth-child(3) {
+    animation: real-women-fade-in 0.8s ease forwards;
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+  }
+
+  .real-women.is-revealed [data-real-women-reveal]:nth-child(4) {
+    animation: real-women-fade-in 0.8s ease forwards;
+    animation-delay: 0.9s;
+    animation-fill-mode: both;
+  }
+
+  @keyframes real-women-ornament-in {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes real-women-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .real-women__slide {
+      transition: none !important;
+    }
+
+    .real-women__dot {
+      transition: none !important;
+    }
+
+    .real-women.is-revealed [data-real-women-reveal] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .real-women__ornament {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-real-women]');
+    if (!root) return;
+
+    const slides = Array.from(root.querySelectorAll('[data-real-women-slide]'));
+    const dots = Array.from(root.querySelectorAll('[data-real-women-dot]'));
+    const dwellMs = Number(root.getAttribute('data-real-women-duration')) || 6000;
+
+    if (!slides.length) return;
+
+    let current = slides.findIndex((el) => el.classList.contains('is-active'));
+    if (current < 0) current = 0;
+
+    let pauseUntil = 0;
+    let rotationTimer = 0;
+    let fadeTimer = 0;
+    let sectionVisible = false;
+    let fading = false;
+    let rotationArmed = false;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const clearRotationTimer = () => window.clearTimeout(rotationTimer);
+    const clearFadeTimer = () => window.clearTimeout(fadeTimer);
+
+    const clearTimers = () => {
+      clearRotationTimer();
+      clearFadeTimer();
+    };
+
+    const setDots = (idx) => {
+      dots.forEach((d, i) => {
+        const on = i === idx;
+        d.classList.toggle('is-active', on);
+        d.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    };
+
+    const setAriaHidden = (idx) => {
+      slides.forEach((s, i) => {
+        if (i === idx) s.removeAttribute('aria-hidden');
+        else s.setAttribute('aria-hidden', 'true');
+      });
+    };
+
+    const crossfadeTo = (nextIdx, afterFadeIn) => {
+      const next = ((nextIdx % slides.length) + slides.length) % slides.length;
+      if (next === current || fading) return;
+
+      if (prefersReducedMotion) {
+        slides[current].classList.remove('is-active');
+        slides[next].classList.add('is-active');
+        current = next;
+        setDots(current);
+        setAriaHidden(current);
+        fading = false;
+        if (afterFadeIn) afterFadeIn();
+        return;
+      }
+
+      fading = true;
+      clearFadeTimer();
+      slides[current].classList.remove('is-active');
+
+      fadeTimer = window.setTimeout(() => {
+        slides[next].classList.add('is-active');
+        current = next;
+        setDots(current);
+        setAriaHidden(current);
+
+        fadeTimer = window.setTimeout(() => {
+          fading = false;
+          if (afterFadeIn) afterFadeIn();
+        }, 500);
+      }, 500);
+    };
+
+    const scheduleRotation = () => {
+      clearRotationTimer();
+      if (slides.length < 2 || prefersReducedMotion) return;
+
+      rotationTimer = window.setTimeout(advanceSlide, dwellMs);
+    };
+
+    const advanceSlide = () => {
+      if (!sectionVisible || slides.length < 2 || prefersReducedMotion) return;
+      if (fading) {
+        rotationTimer = window.setTimeout(advanceSlide, 120);
+        return;
+      }
+      if (Date.now() < pauseUntil) {
+        rotationTimer = window.setTimeout(advanceSlide, Math.max(80, pauseUntil - Date.now()));
+        return;
+      }
+      crossfadeTo(current + 1, scheduleRotation);
+    };
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const idx = Number(dot.getAttribute('data-index'));
+        if (Number.isNaN(idx) || idx === current) return;
+        pauseUntil = Date.now() + 12000;
+        clearRotationTimer();
+        crossfadeTo(idx, scheduleRotation);
+      });
+    });
+
+    setDots(current);
+    setAriaHidden(current);
+
+    if ('IntersectionObserver' in window) {
+      const revealIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
+              root.classList.add('is-revealed');
+              revealIo.disconnect();
+            }
+          });
+        },
+        { threshold: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 1] }
+      );
+      revealIo.observe(root);
+
+      const rotateIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            sectionVisible = entry.isIntersecting;
+            if (sectionVisible && slides.length >= 2 && !prefersReducedMotion) {
+              if (!rotationArmed) {
+                rotationArmed = true;
+                scheduleRotation();
+              }
+            } else {
+              rotationArmed = false;
+              clearTimers();
+              fading = false;
+            }
+          });
+        },
+        { threshold: 0 }
+      );
+      rotateIo.observe(root);
+    } else {
+      root.classList.add('is-revealed');
+      sectionVisible = true;
+      rotationArmed = true;
+      if (slides.length >= 2 && !prefersReducedMotion) scheduleRotation();
+    }
+
+    if (prefersReducedMotion) {
+      root.classList.add('is-revealed');
+      sectionVisible = true;
+      rotationArmed = false;
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Real women",
+  "tag": "section",
+  "class": "section-real-women",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow",
+      "default": "WORN BY WOMEN LIKE YOU"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "I forgot I was wearing it. I just felt like myself, but better."
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author name",
+          "default": "Maya R."
+        },
+        {
+          "type": "text",
+          "id": "author_city",
+          "label": "Author city",
+          "default": "Houston"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Real women",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I forgot I was wearing it. I just felt like myself, but better.",
+            "author_name": "Maya R.",
+            "author_city": "Houston"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "It's the first thing that makes me feel held, not squeezed.",
+            "author_name": "Andrea P.",
+            "author_city": "Miami"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I bought it for an event. I wear it every week now.",
+            "author_name": "Jessica T.",
+            "author_city": "Austin"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I didn't know shapewear could feel like this.",
+            "author_name": "Sofia L.",
+            "author_city": "Los Angeles"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "It's the underwear I never knew I needed.",
+            "author_name": "Elena M.",
+            "author_city": "New York"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
