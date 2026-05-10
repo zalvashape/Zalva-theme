@@ -24,6 +24,10 @@
       "type": "brand-statement",
       "settings": {}
     },
+    "featured_signature": {
+      "type": "featured-signature",
+      "settings": {}
+    },
     "category_grid": {
       "type": "category-grid",
       "settings": {}
@@ -38,6 +42,7 @@
   "order": [
     "main",
     "brand_statement",
+    "featured_signature",
     "category_grid",
     "featured_products"
   ]

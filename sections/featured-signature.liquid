@@ -1,0 +1,432 @@
+{% liquid
+  assign default_image_url = 'https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=1200&q=85'
+  if section.settings.image != blank
+    assign img_src = section.settings.image | image_url: width: 1600
+  else
+    assign img_src = default_image_url
+  endif
+
+  assign eyebrow_text = section.settings.eyebrow_text | default: 'OUR HERO PIECE'
+  assign product_name = section.settings.product_name | default: 'Contour Bodysuit'
+  assign description = section.settings.description | default: 'The piece that started it all. Sculpting yet seamless. Designed to feel like nothing — and everything — at the same time.'
+  assign detail_list = section.settings.detail_list | default: 'Seamless construction · Made in Italy · XS — 5XL'
+  assign cta_label = section.settings.cta_label | default: 'DISCOVER'
+  assign cta_link = section.settings.cta_link | default: routes.all_products_collection_url
+  assign image_tag_text = section.settings.image_tag | default: 'The signature'
+  assign img_alt = product_name | append: ' — Zalva Shape'
+
+  assign detail_parts = detail_list | split: '·'
+%}
+
+<div class="featured-signature full-width" data-featured-signature>
+  <div class="featured-signature__inner">
+    <div class="featured-signature__grid">
+      <div class="featured-signature__media-wrap">
+        <div class="featured-signature__media" data-featured-signature-media>
+          <img
+            class="featured-signature__img"
+            src="{{ img_src }}"
+            alt="{{ img_alt | escape }}"
+            width="1200"
+            height="1600"
+            loading="lazy"
+            decoding="async"
+          >
+          <span class="featured-signature__badge">{{ image_tag_text }}</span>
+        </div>
+      </div>
+
+      <div class="featured-signature__content" data-featured-signature-content>
+        <p class="featured-signature__eyebrow" data-featured-signature-el>{{ eyebrow_text }}</p>
+        <h2 class="featured-signature__title" data-featured-signature-el>{{ product_name }}</h2>
+        <div class="featured-signature__rule" aria-hidden="true" data-featured-signature-el></div>
+        <p class="featured-signature__desc" data-featured-signature-el>{{ description }}</p>
+        <div class="featured-signature__details" data-featured-signature-el>
+          {% for part in detail_parts %}
+            <span class="featured-signature__detail">{{ part | strip }}</span>
+            {% unless forloop.last %}
+              <span class="featured-signature__detail-sep" aria-hidden="true">·</span>
+            {% endunless %}
+          {% endfor %}
+        </div>
+        <a class="featured-signature__cta" href="{{ cta_link }}" data-featured-signature-el>{{ cta_label }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .featured-signature {
+    --fs-linen: #f0e8df;
+    --fs-noir: #1a1a1a;
+    --fs-champagne: #c8a96e;
+    --fs-deep-brown: #3d2b24;
+    --fs-warm-taupe: #a07060;
+
+    width: 100%;
+    background-color: var(--fs-linen);
+    padding-block: 60px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .featured-signature {
+      padding-block: 120px;
+    }
+  }
+
+  .featured-signature__inner {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 20px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .featured-signature__inner {
+      padding-inline: 40px;
+    }
+  }
+
+  .featured-signature__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+    align-items: center;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 990px) {
+    .featured-signature__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+  }
+
+  .featured-signature__media-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .featured-signature__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background-color: #e8dfd6;
+    opacity: 0;
+    transform: scale(1.05);
+    will-change: opacity, transform;
+  }
+
+  .featured-signature.is-visible .featured-signature__media {
+    animation: featured-signature-media-in 1.2s ease forwards;
+  }
+
+  .featured-signature__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .featured-signature__badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    padding: 6px 14px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background-color: var(--fs-noir);
+    color: var(--fs-champagne);
+  }
+
+  .featured-signature__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    min-width: 0;
+  }
+
+  .featured-signature__content > * + *:not(.featured-signature__cta) {
+    margin-top: 24px;
+  }
+
+  .featured-signature__content > .featured-signature__cta {
+    margin-top: 16px;
+  }
+
+  .featured-signature__eyebrow {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--fs-deep-brown);
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .featured-signature__title {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(36px, 4vw, 56px);
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: var(--fs-noir);
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .featured-signature__rule {
+    width: 32px;
+    height: 1px;
+    background-color: var(--fs-champagne);
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .featured-signature__desc {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--fs-deep-brown);
+    max-width: 440px;
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .featured-signature__details {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fs-warm-taupe);
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 749px) {
+    .featured-signature__details {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+    }
+
+    .featured-signature__detail-sep {
+      display: none;
+    }
+  }
+
+  .featured-signature__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 16px 40px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    background-color: var(--fs-noir);
+    color: var(--fs-champagne);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .featured-signature__cta:hover {
+    background-color: var(--fs-champagne);
+    color: var(--fs-noir);
+  }
+
+  .featured-signature__cta:focus-visible {
+    outline: 2px solid var(--fs-deep-brown);
+    outline-offset: 4px;
+  }
+
+  .featured-signature.is-visible [data-featured-signature-el]:nth-child(1) {
+    animation: featured-signature-el-in 0.8s ease forwards;
+    animation-delay: 0s;
+  }
+
+  .featured-signature.is-visible [data-featured-signature-el]:nth-child(2) {
+    animation: featured-signature-el-in 0.8s ease forwards;
+    animation-delay: 0.15s;
+  }
+
+  .featured-signature.is-visible [data-featured-signature-el]:nth-child(3) {
+    animation: featured-signature-el-in 0.8s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .featured-signature.is-visible [data-featured-signature-el]:nth-child(4) {
+    animation: featured-signature-el-in 0.8s ease forwards;
+    animation-delay: 0.45s;
+  }
+
+  .featured-signature.is-visible [data-featured-signature-el]:nth-child(5) {
+    animation: featured-signature-el-in 0.8s ease forwards;
+    animation-delay: 0.6s;
+  }
+
+  .featured-signature.is-visible [data-featured-signature-el]:nth-child(6) {
+    animation: featured-signature-el-in 0.8s ease forwards;
+    animation-delay: 0.75s;
+  }
+
+  @keyframes featured-signature-media-in {
+    from {
+      opacity: 0;
+      transform: scale(1.05);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes featured-signature-el-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 30px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .featured-signature__media,
+    .featured-signature [data-featured-signature-el] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-featured-signature]');
+    if (!root) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          root.classList.add('is-visible');
+          io.disconnect();
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    io.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Featured signature",
+  "tag": "section",
+  "class": "section-featured-signature",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Product image",
+      "info": "Optional — uses a placeholder when empty."
+    },
+    {
+      "type": "text",
+      "id": "image_tag",
+      "label": "Image badge text",
+      "default": "The signature"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow",
+      "default": "OUR HERO PIECE"
+    },
+    {
+      "type": "text",
+      "id": "product_name",
+      "label": "Product name",
+      "default": "Contour Bodysuit"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "The piece that started it all. Sculpting yet seamless. Designed to feel like nothing — and everything — at the same time."
+    },
+    {
+      "type": "textarea",
+      "id": "detail_list",
+      "label": "Details",
+      "default": "Seamless construction · Made in Italy · XS — 5XL",
+      "info": "Separate items with middle dots (·)."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "DISCOVER"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured signature"
+    }
+  ]
+}
+{% endschema %}
