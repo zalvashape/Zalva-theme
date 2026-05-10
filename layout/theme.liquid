@@ -115,11 +115,11 @@
         background: transparent;
         box-shadow: 0 0 6px rgba(200, 169, 110, 0.5);
         pointer-events: none;
-        transform: translate3d(-999px, -999px, 0) scale(1);
+        transform: translate3d(-999px, -999px, 0);
         transform-origin: center center;
         opacity: 0;
         z-index: 2147483646;
-        transition: opacity 0.15s ease;
+        transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       }
 
       #zalva-cursor::before {
@@ -132,10 +132,20 @@
         margin: -2px 0 0 -2px;
         border-radius: 50%;
         background-color: var(--zalva-champagne);
+        opacity: 1;
+        transition: opacity 0.2s ease;
       }
 
       #zalva-cursor.is-visible {
         opacity: 1;
+      }
+
+      #zalva-cursor.is-hover {
+        background-color: rgba(200, 169, 110, 0.15);
+      }
+
+      #zalva-cursor.is-hover::before {
+        opacity: 0;
       }
 
       @media (hover: hover) and (pointer: fine) {
@@ -299,8 +309,7 @@
           let isHover = false;
 
           const paint = () => {
-            const scale = isHover ? 2.5 : 1;
-            cursor.style.transform = `translate3d(${clientX - half}px, ${clientY - half}px, 0) scale(${scale})`;
+            cursor.style.transform = `translate3d(${clientX - half}px, ${clientY - half}px, 0)`;
           };
 
           const onMove = (e) => {
