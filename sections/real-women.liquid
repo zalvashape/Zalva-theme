@@ -98,9 +98,8 @@
     justify-content: center;
     gap: 4px;
     margin: 0 auto 40px;
-    opacity: 0;
-    transform: scale(0.5);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: scale(1);
   }
 
   .real-women__ornament-line {
@@ -125,8 +124,7 @@
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--rw-warm-taupe);
-    opacity: 0;
-    will-change: opacity;
+    opacity: 1;
   }
 
   .real-women__viewport {
@@ -134,8 +132,7 @@
     width: 100%;
     min-height: 240px;
     margin-inline: auto;
-    opacity: 0;
-    will-change: opacity;
+    opacity: 1;
   }
 
   .real-women__slide {
@@ -200,8 +197,7 @@
     align-items: center;
     gap: 12px;
     margin-top: 60px;
-    opacity: 0;
-    will-change: opacity;
+    opacity: 1;
   }
 
   .real-women__dot {
@@ -228,25 +224,32 @@
 
   /* Scroll reveal (threshold applied via JS class .is-revealed) */
   .real-women.is-revealed [data-real-women-reveal]:nth-child(1) {
-    animation: real-women-ornament-in 0.8s ease forwards;
+    animation: real-women-ornament-in 0.8s ease both;
   }
 
   .real-women.is-revealed [data-real-women-reveal]:nth-child(2) {
-    animation: real-women-fade-in 0.8s ease forwards;
+    animation: real-women-fade-in 0.8s ease both;
     animation-delay: 0.3s;
-    animation-fill-mode: both;
   }
 
   .real-women.is-revealed [data-real-women-reveal]:nth-child(3) {
-    animation: real-women-fade-in 0.8s ease forwards;
+    animation: real-women-fade-in 0.8s ease both;
     animation-delay: 0.6s;
-    animation-fill-mode: both;
   }
 
   .real-women.is-revealed [data-real-women-reveal]:nth-child(4) {
-    animation: real-women-fade-in 0.8s ease forwards;
+    animation: real-women-fade-in 0.8s ease both;
     animation-delay: 0.9s;
-    animation-fill-mode: both;
+  }
+
+  .real-women.reveal-settled [data-real-women-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .real-women.reveal-settled .real-women__ornament {
+    transform: scale(1) !important;
   }
 
   @keyframes real-women-ornament-in {
@@ -286,6 +289,16 @@
       transform: none !important;
     }
 
+    .real-women.reveal-settled [data-real-women-reveal] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .real-women.reveal-settled .real-women__ornament {
+      transform: scale(1) !important;
+    }
+
     .real-women__ornament {
       opacity: 1 !important;
       transform: none !important;
@@ -298,11 +311,36 @@
     const root = document.querySelector('[data-real-women]');
     if (!root) return;
 
+    const REVEAL_FALLBACK_MS = 1000;
+    let revealDone = false;
+    let revealFallbackTimer = 0;
+
+    const clearRevealFallback = () => {
+      if (revealFallbackTimer) window.clearTimeout(revealFallbackTimer);
+      revealFallbackTimer = 0;
+    };
+
+    const markRevealed = () => {
+      if (revealDone) return;
+      revealDone = true;
+      clearRevealFallback();
+      root.classList.remove('reveal-settled');
+      root.classList.add('is-revealed');
+    };
+
+    revealFallbackTimer = window.setTimeout(() => {
+      if (revealDone) return;
+      if (!root.classList.contains('is-revealed')) root.classList.add('reveal-settled');
+    }, REVEAL_FALLBACK_MS);
+
     const slides = Array.from(root.querySelectorAll('[data-real-women-slide]'));
     const dots = Array.from(root.querySelectorAll('[data-real-women-dot]'));
     const dwellMs = Number(root.getAttribute('data-real-women-duration')) || 6000;
 
-    if (!slides.length) return;
+    if (!slides.length) {
+      markRevealed();
+      return;
+    }
 
     let current = slides.findIndex((el) => el.classList.contains('is-active'));
     if (current < 0) current = 0;
@@ -410,7 +448,7 @@
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-              root.classList.add('is-revealed');
+              markRevealed();
               revealIo.disconnect();
             }
           });
@@ -439,14 +477,14 @@
       );
       rotateIo.observe(root);
     } else {
-      root.classList.add('is-revealed');
+      markRevealed();
       sectionVisible = true;
       rotationArmed = true;
       if (slides.length >= 2 && !prefersReducedMotion) scheduleRotation();
     }
 
     if (prefersReducedMotion) {
-      root.classList.add('is-revealed');
+      markRevealed();
       sectionVisible = true;
       rotationArmed = false;
     }

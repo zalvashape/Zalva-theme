@@ -199,9 +199,8 @@
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--cg-champagne);
-    opacity: 0;
-    transform: translate3d(0, 24px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .category-grid__title {
@@ -211,9 +210,8 @@
     font-size: clamp(36px, 4.5vw, 64px);
     line-height: 1.1;
     color: var(--cg-noir);
-    opacity: 0;
-    transform: translate3d(0, 24px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .category-grid__grid {
@@ -236,9 +234,8 @@
     margin: 0;
     padding: 0;
     min-width: 0;
-    opacity: 0;
-    transform: translate3d(0, 40px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .category-grid__card {
@@ -368,28 +365,36 @@
   }
 
   .category-grid.is-visible .category-grid__header [data-category-grid-header]:nth-child(1) {
-    animation: category-grid-rise 0.9s ease forwards;
+    animation: category-grid-rise 0.9s ease both;
     animation-delay: 0s;
   }
 
   .category-grid.is-visible .category-grid__header [data-category-grid-header]:nth-child(2) {
-    animation: category-grid-rise 0.9s ease forwards;
+    animation: category-grid-rise 0.9s ease both;
     animation-delay: 0.15s;
   }
 
   .category-grid.is-visible .category-grid__grid .category-grid__item:nth-child(1) {
-    animation: category-grid-rise-card 0.9s ease forwards;
+    animation: category-grid-rise-card 0.9s ease both;
     animation-delay: 1.05s;
   }
 
   .category-grid.is-visible .category-grid__grid .category-grid__item:nth-child(2) {
-    animation: category-grid-rise-card 0.9s ease forwards;
+    animation: category-grid-rise-card 0.9s ease both;
     animation-delay: 1.2s;
   }
 
   .category-grid.is-visible .category-grid__grid .category-grid__item:nth-child(3) {
-    animation: category-grid-rise-card 0.9s ease forwards;
+    animation: category-grid-rise-card 0.9s ease both;
     animation-delay: 1.35s;
+  }
+
+  .category-grid.reveal-settled .category-grid__eyebrow,
+  .category-grid.reveal-settled .category-grid__title,
+  .category-grid.reveal-settled .category-grid__item {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   @keyframes category-grid-rise {
@@ -425,6 +430,14 @@
       transform: none !important;
     }
 
+    .category-grid.reveal-settled .category-grid__eyebrow,
+    .category-grid.reveal-settled .category-grid__title,
+    .category-grid.reveal-settled .category-grid__item {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
     .category-grid__img {
       transition: none !important;
     }
@@ -447,16 +460,38 @@
     const root = document.querySelector('[data-category-grid]');
     if (!root) return;
 
+    const REVEAL_FALLBACK_MS = 1000;
+    let revealDone = false;
+    let fallbackTimer = 0;
+
+    const clearRevealFallback = () => {
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      fallbackTimer = 0;
+    };
+
+    const markRevealed = () => {
+      if (revealDone) return;
+      revealDone = true;
+      clearRevealFallback();
+      root.classList.remove('reveal-settled');
+      root.classList.add('is-visible');
+    };
+
+    fallbackTimer = window.setTimeout(() => {
+      if (revealDone) return;
+      if (!root.classList.contains('is-visible')) root.classList.add('reveal-settled');
+    }, REVEAL_FALLBACK_MS);
+
     const prefersReducedMotion =
       window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      root.classList.add('is-visible');
+      markRevealed();
       return;
     }
 
     if (!('IntersectionObserver' in window)) {
-      root.classList.add('is-visible');
+      markRevealed();
       return;
     }
 
@@ -464,7 +499,7 @@
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          root.classList.add('is-visible');
+          markRevealed();
           io.disconnect();
         });
       },

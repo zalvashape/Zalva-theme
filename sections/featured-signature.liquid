@@ -114,13 +114,12 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background-color: #e8dfd6;
-    opacity: 0;
-    transform: scale(1.05);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: scale(1);
   }
 
   .featured-signature.is-visible .featured-signature__media {
-    animation: featured-signature-media-in 1.2s ease forwards;
+    animation: featured-signature-media-in 1.2s ease both;
   }
 
   .featured-signature__img {
@@ -172,9 +171,8 @@
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--fs-deep-brown);
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .featured-signature__title {
@@ -185,18 +183,16 @@
     line-height: 1.1;
     letter-spacing: 0.01em;
     color: var(--fs-noir);
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .featured-signature__rule {
     width: 32px;
     height: 1px;
     background-color: var(--fs-champagne);
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .featured-signature__desc {
@@ -207,9 +203,8 @@
     line-height: 1.7;
     color: var(--fs-deep-brown);
     max-width: 440px;
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .featured-signature__details {
@@ -223,9 +218,8 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--fs-warm-taupe);
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   @media (max-width: 749px) {
@@ -256,9 +250,8 @@
     background-color: var(--fs-noir);
     color: var(--fs-champagne);
     transition: background-color 0.4s ease, color 0.4s ease;
-    opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    will-change: opacity, transform;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   .featured-signature__cta:hover {
@@ -272,33 +265,44 @@
   }
 
   .featured-signature.is-visible [data-featured-signature-el]:nth-child(1) {
-    animation: featured-signature-el-in 0.8s ease forwards;
+    animation: featured-signature-el-in 0.8s ease both;
     animation-delay: 0s;
   }
 
   .featured-signature.is-visible [data-featured-signature-el]:nth-child(2) {
-    animation: featured-signature-el-in 0.8s ease forwards;
+    animation: featured-signature-el-in 0.8s ease both;
     animation-delay: 0.15s;
   }
 
   .featured-signature.is-visible [data-featured-signature-el]:nth-child(3) {
-    animation: featured-signature-el-in 0.8s ease forwards;
+    animation: featured-signature-el-in 0.8s ease both;
     animation-delay: 0.3s;
   }
 
   .featured-signature.is-visible [data-featured-signature-el]:nth-child(4) {
-    animation: featured-signature-el-in 0.8s ease forwards;
+    animation: featured-signature-el-in 0.8s ease both;
     animation-delay: 0.45s;
   }
 
   .featured-signature.is-visible [data-featured-signature-el]:nth-child(5) {
-    animation: featured-signature-el-in 0.8s ease forwards;
+    animation: featured-signature-el-in 0.8s ease both;
     animation-delay: 0.6s;
   }
 
   .featured-signature.is-visible [data-featured-signature-el]:nth-child(6) {
-    animation: featured-signature-el-in 0.8s ease forwards;
+    animation: featured-signature-el-in 0.8s ease both;
     animation-delay: 0.75s;
+  }
+
+  .featured-signature.reveal-settled .featured-signature__media,
+  .featured-signature.reveal-settled [data-featured-signature-el] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .featured-signature.reveal-settled .featured-signature__media {
+    transform: scale(1) !important;
   }
 
   @keyframes featured-signature-media-in {
@@ -332,6 +336,17 @@
       opacity: 1 !important;
       transform: none !important;
     }
+
+    .featured-signature.reveal-settled .featured-signature__media,
+    .featured-signature.reveal-settled [data-featured-signature-el] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .featured-signature.reveal-settled .featured-signature__media {
+      transform: scale(1) !important;
+    }
   }
 {% endstylesheet %}
 
@@ -340,16 +355,38 @@
     const root = document.querySelector('[data-featured-signature]');
     if (!root) return;
 
+    const REVEAL_FALLBACK_MS = 1000;
+    let revealDone = false;
+    let fallbackTimer = 0;
+
+    const clearRevealFallback = () => {
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      fallbackTimer = 0;
+    };
+
+    const markRevealed = () => {
+      if (revealDone) return;
+      revealDone = true;
+      clearRevealFallback();
+      root.classList.remove('reveal-settled');
+      root.classList.add('is-visible');
+    };
+
+    fallbackTimer = window.setTimeout(() => {
+      if (revealDone) return;
+      if (!root.classList.contains('is-visible')) root.classList.add('reveal-settled');
+    }, REVEAL_FALLBACK_MS);
+
     const prefersReducedMotion =
       window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      root.classList.add('is-visible');
+      markRevealed();
       return;
     }
 
     if (!('IntersectionObserver' in window)) {
-      root.classList.add('is-visible');
+      markRevealed();
       return;
     }
 
@@ -357,7 +394,7 @@
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          root.classList.add('is-visible');
+          markRevealed();
           io.disconnect();
         });
       },
