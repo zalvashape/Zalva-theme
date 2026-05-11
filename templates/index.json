@@ -90,6 +90,10 @@
     "editorial_cta": {
       "type": "editorial-cta",
       "settings": {}
+    },
+    "brand_marquee": {
+      "type": "brand-marquee",
+      "settings": {}
     }
   },
   "order": [
@@ -100,6 +104,7 @@
     "category_grid",
     "real_women",
     "size_inclusivity",
-    "editorial_cta"
+    "editorial_cta",
+    "brand_marquee"
   ]
 }

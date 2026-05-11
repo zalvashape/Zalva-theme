@@ -1,0 +1,143 @@
+{% liquid
+  assign phrase = section.settings.marquee_phrase | default: 'SCULPTED · SUPPORTED · SEEN'
+  assign speed = section.settings.animation_speed | default: 'slow'
+
+  case speed
+    when 'fast'
+      assign duration = '14s'
+    when 'medium'
+      assign duration = '24s'
+    else
+      assign duration = '40s'
+  endcase
+%}
+
+{% capture marquee_repeat %}
+  {%- for i in (1..12) -%}
+    {{- phrase -}}
+    {%- unless forloop.last %} · {% endunless -%}
+  {%- endfor -%}
+{% endcapture %}
+
+<div
+  class="brand-marquee"
+  data-brand-marquee
+  style="--marquee-duration: {{ duration }};"
+>
+  <div class="brand-marquee-viewport" role="region" aria-label="{{ phrase | escape }}">
+    <div class="brand-marquee-track">
+      <div class="brand-marquee-group">
+        <span class="brand-marquee-text">{{ marquee_repeat }}</span>
+      </div>
+      <div class="brand-marquee-group" aria-hidden="true">
+        <span class="brand-marquee-text">{{ marquee_repeat }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.brand-marquee { width: 100%; box-sizing: border-box; background: #1A1A1A; padding: 32px 0; margin: 0; cursor: default; opacity: 1; }
+.brand-marquee-viewport { overflow: hidden; width: 100%; }
+.brand-marquee-track { display: flex; flex-direction: row; flex-wrap: nowrap; width: max-content; animation: brand-marquee-scroll var(--marquee-duration, 40s) linear infinite; will-change: transform; }
+.brand-marquee:hover .brand-marquee-track { animation-play-state: paused; }
+.brand-marquee-group { flex: 0 0 auto; display: flex; align-items: center; }
+.brand-marquee-text { display: inline-block; font-family: 'Cormorant Garamond', serif; font-weight: 200; font-size: clamp(32px, 5vw, 56px); color: #C8A96E; letter-spacing: 0.3em; text-transform: uppercase; white-space: nowrap; line-height: 1.2; padding-right: 0.3em; }
+@keyframes brand-marquee-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.brand-marquee.is-visible { animation: brand-marquee-section-fade 0.8s ease both; }
+@keyframes brand-marquee-section-fade { from { opacity: 0; } to { opacity: 1; } }
+.brand-marquee.reveal-settled { animation: none !important; opacity: 1 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-marquee .brand-marquee-track { animation: none !important; transform: none !important; }
+  .brand-marquee.is-visible { animation: none !important; opacity: 1 !important; }
+}
+</style>
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-brand-marquee]');
+    if (!root) return;
+
+    const REVEAL_FALLBACK_MS = 1000;
+    let revealDone = false;
+    let fallbackTimer = 0;
+
+    const clearRevealFallback = () => {
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      fallbackTimer = 0;
+    };
+
+    const markRevealed = () => {
+      if (revealDone) return;
+      revealDone = true;
+      clearRevealFallback();
+      root.classList.remove('reveal-settled');
+      root.classList.add('is-visible');
+    };
+
+    fallbackTimer = window.setTimeout(() => {
+      if (revealDone) return;
+      if (!root.classList.contains('is-visible')) root.classList.add('reveal-settled');
+    }, REVEAL_FALLBACK_MS);
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      markRevealed();
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      markRevealed();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          if (entry.intersectionRatio < 0.2) return;
+          markRevealed();
+          io.disconnect();
+        });
+      },
+      { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] }
+    );
+
+    io.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brand marquee",
+  "tag": "section",
+  "class": "section-brand-marquee",
+  "settings": [
+    {
+      "type": "text",
+      "id": "marquee_phrase",
+      "label": "Marquee phrase",
+      "default": "SCULPTED · SUPPORTED · SEEN"
+    },
+    {
+      "type": "select",
+      "id": "animation_speed",
+      "label": "Animation speed",
+      "options": [
+        { "value": "slow", "label": "Slow" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "fast", "label": "Fast" }
+      ],
+      "default": "slow"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand marquee",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
