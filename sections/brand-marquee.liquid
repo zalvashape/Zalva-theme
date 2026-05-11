@@ -37,11 +37,16 @@
 </div>
 
 <style>
-.brand-marquee { width: 100%; box-sizing: border-box; background: #1A1A1A; padding-block: 56px; padding-inline: 0; margin: 0; opacity: 1; }
+.brand-marquee { width: 100%; box-sizing: border-box; background: #1A1A1A; padding-block: 32px; padding-inline: 0; margin: 0; opacity: 1; }
+@media (min-width: 990px) {
+  .brand-marquee {
+    padding-block: 40px;
+  }
+}
 .brand-marquee-viewport { overflow: hidden; width: 100%; }
 .brand-marquee-track { display: flex; flex-direction: row; flex-wrap: nowrap; width: max-content; animation: brand-marquee-scroll var(--marquee-duration, 120s) linear infinite; will-change: transform; }
 .brand-marquee-group { flex: 0 0 auto; display: flex; align-items: center; }
-.brand-marquee-text { display: inline-block; font-family: 'Cormorant Garamond', serif; font-weight: 200; font-size: clamp(40px, 6.5vw, 72px); color: #C8A96E; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; line-height: 1.2; padding-right: 0.35em; }
+.brand-marquee-text { display: inline-block; font-family: 'Cormorant Garamond', serif; font-weight: 200; font-size: clamp(28px, 4vw, 48px); color: #C8A96E; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; line-height: 1.2; padding-right: 0.35em; }
 @keyframes brand-marquee-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 .brand-marquee.is-visible { animation: brand-marquee-section-fade 0.8s ease both; }
 @keyframes brand-marquee-section-fade { from { opacity: 0; } to { opacity: 1; } }
