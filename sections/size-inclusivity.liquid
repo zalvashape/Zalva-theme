@@ -1,0 +1,322 @@
+{% liquid
+  assign eyebrow_text = section.settings.eyebrow_text | default: 'FOR EVERY BODY'
+  assign headline_line_1 = section.settings.headline_line_1 | default: 'XS to 5XL.'
+  assign headline_line_2 = section.settings.headline_line_2 | default: 'No exceptions.'
+  assign subtitle = section.settings.subtitle
+    | default: 'Designed, fitted, and tested for the full spectrum of women.'
+
+  assign sizes_raw = section.settings.size_list | default: "XS\nS\nM\nL\nXL\nXXL\n3XL\n4XL\n5XL"
+  assign sizes = sizes_raw | strip | split: '\n'
+%}
+
+<div class="size-inclusivity full-width" data-size-inclusivity>
+  <div class="size-inclusivity__inner">
+    <div class="size-inclusivity__accent" aria-hidden="true"></div>
+
+    <p class="size-inclusivity__eyebrow" data-size-inclusivity-reveal>{{ eyebrow_text }}</p>
+
+    <h2 class="size-inclusivity__headline" aria-label="{{ headline_line_1 }} {{ headline_line_2 }}">
+      <span class="size-inclusivity__headline-line size-inclusivity__headline-line--1" data-size-inclusivity-reveal>
+        {{- headline_line_1 -}}
+      </span>
+      <span class="size-inclusivity__headline-line size-inclusivity__headline-line--2" data-size-inclusivity-reveal>
+        {{- headline_line_2 -}}
+      </span>
+    </h2>
+
+    <p class="size-inclusivity__subtitle" data-size-inclusivity-reveal>{{ subtitle }}</p>
+
+    <div class="size-inclusivity__sizes" role="list" aria-label="Available sizes">
+      {% for size in sizes %}
+        {% liquid
+          assign s = size | strip
+          if s == blank
+            continue
+          endif
+
+          assign pill_delay = forloop.index0 | times: 0.05 | plus: 1.3
+        %}
+        <span
+          class="size-inclusivity__pill"
+          role="listitem"
+          data-size-inclusivity-pill
+          style="transition-delay: {{ pill_delay }}s;"
+        >
+          {{- s -}}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .size-inclusivity {
+    --si-noir: #1a1a1a;
+    --si-champagne: #c8a96e;
+    --si-ivory: #faf8f5;
+    --si-blush: #d4b5a0;
+
+    width: 100%;
+    background-color: var(--si-noir);
+    padding-block: 100px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  @media (min-width: 990px) {
+    .size-inclusivity {
+      padding-block: 160px;
+    }
+  }
+
+  .size-inclusivity__inner {
+    width: 100%;
+    max-width: 880px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 5vw, 40px);
+    box-sizing: border-box;
+  }
+
+  .size-inclusivity__accent {
+    width: 40px;
+    height: 1px;
+    margin: 0 auto 36px;
+    background-color: var(--si-champagne);
+    transform: scaleX(0);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .size-inclusivity__eyebrow {
+    margin: 0 0 32px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--si-blush);
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  .size-inclusivity__headline {
+    margin: 0;
+    padding: 0;
+  }
+
+  .size-inclusivity__headline-line {
+    display: block;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    will-change: opacity, transform;
+  }
+
+  .size-inclusivity__headline-line--1 {
+    font-weight: 200;
+    color: var(--si-ivory);
+  }
+
+  .size-inclusivity__headline-line--2 {
+    font-weight: 300;
+    font-style: italic;
+    color: var(--si-champagne);
+  }
+
+  .size-inclusivity__subtitle {
+    margin: 40px auto 0;
+    max-width: 580px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: clamp(14px, 1.2vw, 16px);
+    letter-spacing: 0.15em;
+    line-height: 1.7;
+    color: var(--si-blush);
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  .size-inclusivity__sizes {
+    margin-top: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .size-inclusivity__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: 1px solid var(--si-champagne);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--si-ivory);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1;
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    will-change: opacity, transform, background-color, color;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      opacity 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  .size-inclusivity__pill:hover {
+    background-color: var(--si-champagne);
+    color: var(--si-noir);
+  }
+
+  .size-inclusivity__pill:focus-visible {
+    outline: 2px solid var(--si-champagne);
+    outline-offset: 4px;
+  }
+
+  .size-inclusivity.is-visible .size-inclusivity__accent {
+    transition: transform 0.8s ease;
+    transform: scaleX(1);
+  }
+
+  .size-inclusivity.is-visible .size-inclusivity__eyebrow {
+    transition: opacity 0.8s ease;
+    transition-delay: 0.2s;
+    opacity: 1;
+  }
+
+  .size-inclusivity.is-visible .size-inclusivity__headline-line--1 {
+    transition: opacity 0.9s ease, transform 0.9s ease;
+    transition-delay: 0.4s;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .size-inclusivity.is-visible .size-inclusivity__headline-line--2 {
+    transition: opacity 0.9s ease, transform 0.9s ease;
+    transition-delay: 0.7s;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .size-inclusivity.is-visible .size-inclusivity__subtitle {
+    transition: opacity 0.8s ease;
+    transition-delay: 1s;
+    opacity: 1;
+  }
+
+  .size-inclusivity.is-visible .size-inclusivity__pill {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (max-width: 480px) {
+    .size-inclusivity__sizes {
+      margin-top: 56px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .size-inclusivity__accent {
+      transition: none !important;
+      transform: scaleX(1) !important;
+    }
+
+    .size-inclusivity__eyebrow,
+    .size-inclusivity__headline-line,
+    .size-inclusivity__subtitle,
+    .size-inclusivity__pill {
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-size-inclusivity]');
+    if (!root) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      root.classList.add('is-visible');
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          if (entry.intersectionRatio < 0.3) return;
+          root.classList.add('is-visible');
+          io.disconnect();
+        });
+      },
+      { threshold: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 1] }
+    );
+
+    io.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Size inclusivity",
+  "tag": "section",
+  "class": "section-size-inclusivity",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow",
+      "default": "FOR EVERY BODY"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_1",
+      "label": "Headline line 1",
+      "default": "XS to 5XL."
+    },
+    {
+      "type": "text",
+      "id": "headline_line_2",
+      "label": "Headline line 2",
+      "default": "No exceptions."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Designed, fitted, and tested for the full spectrum of women."
+    },
+    {
+      "type": "textarea",
+      "id": "size_list",
+      "label": "Size list (one per line)",
+      "default": "XS\nS\nM\nL\nXL\nXXL\n3XL\n4XL\n5XL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Size inclusivity"
+    }
+  ]
+}
+{% endschema %}
+

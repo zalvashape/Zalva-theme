@@ -83,6 +83,10 @@
       },
       "block_order": ["rw_maya", "rw_andrea", "rw_jessica", "rw_sofia", "rw_elena"]
     },
+    "size_inclusivity": {
+      "type": "size-inclusivity",
+      "settings": {}
+    },
     "featured_products": {
       "type": "zalva-featured-placeholder",
       "settings": {
@@ -97,6 +101,7 @@
     "texture_detail",
     "category_grid",
     "real_women",
+    "size_inclusivity",
     "featured_products"
   ]
 }
