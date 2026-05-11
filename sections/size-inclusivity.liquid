@@ -1,362 +1,49 @@
 {% liquid
-  assign eyebrow_text = section.settings.eyebrow_text | default: 'FOR EVERY BODY'
-  assign headline_line_1 = section.settings.headline_line_1 | default: 'XS to 5XL.'
-  assign headline_line_2 = section.settings.headline_line_2 | default: 'No exceptions.'
+  assign eyebrow_text = section.settings.eyebrow_text
+  assign headline_line_1 = section.settings.headline_line_1
+  assign headline_line_2 = section.settings.headline_line_2
   assign subtitle = section.settings.subtitle
-    | default: 'Designed, fitted, and tested for the full spectrum of women.'
-
-  assign sizes_raw = section.settings.size_list | default: 'XS, S, M, L, XL, XXL, 3XL, 4XL, 5XL'
-  assign sizes = sizes_raw | strip | split: ','
+  assign sizes_raw = section.settings.size_list
+  assign sizes = sizes_raw | split: ','
 %}
 
-<div class="size-inclusivity full-width" data-size-inclusivity>
-  <div class="size-inclusivity__inner">
-    <div class="size-inclusivity__accent" aria-hidden="true"></div>
-
-    <p class="size-inclusivity__eyebrow" data-size-inclusivity-reveal>{{ eyebrow_text }}</p>
-
-    <h2 class="size-inclusivity__headline" aria-label="{{ headline_line_1 }} {{ headline_line_2 }}">
-      <span class="size-inclusivity__headline-line size-inclusivity__headline-line--1" data-size-inclusivity-reveal>
-        {{- headline_line_1 -}}
-      </span>
-      <span class="size-inclusivity__headline-line size-inclusivity__headline-line--2" data-size-inclusivity-reveal>
-        {{- headline_line_2 -}}
-      </span>
+<div class="size-inclusivity">
+  <div class="size-inclusivity-inner">
+    <div class="size-inclusivity-accent"></div>
+    <p class="size-inclusivity-eyebrow">{{ eyebrow_text }}</p>
+    <h2 class="size-inclusivity-headline">
+      <span class="size-inclusivity-line-1">{{ headline_line_1 }}</span>
+      <span class="size-inclusivity-line-2">{{ headline_line_2 }}</span>
     </h2>
-
-    <p class="size-inclusivity__subtitle" data-size-inclusivity-reveal>{{ subtitle }}</p>
-
-    <div class="size-inclusivity__sizes" role="list" aria-label="Available sizes">
+    <p class="size-inclusivity-subtitle">{{ subtitle }}</p>
+    <div class="size-inclusivity-sizes">
       {% for size in sizes %}
-        {% liquid
-          assign s = size | strip
-          if s == blank
-            continue
-          endif
-
-          assign pill_delay = forloop.index0 | times: 0.05 | plus: 1.3
-        %}
-        <span
-          class="size-inclusivity__pill"
-          role="listitem"
-          data-size-inclusivity-pill
-          style="animation-delay: {{ pill_delay }}s;"
-        >
-          {{- s -}}
-        </span>
+        <span class="size-inclusivity-pill">{{ size | strip }}</span>
       {% endfor %}
     </div>
   </div>
 </div>
 
-{% stylesheet %}
-  .size-inclusivity {
-    --si-noir: #1a1a1a;
-    --si-champagne: #c8a96e;
-    --si-ivory: #faf8f5;
-    --si-blush: #d4b5a0;
-
-    width: 100%;
-    background-color: var(--si-noir);
-    padding-block: 100px;
-    box-sizing: border-box;
-    text-align: center;
-  }
-
-  @media (min-width: 990px) {
-    .size-inclusivity {
-      padding-block: 160px;
-    }
-  }
-
-  .size-inclusivity__inner {
-    width: 100%;
-    max-width: 880px;
-    margin-inline: auto;
-    padding-inline: clamp(20px, 5vw, 40px);
-    box-sizing: border-box;
-  }
-
-  .size-inclusivity__accent {
-    width: 40px;
-    height: 1px;
-    margin: 0 auto 36px;
-    background-color: var(--si-champagne);
-    transform: scaleX(1);
-    transform-origin: center;
-  }
-
-  .size-inclusivity__eyebrow {
-    margin: 0 0 32px;
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--si-blush);
-    opacity: 1;
-  }
-
-  .size-inclusivity__headline {
-    margin: 0;
-    padding: 0;
-  }
-
-  .size-inclusivity__headline-line {
-    display: block;
-    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
-    font-size: clamp(48px, 7vw, 96px);
-    line-height: 1.05;
-    letter-spacing: 0.01em;
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .size-inclusivity__headline-line--1 {
-    font-weight: 200;
-    color: var(--si-ivory);
-  }
-
-  .size-inclusivity__headline-line--2 {
-    font-weight: 300;
-    font-style: italic;
-    color: var(--si-champagne);
-  }
-
-  .size-inclusivity__subtitle {
-    margin: 40px auto 0;
-    max-width: 580px;
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-weight: 300;
-    font-size: clamp(14px, 1.2vw, 16px);
-    letter-spacing: 0.15em;
-    line-height: 1.7;
-    color: var(--si-blush);
-    opacity: 1;
-  }
-
-  .size-inclusivity__sizes {
-    margin-top: 80px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .size-inclusivity__pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 16px;
-    border: 1px solid var(--si-champagne);
-    border-radius: 100px;
-    background: transparent;
-    color: var(--si-ivory);
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    line-height: 1;
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  .size-inclusivity__pill:hover {
-    background-color: var(--si-champagne);
-    color: var(--si-noir);
-  }
-
-  .size-inclusivity__pill:focus-visible {
-    outline: 2px solid var(--si-champagne);
-    outline-offset: 4px;
-  }
-
-  .size-inclusivity.is-visible .size-inclusivity__accent {
-    animation: size-inclusivity-accent-grow 0.8s ease both;
-  }
-
-  .size-inclusivity.is-visible .size-inclusivity__eyebrow {
-    animation: size-inclusivity-fade-in 0.8s ease both;
-    animation-delay: 0.2s;
-  }
-
-  .size-inclusivity.is-visible .size-inclusivity__headline-line--1 {
-    animation: size-inclusivity-rise 0.9s ease both;
-    animation-delay: 0.4s;
-  }
-
-  .size-inclusivity.is-visible .size-inclusivity__headline-line--2 {
-    animation: size-inclusivity-rise 0.9s ease both;
-    animation-delay: 0.7s;
-  }
-
-  .size-inclusivity.is-visible .size-inclusivity__subtitle {
-    animation: size-inclusivity-fade-in 0.8s ease both;
-    animation-delay: 1s;
-  }
-
-  .size-inclusivity.is-visible .size-inclusivity__pill {
-    animation: size-inclusivity-pill-in 0.5s ease forwards;
-  }
-
-  @keyframes size-inclusivity-accent-grow {
-    from {
-      transform: scaleX(0);
-    }
-
-    to {
-      transform: scaleX(1);
-    }
-  }
-
-  @keyframes size-inclusivity-fade-in {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes size-inclusivity-rise {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 30px, 0);
-    }
-
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  @keyframes size-inclusivity-pill-in {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 20px, 0);
-    }
-
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  .size-inclusivity.reveal-settled .size-inclusivity__accent,
-  .size-inclusivity.reveal-settled .size-inclusivity__eyebrow,
-  .size-inclusivity.reveal-settled .size-inclusivity__headline-line,
-  .size-inclusivity.reveal-settled .size-inclusivity__subtitle,
-  .size-inclusivity.reveal-settled .size-inclusivity__pill {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .size-inclusivity.reveal-settled .size-inclusivity__accent {
-    transform: scaleX(1) !important;
-  }
-
-  @media (max-width: 480px) {
-    .size-inclusivity__sizes {
-      margin-top: 56px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .size-inclusivity__accent {
-      animation: none !important;
-      transform: scaleX(1) !important;
-    }
-
-    .size-inclusivity__eyebrow,
-    .size-inclusivity__headline-line,
-    .size-inclusivity__subtitle,
-    .size-inclusivity__pill {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-    }
-
-    .size-inclusivity.reveal-settled .size-inclusivity__accent,
-    .size-inclusivity.reveal-settled .size-inclusivity__eyebrow,
-    .size-inclusivity.reveal-settled .size-inclusivity__headline-line,
-    .size-inclusivity.reveal-settled .size-inclusivity__subtitle,
-    .size-inclusivity.reveal-settled .size-inclusivity__pill {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-    }
-
-    .size-inclusivity.reveal-settled .size-inclusivity__accent {
-      transform: scaleX(1) !important;
-    }
-  }
-{% endstylesheet %}
-
-<script>
-  (() => {
-    const root = document.querySelector('[data-size-inclusivity]');
-    if (!root) return;
-
-    const REVEAL_FALLBACK_MS = 1000;
-    let revealDone = false;
-    let fallbackTimer = 0;
-
-    const clearRevealFallback = () => {
-      if (fallbackTimer) window.clearTimeout(fallbackTimer);
-      fallbackTimer = 0;
-    };
-
-    const markRevealed = () => {
-      if (revealDone) return;
-      revealDone = true;
-      clearRevealFallback();
-      root.classList.remove('reveal-settled');
-      root.classList.add('is-visible');
-    };
-
-    fallbackTimer = window.setTimeout(() => {
-      if (revealDone) return;
-      if (!root.classList.contains('is-visible')) root.classList.add('reveal-settled');
-    }, REVEAL_FALLBACK_MS);
-
-    const prefersReducedMotion =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-      markRevealed();
-      return;
-    }
-
-    if (!('IntersectionObserver' in window)) {
-      markRevealed();
-      return;
-    }
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          if (entry.intersectionRatio < 0.3) return;
-          markRevealed();
-          io.disconnect();
-        });
-      },
-      { threshold: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 1] }
-    );
-
-    io.observe(root);
-  })();
-</script>
+<style>
+.size-inclusivity { background: #1A1A1A; padding: 100px 20px; text-align: center; }
+@media (min-width: 990px) { .size-inclusivity { padding: 160px 40px; } }
+.size-inclusivity-inner { max-width: 880px; margin: 0 auto; }
+.size-inclusivity-accent { width: 40px; height: 1px; margin: 0 auto 36px; background: #C8A96E; }
+.size-inclusivity-eyebrow { font-family: Jost, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: #D4B5A0; margin: 0 0 32px; }
+.size-inclusivity-headline { margin: 0; padding: 0; }
+.size-inclusivity-line-1, .size-inclusivity-line-2 { display: block; font-family: 'Cormorant Garamond', serif; font-size: clamp(48px, 7vw, 96px); line-height: 1.05; letter-spacing: 0.01em; }
+.size-inclusivity-line-1 { font-weight: 200; color: #FAF8F5; }
+.size-inclusivity-line-2 { font-weight: 300; font-style: italic; color: #C8A96E; }
+.size-inclusivity-subtitle { font-family: Jost, sans-serif; font-weight: 300; font-size: clamp(14px, 1.2vw, 16px); letter-spacing: 0.15em; line-height: 1.7; color: #D4B5A0; max-width: 580px; margin: 40px auto 0; }
+.size-inclusivity-sizes { margin-top: 80px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.size-inclusivity-pill { display: inline-flex; align-items: center; padding: 8px 16px; border: 1px solid #C8A96E; border-radius: 100px; color: #FAF8F5; font-family: Jost, sans-serif; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s ease; }
+.size-inclusivity-pill:hover { background: #C8A96E; color: #1A1A1A; }
+</style>
 
 {% schema %}
 {
   "name": "Size inclusivity",
   "tag": "section",
-  "class": "section-size-inclusivity",
   "settings": [
     {
       "type": "text",
@@ -385,7 +72,7 @@
     {
       "type": "text",
       "id": "size_list",
-      "label": "Size list (comma-separated)",
+      "label": "Sizes (comma-separated)",
       "default": "XS, S, M, L, XL, XXL, 3XL, 4XL, 5XL"
     }
   ],
@@ -397,4 +84,3 @@
   ]
 }
 {% endschema %}
-
