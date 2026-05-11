@@ -87,11 +87,9 @@
       "type": "size-inclusivity",
       "settings": {}
     },
-    "featured_products": {
-      "type": "zalva-featured-placeholder",
-      "settings": {
-        "heading": "Featured"
-      }
+    "editorial_cta": {
+      "type": "editorial-cta",
+      "settings": {}
     }
   },
   "order": [
@@ -102,6 +100,6 @@
     "category_grid",
     "real_women",
     "size_inclusivity",
-    "featured_products"
+    "editorial_cta"
   ]
 }
