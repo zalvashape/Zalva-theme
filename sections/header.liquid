@@ -33,14 +33,14 @@
 
       <div class="zs-header__col zs-header__col--right">
         <a class="zs-header__icon-link" href="{{ routes.search_url }}" aria-label="Search">
-          <svg class="zs-header__icon-svg" width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <svg class="zs-header__icon-svg" width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/>
             <path d="M12.5 12.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </a>
         {% if shop.customer_accounts_enabled %}
           <a class="zs-header__icon-link" href="{{ routes.account_url }}" aria-label="Account">
-            <svg class="zs-header__icon-svg" width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <svg class="zs-header__icon-svg" width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M10 11.5C12.4853 11.5 14.5 9.48528 14.5 7C14.5 4.51472 12.4853 2.5 10 2.5C7.51472 2.5 5.5 4.51472 5.5 7C5.5 9.48528 7.51472 11.5 10 11.5Z" stroke="currentColor" stroke-width="1.5"/>
               <path d="M3.5 17.5C3.5 14.4624 6.73858 12 10.5 12C14.2614 12 17.5 14.4624 17.5 17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
@@ -48,7 +48,7 @@
         {% endif %}
         <a class="zs-header__icon-link zs-header__icon-link--cart" href="{{ routes.cart_url }}" aria-label="Cart">
           <span class="zs-header__cart-wrap">
-            <svg class="zs-header__icon-svg" width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <svg class="zs-header__icon-svg" width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M5.5 7.5H14.5L13.5 14.5H6.5L5.5 7.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
               <path d="M8 7.5V5.5C8 4.39543 8.89543 3.5 10 3.5C11.1046 3.5 12 4.39543 12 5.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
@@ -124,6 +124,8 @@
 
   @media (min-width: 769px) {
     .zs-header__announce {
+      height: 36px;
+      min-height: 36px;
       padding-inline: 40px;
     }
   }
@@ -142,6 +144,12 @@
     max-width: 100%;
   }
 
+  @media (min-width: 769px) {
+    .zs-header__announce-text {
+      font-size: 11px;
+    }
+  }
+
   .zs-header__announce-text.is-fade-out {
     opacity: 0;
   }
@@ -152,7 +160,7 @@
     z-index: 100;
     width: 100%;
     box-sizing: border-box;
-    height: 88px;
+    height: 72px;
     display: flex;
     align-items: center;
     background-color: rgba(250, 248, 245, 0.92);
@@ -168,6 +176,12 @@
       -webkit-backdrop-filter 0.4s ease;
   }
 
+  @media (min-width: 769px) {
+    .zs-header__bar {
+      height: 96px;
+    }
+  }
+
   /* Homepage + top of hero only (class added by JS). No class = default ivory (works without JS). */
   .zs-header__bar.is-over-hero {
     background-color: rgba(26, 26, 26, 0.2);
@@ -177,24 +191,20 @@
     backdrop-filter: blur(12px);
   }
 
-  @media (max-width: 768px) {
-    .zs-header__bar {
-      height: 72px;
-    }
-  }
-
   .zs-header__inner {
     position: relative;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
-    padding-inline: 20px;
+    padding-inline: 20px 16px;
   }
 
   @media (min-width: 769px) {
     .zs-header__inner {
+      display: flex;
+      justify-content: space-between;
       padding-inline: 40px;
     }
   }
@@ -202,33 +212,73 @@
   .zs-header__col--left {
     position: relative;
     z-index: 2;
+    grid-column: 1;
+    justify-self: start;
     display: flex;
     justify-content: flex-start;
     flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  @media (min-width: 769px) {
+    .zs-header__col--left {
+      grid-column: auto;
+      justify-self: auto;
+    }
   }
 
   .zs-header__col--center {
-    position: absolute;
-    left: 50%;
-    top: 50%;
+    position: static;
+    grid-column: 2;
+    justify-self: center;
     z-index: 1;
-    transform: translate(-50%, -50%);
+    transform: none;
     display: flex;
     justify-content: center;
     text-align: center;
-    width: max-content;
-    max-width: min(100vw - 160px, 100%);
-    pointer-events: none;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    pointer-events: auto;
+  }
+
+  @media (min-width: 769px) {
+    .zs-header__col--center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      grid-column: auto;
+      justify-self: auto;
+      transform: translate(-50%, -50%);
+      width: max-content;
+      max-width: min(100vw - 160px, 100%);
+      pointer-events: none;
+    }
+
+    .zs-header__col--center .zs-header__logo {
+      pointer-events: auto;
+    }
   }
 
   .zs-header__col--right {
     position: relative;
     z-index: 2;
+    grid-column: 3;
+    justify-self: end;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 24px;
+    gap: 12px;
     flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  @media (min-width: 769px) {
+    .zs-header__col--right {
+      grid-column: auto;
+      justify-self: auto;
+      gap: 24px;
+    }
   }
 
   .zs-header__menu-btn {
@@ -248,6 +298,12 @@
     letter-spacing: 0.25em;
     text-transform: uppercase;
     line-height: 1;
+  }
+
+  @media (min-width: 769px) {
+    .zs-header__menu-btn {
+      font-size: 12px;
+    }
   }
 
   .zs-header__menu-btn:focus-visible {
@@ -272,6 +328,16 @@
     border-radius: 0.5px;
   }
 
+  @media (min-width: 769px) {
+    .zs-header__hamburger {
+      width: 22px;
+    }
+
+    .zs-header__hamburger span {
+      width: 22px;
+    }
+  }
+
   @media (max-width: 768px) {
     .zs-header__menu-label {
       position: absolute;
@@ -294,7 +360,7 @@
     pointer-events: auto;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
-    font-size: 22px;
+    font-size: 16px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
     text-decoration: none;
@@ -308,10 +374,9 @@
     outline-offset: 4px;
   }
 
-  @media (max-width: 768px) {
+  @media (min-width: 769px) {
     .zs-header__logo {
-      font-size: 16px;
-      letter-spacing: 0.4em;
+      font-size: 26px;
     }
   }
 
@@ -331,8 +396,15 @@
 
   .zs-header__icon-svg {
     flex-shrink: 0;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-header__icon-svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   .zs-header__cart-wrap {
@@ -352,6 +424,12 @@
     color: var(--zs-champagne);
     line-height: 1;
     pointer-events: none;
+  }
+
+  @media (min-width: 769px) {
+    .zs-header__cart-count {
+      font-size: 11px;
+    }
   }
 
   .zs-header__bar.is-over-hero .zs-header__cart-count {
