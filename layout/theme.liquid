@@ -33,32 +33,10 @@
 
     {{ content_for_header }}
 
-    <style>
-      header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        width: 100%;
-        background-color: #faf8f5;
-        color: #1a1a1a;
-        box-sizing: border-box;
-      }
-
-      header a {
-        color: #1a1a1a;
-      }
-
-      header svg,
-      header svg * {
-        fill: currentColor;
-        stroke: currentColor;
-      }
-    </style>
   </head>
 
   <body class="template-{{ request.page_type }}{% if request.page_type == 'index' %} zalva-home{% endif %}">
-    {% section 'announcement-bar' %}
-
+    {% comment %} Premium header: announcement bar + main bar + side panel live in sections/header.liquid (header-group). {% endcomment %}
     {% sections 'header-group' %}
 
     {{ content_for_layout }}

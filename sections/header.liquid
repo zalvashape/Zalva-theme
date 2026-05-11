@@ -1,77 +1,587 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
-
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
+<div
+  class="zs-header"
+  data-zs-header
+  data-is-home="{% if request.page_type == 'index' %}true{% else %}false{% endif %}"
+  {{ section.shopify_attributes }}
+>
+  <div class="zs-header__announce" aria-live="polite">
+    <p class="zs-header__announce-text" data-zs-announce-text>COMPLIMENTARY SHIPPING OVER $75</p>
   </div>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
+  <header
+    class="zs-header__bar{% if request.page_type == 'index' %} is-over-hero{% endif %}"
+    data-zs-header-bar
+  >
+    <div class="zs-header__inner">
+      <div class="zs-header__col zs-header__col--left">
+        <button
+          type="button"
+          class="zs-header__menu-btn"
+          data-zs-menu-open
+          aria-expanded="false"
+          aria-controls="zs-header-panel"
+        >
+          <span class="zs-header__hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span class="zs-header__menu-label">MENU</span>
+        </button>
+      </div>
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
+      <div class="zs-header__col zs-header__col--center">
+        <a class="zs-header__logo" href="{{ routes.root_url }}">ZALVA SHAPE</a>
+      </div>
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
+      <div class="zs-header__col zs-header__col--right">
+        <a class="zs-header__icon-link" href="{{ routes.search_url }}" aria-label="Search">
+          <svg class="zs-header__icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12.5 12.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </a>
+        {% if shop.customer_accounts_enabled %}
+          <a class="zs-header__icon-link" href="{{ routes.account_url }}" aria-label="Account">
+            <svg class="zs-header__icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 11.5C12.4853 11.5 14.5 9.48528 14.5 7C14.5 4.51472 12.4853 2.5 10 2.5C7.51472 2.5 5.5 4.51472 5.5 7C5.5 9.48528 7.51472 11.5 10 11.5Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3.5 17.5C3.5 14.4624 6.73858 12 10.5 12C14.2614 12 17.5 14.4624 17.5 17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </a>
+        {% endif %}
+        <a class="zs-header__icon-link zs-header__icon-link--cart" href="{{ routes.cart_url }}" aria-label="Cart">
+          <span class="zs-header__cart-wrap">
+            <svg class="zs-header__icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5.5 7.5H14.5L13.5 14.5H6.5L5.5 7.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8 7.5V5.5C8 4.39543 8.89543 3.5 10 3.5C11.1046 3.5 12 4.39543 12 5.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            {% if cart.item_count > 0 %}
+              <span class="zs-header__cart-count">{{ cart.item_count }}</span>
+            {% endif %}
+          </span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="zs-header__overlay" data-zs-overlay hidden></div>
+
+  <div
+    class="zs-header__panel"
+    id="zs-header-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Menu"
+    data-zs-panel
+    hidden
+  >
+    <button type="button" class="zs-header__panel-close" data-zs-menu-close aria-label="Close menu">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <nav class="zs-header__panel-nav" aria-label="Primary">
+      <ul class="zs-header__panel-list">
+        <li><a class="zs-header__panel-link" href="{{ routes.all_products_collection_url }}">Shop</a></li>
+        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a></li>
+        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}collections/waist-trainers">Waist Trainers</a></li>
+        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}collections/fajas">Fajas</a></li>
+        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}pages/about">The Story</a></li>
+        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}pages/size-guide">Size Guide</a></li>
+        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}pages/contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="zs-header__panel-footer">
+      <span class="zs-header__panel-line" aria-hidden="true"></span>
+      <p class="zs-header__panel-social">INSTAGRAM · TIKTOK</p>
+    </div>
   </div>
-</header>
+</div>
 
 {% stylesheet %}
-  header {
-    height: 5rem;
+  .zs-header {
+    --zs-noir: #1a1a1a;
+    --zs-ivory: #faf8f5;
+    --zs-champagne: #c8a96e;
+    --zs-taupe: #a07060;
+    --zs-border: #e5ddd3;
+  }
+
+  .zs-header__announce {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    height: 32px;
+    background-color: var(--zs-noir);
+    color: var(--zs-champagne);
+    width: 100%;
   }
-  header a {
+
+  .zs-header__announce-text {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    line-height: 1;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    text-align: center;
+    padding-inline: 0.75rem;
+  }
+
+  .zs-header__announce-text.is-fade-out {
+    opacity: 0;
+  }
+
+  .zs-header__bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    background-color: var(--zs-ivory);
+    color: var(--zs-noir);
+    border-bottom: 1px solid var(--zs-border);
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease,
+      border-color 0.4s ease,
+      transform 0.4s ease;
+    will-change: transform;
+  }
+
+  .zs-header__bar.is-over-hero {
+    background-color: transparent;
+    color: var(--zs-ivory);
+    border-bottom-color: transparent;
+  }
+
+  .zs-header__bar.is-scroll-hidden {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    .zs-header__bar {
+      height: 64px;
+    }
+  }
+
+  .zs-header__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .zs-header__col--left {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .zs-header__col--center {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .zs-header__col--right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .zs-header__menu-btn {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .zs-header__menu-btn:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-header__hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 18px;
+    flex-shrink: 0;
+  }
+
+  .zs-header__hamburger span {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background-color: currentColor;
+    border-radius: 0.5px;
+  }
+
+  @media (max-width: 768px) {
+    .zs-header__menu-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .zs-header__menu-btn {
+      gap: 0;
+    }
+  }
+
+  .zs-header__logo {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 20px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
     text-decoration: none;
-    color: #1a1a1a;
+    color: inherit;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .zs-header__logo:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .zs-header__logo {
+      font-size: 16px;
+      letter-spacing: 0.28em;
+    }
+  }
+
+  .zs-header__icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .zs-header__icon-link:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-header__icon-svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
+
+  .zs-header__cart-wrap {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  header a sup {
+
+  .zs-header__cart-count {
     position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
+    top: -4px;
+    right: -8px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--zs-champagne);
+    line-height: 1;
+    pointer-events: none;
   }
-  header svg {
-    width: 2rem;
+
+  .zs-header__bar.is-over-hero .zs-header__cart-count {
+    color: var(--zs-champagne);
   }
-  header .header__menu,
-  header .header__icons {
+
+  .zs-header__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background-color: rgba(26, 26, 26, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s ease;
+  }
+
+  .zs-header__overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .zs-header__overlay[hidden] {
+    display: block;
+  }
+
+  .zs-header__panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    width: 400px;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background-color: var(--zs-ivory);
+    color: var(--zs-noir);
+    transform: translateX(-100%);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    padding-top: 60px;
+    box-sizing: border-box;
+  }
+
+  .zs-header__panel.is-active {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .zs-header__panel:not(.is-active) {
+    pointer-events: none;
+  }
+
+  .zs-header__panel[hidden] {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .zs-header__panel {
+      width: 100%;
+    }
+  }
+
+  .zs-header__panel-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--zs-noir);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .zs-header__panel-close:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 2px;
+  }
+
+  .zs-header__panel-nav {
+    padding-left: 60px;
+    padding-right: 24px;
+  }
+
+  .zs-header__panel-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .zs-header__panel-link {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 36px);
+    color: var(--zs-noir);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .zs-header__panel-link:hover {
+    color: var(--zs-taupe);
+  }
+
+  .zs-header__panel-footer {
+    position: absolute;
+    bottom: 40px;
+    left: 60px;
+    right: 24px;
+  }
+
+  .zs-header__panel-line {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background-color: var(--zs-champagne);
+    margin-bottom: 16px;
+  }
+
+  .zs-header__panel-social {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--zs-taupe);
+  }
+
+  html.zs-header--panel-open,
+  html.zs-header--panel-open body {
+    overflow: hidden;
   }
 {% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-zs-header]');
+    if (!root) return;
+
+    const isHome = root.dataset.isHome === 'true';
+    const bar = root.querySelector('[data-zs-header-bar]');
+    const panel = root.querySelector('[data-zs-panel]');
+    const overlay = root.querySelector('[data-zs-overlay]');
+    const openBtn = root.querySelector('[data-zs-menu-open]');
+    const closeEls = [root.querySelector('[data-zs-menu-close]'), overlay].filter(Boolean);
+    const announceEl = root.querySelector('[data-zs-announce-text]');
+
+    const messages = [
+      'COMPLIMENTARY SHIPPING OVER $75',
+      'FREE 30-DAY RETURNS',
+      'NEW · CONTOUR BODYSUIT',
+    ];
+
+    let announceIndex = 0;
+    if (announceEl) {
+      const rotateAnnounce = () => {
+        announceEl.classList.add('is-fade-out');
+        window.setTimeout(() => {
+          announceIndex = (announceIndex + 1) % messages.length;
+          announceEl.textContent = messages[announceIndex];
+          announceEl.classList.remove('is-fade-out');
+        }, 400);
+      };
+      window.setInterval(rotateAnnounce, 5000);
+    }
+
+    const setPanelOpen = (open) => {
+      if (!panel || !overlay) return;
+      document.documentElement.classList.toggle('zs-header--panel-open', open);
+      openBtn?.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) {
+        panel.hidden = false;
+        overlay.hidden = false;
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            panel.classList.add('is-active');
+            overlay.classList.add('is-active');
+          });
+        });
+      } else {
+        panel.classList.remove('is-active');
+        overlay.classList.remove('is-active');
+        window.setTimeout(() => {
+          panel.hidden = true;
+          overlay.hidden = true;
+        }, 500);
+      }
+    };
+
+    openBtn?.addEventListener('click', () => {
+      const expanded = openBtn.getAttribute('aria-expanded') === 'true';
+      setPanelOpen(!expanded);
+    });
+
+    closeEls.forEach((el) => {
+      el?.addEventListener('click', () => setPanelOpen(false));
+    });
+
+    panel?.querySelectorAll('a.zs-header__panel-link').forEach((link) => {
+      link.addEventListener('click', () => setPanelOpen(false));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel?.classList.contains('is-active')) {
+        setPanelOpen(false);
+      }
+    });
+
+    const updateOverHero = () => {
+      if (!isHome || !bar) return;
+      const over = window.scrollY < window.innerHeight;
+      bar.classList.toggle('is-over-hero', over);
+    };
+
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const updateScrollHide = () => {
+      if (!bar) return;
+      if (panel?.classList.contains('is-active')) {
+        bar.classList.remove('is-scroll-hidden');
+        lastY = window.scrollY;
+        return;
+      }
+      const y = window.scrollY;
+      const dy = y - lastY;
+      const threshold = 8;
+      if (y < 48) {
+        bar.classList.remove('is-scroll-hidden');
+      } else if (dy > threshold) {
+        bar.classList.add('is-scroll-hidden');
+      } else if (dy < -threshold) {
+        bar.classList.remove('is-scroll-hidden');
+      }
+      lastY = y;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateOverHero();
+        updateScrollHide();
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateOverHero();
+    updateScrollHide();
+  })();
+</script>
 
 {% schema %}
 {
   "name": "t:general.header",
-  "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
-    {
-      "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
-    }
-  ]
+  "tag": "div",
+  "class": "section-zs-header",
+  "settings": []
 }
 {% endschema %}
