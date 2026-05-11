@@ -8,10 +8,7 @@
     <p class="zs-header__announce-text" data-zs-announce-text>COMPLIMENTARY SHIPPING OVER $75</p>
   </div>
 
-  <header
-    class="zs-header__bar{% if request.page_type == 'index' %} is-over-hero{% endif %}"
-    data-zs-header-bar
-  >
+  <header class="zs-header__bar" data-zs-header-bar>
     <div class="zs-header__inner">
       <div class="zs-header__col zs-header__col--left">
         <button
@@ -103,13 +100,19 @@
     --zs-champagne: #c8a96e;
     --zs-taupe: #a07060;
     --zs-border: #e5ddd3;
+
+    position: relative;
+    z-index: 100;
   }
 
   .zs-header__announce {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 32px;
+    min-height: 32px;
     background-color: var(--zs-noir);
     color: var(--zs-champagne);
     width: 100%;
@@ -147,19 +150,17 @@
       background-color 0.4s ease,
       color 0.4s ease,
       border-color 0.4s ease,
-      transform 0.4s ease;
-    will-change: transform;
+      backdrop-filter 0.4s ease,
+      -webkit-backdrop-filter 0.4s ease;
   }
 
+  /* Homepage + top of hero only (class added by JS). No class = default ivory (works without JS). */
   .zs-header__bar.is-over-hero {
-    background-color: transparent;
+    background-color: rgba(26, 26, 26, 0.2);
     color: var(--zs-ivory);
-    border-bottom-color: transparent;
-  }
-
-  .zs-header__bar.is-scroll-hidden {
-    transform: translateY(-100%);
-    pointer-events: none;
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
   @media (max-width: 768px) {
@@ -538,42 +539,20 @@
       bar.classList.toggle('is-over-hero', over);
     };
 
-    let lastY = window.scrollY;
     let ticking = false;
-
-    const updateScrollHide = () => {
-      if (!bar) return;
-      if (panel?.classList.contains('is-active')) {
-        bar.classList.remove('is-scroll-hidden');
-        lastY = window.scrollY;
-        return;
-      }
-      const y = window.scrollY;
-      const dy = y - lastY;
-      const threshold = 8;
-      if (y < 48) {
-        bar.classList.remove('is-scroll-hidden');
-      } else if (dy > threshold) {
-        bar.classList.add('is-scroll-hidden');
-      } else if (dy < -threshold) {
-        bar.classList.remove('is-scroll-hidden');
-      }
-      lastY = y;
-    };
 
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         updateOverHero();
-        updateScrollHide();
         ticking = false;
       });
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     updateOverHero();
-    updateScrollHide();
   })();
 </script>
 
