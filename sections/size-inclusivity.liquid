@@ -5,8 +5,8 @@
   assign subtitle = section.settings.subtitle
     | default: 'Designed, fitted, and tested for the full spectrum of women.'
 
-  assign sizes_raw = section.settings.size_list | default: "XS\nS\nM\nL\nXL\nXXL\n3XL\n4XL\n5XL"
-  assign sizes = sizes_raw | strip | split: '\n'
+  assign sizes_raw = section.settings.size_list | default: 'XS, S, M, L, XL, XXL, 3XL, 4XL, 5XL'
+  assign sizes = sizes_raw | strip | split: ','
 %}
 
 <div class="size-inclusivity full-width" data-size-inclusivity>
@@ -383,15 +383,16 @@
       "default": "Designed, fitted, and tested for the full spectrum of women."
     },
     {
-      "type": "textarea",
+      "type": "text",
       "id": "size_list",
-      "label": "Size list (one per line)",
-      "default": "XS\nS\nM\nL\nXL\nXXL\n3XL\n4XL\n5XL"
+      "label": "Size list (comma-separated)",
+      "default": "XS, S, M, L, XL, XXL, 3XL, 4XL, 5XL"
     }
   ],
   "presets": [
     {
-      "name": "Size inclusivity"
+      "name": "Size inclusivity",
+      "category": "Custom"
     }
   ]
 }
