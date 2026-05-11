@@ -37,13 +37,13 @@
 %}
 
 <div class="texture-detail full-width" data-texture-detail>
-  <div class="texture-detail__inner">
-    <header class="texture-detail__header">
-      <p class="texture-detail__eyebrow" data-texture-header-el>{{ eyebrow_text }}</p>
-      <h2 class="texture-detail__title" data-texture-header-el>{{ main_title }}</h2>
-      <p class="texture-detail__subtitle" data-texture-header-el>{{ subtitle }}</p>
-    </header>
+  <header class="texture-detail__header texture-detail__prose">
+    <p class="texture-detail__eyebrow" data-texture-header-el>{{ eyebrow_text }}</p>
+    <h2 class="texture-detail__title" data-texture-header-el>{{ main_title }}</h2>
+    <p class="texture-detail__subtitle" data-texture-header-el>{{ subtitle }}</p>
+  </header>
 
+  <div class="texture-detail__grid-bleed">
     <div class="texture-detail__grid">
       <div class="texture-detail__cell" data-texture-cell>
         <div class="texture-detail__media">
@@ -110,12 +110,12 @@
         </div>
       </div>
     </div>
-
-    <footer class="texture-detail__footer">
-      <div class="texture-detail__rule" aria-hidden="true" data-texture-footer-el></div>
-      <p class="texture-detail__closing" data-texture-footer-el>{{ closing_statement }}</p>
-    </footer>
   </div>
+
+  <footer class="texture-detail__footer texture-detail__prose">
+    <div class="texture-detail__rule" aria-hidden="true" data-texture-footer-el></div>
+    <p class="texture-detail__closing" data-texture-footer-el>{{ closing_statement }}</p>
+  </footer>
 </div>
 
 {% stylesheet %}
@@ -138,16 +138,16 @@
     }
   }
 
-  .texture-detail__inner {
+  .texture-detail__prose {
     width: 100%;
-    max-width: 1320px;
+    max-width: 880px;
     margin-inline: auto;
-    padding-inline: 20px;
     box-sizing: border-box;
+    padding-inline: 20px;
   }
 
-  @media (min-width: 990px) {
-    .texture-detail__inner {
+  @media (min-width: 640px) {
+    .texture-detail__prose {
       padding-inline: 40px;
     }
   }
@@ -202,21 +202,30 @@
     transform: translate3d(0, 0, 0);
   }
 
-  .texture-detail__grid {
-    display: grid;
-    gap: 16px;
-    grid-template-columns: 1fr;
+  .texture-detail__grid-bleed {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  @media (min-width: 750px) {
+  .texture-detail__grid {
+    display: grid;
+    gap: 2px;
+    width: 100%;
+    grid-template-columns: 1fr;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 640px) {
     .texture-detail__grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (min-width: 990px) {
     .texture-detail__grid {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 

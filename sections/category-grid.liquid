@@ -47,13 +47,14 @@
 %}
 
 <div class="category-grid full-width" data-category-grid>
-  <div class="category-grid__inner">
+  <div class="category-grid__header-row">
     <header class="category-grid__header">
       <p class="category-grid__eyebrow" data-category-grid-header>{{ eyebrow_text }}</p>
       <h2 class="category-grid__title" data-category-grid-header>{{ main_title }}</h2>
     </header>
+  </div>
 
-    <ul class="category-grid__grid" role="list">
+  <ul class="category-grid__grid" role="list">
       <li class="category-grid__item" data-category-grid-card>
         <a class="category-grid__card" href="{{ link_1 }}" aria-label="{{ title_1 }} — Shop now">
           <span class="category-grid__media">
@@ -144,8 +145,7 @@
           </span>
         </a>
       </li>
-    </ul>
-  </div>
+  </ul>
 </div>
 
 {% stylesheet %}
@@ -166,16 +166,14 @@
     }
   }
 
-  .category-grid__inner {
+  .category-grid__header-row {
     width: 100%;
-    max-width: 1320px;
-    margin-inline: auto;
-    padding-inline: 20px;
     box-sizing: border-box;
+    padding-inline: 20px;
   }
 
   @media (min-width: 990px) {
-    .category-grid__inner {
+    .category-grid__header-row {
       padding-inline: 40px;
     }
   }
@@ -219,14 +217,15 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 16px;
+    gap: 0;
+    width: 100%;
+    box-sizing: border-box;
     grid-template-columns: 1fr;
   }
 
   @media (min-width: 990px) {
     .category-grid__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
@@ -300,12 +299,19 @@
     left: 0;
     bottom: 0;
     z-index: 2;
-    padding: 32px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
     pointer-events: none;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 640px) {
+    .category-grid__body {
+      padding: 40px;
+    }
   }
 
   .category-grid__name {
