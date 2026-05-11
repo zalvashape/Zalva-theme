@@ -6,11 +6,11 @@
     assign hero_src = default_image_url
   endif
 
-  assign top_text = section.settings.top_text | default: 'FREE SHIPPING ON ORDERS OVER $75'
+  assign top_text = section.settings.top_text | default: 'MADE TO BE WORN. NOT JUST SEEN.'
   assign w1 = section.settings.headline_word_1 | default: 'She'
   assign w2 = section.settings.headline_word_2 | default: 'wears'
   assign w3 = section.settings.headline_word_3 | default: 'herself.'
-  assign subtitle = section.settings.subtitle | default: 'Premium shapewear · Designed in the US'
+  assign subtitle = section.settings.subtitle | default: 'Premium shapewear · Sculpted for every body.'
   assign hero_alt = section.settings.hero_image_alt | default: 'Zalva Shape'
   assign explore_href = section.settings.explore_link | default: routes.all_products_collection_url
 %}
@@ -342,7 +342,7 @@
       "type": "text",
       "id": "top_text",
       "label": "Top line",
-      "default": "FREE SHIPPING ON ORDERS OVER $75"
+      "default": "MADE TO BE WORN. NOT JUST SEEN."
     },
     {
       "type": "text",
@@ -366,7 +366,7 @@
       "type": "textarea",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "Premium shapewear · Designed in the US"
+      "default": "Premium shapewear · Sculpted for every body."
     },
     {
       "type": "url",
