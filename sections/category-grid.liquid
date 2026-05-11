@@ -157,14 +157,9 @@
     width: 100%;
     margin: 0;
     background-color: var(--cg-ivory);
-    padding-block: 80px;
+    padding-block: 0;
     box-sizing: border-box;
-  }
-
-  @media (min-width: 990px) {
-    .category-grid {
-      padding-block: 120px;
-    }
+    display: flow-root;
   }
 
   .category-grid__header-row {
@@ -181,11 +176,13 @@
 
   .category-grid__header {
     text-align: left;
+    margin-top: 50px;
     margin-bottom: 40px;
   }
 
   @media (min-width: 990px) {
     .category-grid__header {
+      margin-top: 80px;
       margin-bottom: 60px;
     }
   }
