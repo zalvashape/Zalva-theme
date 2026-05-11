@@ -13,6 +13,16 @@ body {
   min-height: 100svh;
 }
 
+/* Homepage: remove default inter-section margins for seamless stacked sections */
+body.zalva-home .shopify-section {
+  margin-block: 0;
+}
+
+/* Avoid flex spacer opening a band of body background above the footer on the homepage */
+body.zalva-home .site-footer {
+  margin-top: 0;
+}
+
 html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
   overflow: hidden;
 }
