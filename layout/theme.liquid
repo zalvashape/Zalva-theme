@@ -42,5 +42,91 @@
     {{ content_for_layout }}
 
     {% section 'footer' %}
+
+    <script>
+      (() => {
+        const headerRoot = document.querySelector('[data-zs-header]');
+        if (!headerRoot) return;
+
+        const isHome = headerRoot.dataset.isHome === 'true';
+        let themedSections = document.querySelectorAll('[data-header-theme]');
+        let lastClass = '';
+        let rafId = 0;
+        let observer = null;
+
+        const getProbeY = () => {
+          const h = headerRoot.getBoundingClientRect().height;
+          return Math.max(0, Math.min(h * 0.5, window.innerHeight - 1));
+        };
+
+        const resolveTheme = () => {
+          if (isHome && window.scrollY < 0.5) return 'dark';
+          if (!themedSections.length) return 'light';
+          const probeY = getProbeY();
+          for (let i = 0; i < themedSections.length; i++) {
+            const el = themedSections[i];
+            const r = el.getBoundingClientRect();
+            if (r.top <= probeY && r.bottom > probeY) {
+              return el.getAttribute('data-header-theme') === 'dark' ? 'dark' : 'light';
+            }
+          }
+          return 'light';
+        };
+
+        const applyTheme = (theme) => {
+          const next = theme === 'dark' ? 'header-theme-dark' : 'header-theme-light';
+          if (lastClass === next) return;
+          lastClass = next;
+          headerRoot.classList.remove('header-theme-light', 'header-theme-dark');
+          headerRoot.classList.add(next);
+        };
+
+        const runDetection = () => {
+          applyTheme(resolveTheme());
+        };
+
+        const scheduleUpdate = () => {
+          if (rafId) return;
+          rafId = window.requestAnimationFrame(() => {
+            rafId = 0;
+            runDetection();
+          });
+        };
+
+        const connectObserver = () => {
+          observer?.disconnect();
+          const topInset = Math.max(1, Math.ceil(headerRoot.getBoundingClientRect().height));
+          observer = new IntersectionObserver(
+            () => {
+              scheduleUpdate();
+            },
+            {
+              root: null,
+              rootMargin: `-${topInset}px 0px 0px 0px`,
+              threshold: [0, 0.05, 0.1, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95, 1],
+            }
+          );
+          themedSections.forEach((section) => observer.observe(section));
+        };
+
+        const init = () => {
+          themedSections = document.querySelectorAll('[data-header-theme]');
+          connectObserver();
+          applyTheme(resolveTheme());
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init, { once: true });
+        } else {
+          init();
+        }
+
+        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener('resize', () => {
+          connectObserver();
+          scheduleUpdate();
+        });
+      })();
+    </script>
   </body>
 </html>

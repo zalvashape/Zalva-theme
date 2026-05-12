@@ -132,6 +132,10 @@
     padding-inline: 20px;
     background-color: var(--zs-noir);
     color: var(--zs-champagne);
+    will-change: background-color, color;
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
   }
 
   @media (min-width: 769px) {
@@ -180,6 +184,7 @@
     border-bottom: 1px solid var(--zs-border);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
+    will-change: background-color, color;
     transition:
       background-color 0.4s ease,
       color 0.4s ease,
@@ -194,13 +199,31 @@
     }
   }
 
-  /* Homepage + top of hero only (class added by JS). No class = default ivory (works without JS). */
-  .zs-header__bar.is-over-hero {
-    background-color: rgba(26, 26, 26, 0.2);
-    color: var(--zs-ivory);
+  /* Adaptive themes (classes applied by layout/theme.liquid script). */
+  .zs-header.header-theme-light .zs-header__bar {
+    background-color: #faf8f5;
+    color: #1a1a1a;
+    border-bottom-color: var(--zs-border);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .zs-header.header-theme-light .zs-header__announce {
+    background-color: var(--zs-noir);
+    color: var(--zs-champagne);
+  }
+
+  .zs-header.header-theme-dark .zs-header__bar {
+    background-color: #1a1a1a;
+    color: #faf8f5;
     border-bottom-color: rgba(255, 255, 255, 0.12);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
+  }
+
+  .zs-header.header-theme-dark .zs-header__announce {
+    background-color: #faf8f5;
+    color: #1a1a1a;
   }
 
   .zs-header__inner {
@@ -475,7 +498,7 @@
     }
   }
 
-  .zs-header__bar.is-over-hero .zs-header__cart-count {
+  .zs-header.header-theme-dark .zs-header__cart-count {
     color: var(--zs-champagne);
   }
 
@@ -621,8 +644,6 @@
     const root = document.querySelector('[data-zs-header]');
     if (!root) return;
 
-    const isHome = root.dataset.isHome === 'true';
-    const bar = root.querySelector('[data-zs-header-bar]');
     const panel = root.querySelector('[data-zs-panel]');
     const overlay = root.querySelector('[data-zs-overlay]');
     const openBtn = root.querySelector('[data-zs-menu-open]');
@@ -690,26 +711,6 @@
       }
     });
 
-    const updateOverHero = () => {
-      if (!isHome || !bar) return;
-      const over = window.scrollY < window.innerHeight;
-      bar.classList.toggle('is-over-hero', over);
-    };
-
-    let ticking = false;
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        updateOverHero();
-        ticking = false;
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    updateOverHero();
   })();
 </script>
 
