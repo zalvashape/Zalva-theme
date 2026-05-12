@@ -54,8 +54,14 @@
         let rafId = 0;
         let observer = null;
 
+        const getHeaderStackHeight = () => {
+          const announce = headerRoot.querySelector('.zs-header__announce');
+          const bar = headerRoot.querySelector('[data-zs-header-bar]');
+          return (announce?.offsetHeight ?? 0) + (bar?.offsetHeight ?? 0);
+        };
+
         const getProbeY = () => {
-          const h = headerRoot.getBoundingClientRect().height;
+          const h = getHeaderStackHeight();
           return Math.max(0, Math.min(h * 0.5, window.innerHeight - 1));
         };
 
@@ -95,7 +101,7 @@
 
         const connectObserver = () => {
           observer?.disconnect();
-          const topInset = Math.max(1, Math.ceil(headerRoot.getBoundingClientRect().height));
+          const topInset = Math.max(1, Math.ceil(getHeaderStackHeight()));
           observer = new IntersectionObserver(
             () => {
               scheduleUpdate();

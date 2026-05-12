@@ -13,6 +13,17 @@ body {
   min-height: 100svh;
 }
 
+/* Offset for fixed premium header (announce + bar); matches sections/header.liquid heights */
+body:has([data-zs-header]) {
+  padding-top: 100px;
+}
+
+@media (min-width: 769px) {
+  body:has([data-zs-header]) {
+    padding-top: 132px;
+  }
+}
+
 /* Homepage: remove default inter-section margins for seamless stacked sections */
 body.zalva-home .shopify-section {
   margin-block: 0;
