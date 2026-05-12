@@ -225,21 +225,21 @@
 
   /* Scroll reveal (threshold applied via JS class .is-revealed) */
   .real-women.is-revealed [data-real-women-reveal]:nth-child(1) {
-    animation: real-women-ornament-in 0.8s ease both;
+    animation: real-women-ornament-in 0.8s ease forwards;
   }
 
   .real-women.is-revealed [data-real-women-reveal]:nth-child(2) {
-    animation: real-women-fade-in 0.8s ease both;
+    animation: real-women-fade-in 0.8s ease forwards;
     animation-delay: 0.3s;
   }
 
   .real-women.is-revealed [data-real-women-reveal]:nth-child(3) {
-    animation: real-women-fade-in 0.8s ease both;
+    animation: real-women-fade-in 0.8s ease forwards;
     animation-delay: 0.6s;
   }
 
   .real-women.is-revealed [data-real-women-reveal]:nth-child(4) {
-    animation: real-women-fade-in 0.8s ease both;
+    animation: real-women-fade-in 0.8s ease forwards;
     animation-delay: 0.9s;
   }
 
@@ -312,34 +312,71 @@
     const root = document.querySelector('[data-real-women]');
     if (!root) return;
 
+    const REVEAL_IO_DELAY_MS = 100;
     const REVEAL_FALLBACK_MS = 1000;
     let revealDone = false;
     let revealFallbackTimer = 0;
+    let revealIo = null;
+    let removeRevealScrollListener = null;
 
     const clearRevealFallback = () => {
       if (revealFallbackTimer) window.clearTimeout(revealFallbackTimer);
       revealFallbackTimer = 0;
     };
 
-    const markRevealed = () => {
+    const disconnectRevealIo = () => {
+      if (revealIo) {
+        revealIo.disconnect();
+        revealIo = null;
+      }
+    };
+
+    const markRevealSettled = () => {
       if (revealDone) return;
       revealDone = true;
       clearRevealFallback();
+      disconnectRevealIo();
+      if (typeof removeRevealScrollListener === 'function') {
+        removeRevealScrollListener();
+        removeRevealScrollListener = null;
+      }
+      root.classList.remove('is-revealed');
+      root.classList.add('reveal-settled');
+    };
+
+    const markRevealAnimated = () => {
+      if (revealDone) return;
+      revealDone = true;
+      clearRevealFallback();
+      disconnectRevealIo();
+      if (typeof removeRevealScrollListener === 'function') {
+        removeRevealScrollListener();
+        removeRevealScrollListener = null;
+      }
       root.classList.remove('reveal-settled');
       root.classList.add('is-revealed');
     };
 
-    revealFallbackTimer = window.setTimeout(() => {
-      if (revealDone) return;
-      if (!root.classList.contains('is-revealed')) root.classList.add('reveal-settled');
-    }, REVEAL_FALLBACK_MS);
+    const scheduleRevealFallback = () => {
+      clearRevealFallback();
+      revealFallbackTimer = window.setTimeout(() => {
+        if (revealDone) return;
+        markRevealSettled();
+      }, REVEAL_FALLBACK_MS);
+    };
+
+    const isInViewport = (el) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      return r.bottom > 0 && r.top < vh;
+    };
 
     const slides = Array.from(root.querySelectorAll('[data-real-women-slide]'));
     const dots = Array.from(root.querySelectorAll('[data-real-women-dot]'));
     const dwellMs = Number(root.getAttribute('data-real-women-duration')) || 6000;
 
     if (!slides.length) {
-      markRevealed();
+      markRevealSettled();
       return;
     }
 
@@ -444,19 +481,49 @@
     setDots(current);
     setAriaHidden(current);
 
-    if ('IntersectionObserver' in window) {
-      const revealIo = new IntersectionObserver(
+    const startRevealScroll = () => {
+      if (prefersReducedMotion) {
+        markRevealSettled();
+        return;
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        markRevealSettled();
+        return;
+      }
+
+      if (isInViewport(root)) {
+        markRevealSettled();
+        return;
+      }
+
+      scheduleRevealFallback();
+
+      let lastScrollY = window.scrollY || window.pageYOffset || 0;
+      const onScroll = () => {
+        lastScrollY = window.scrollY || window.pageYOffset || 0;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      removeRevealScrollListener = () => window.removeEventListener('scroll', onScroll);
+
+      revealIo = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-              markRevealed();
-              revealIo.disconnect();
-            }
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.3) return;
+            const y = window.scrollY || window.pageYOffset || 0;
+            const scrollingDown = y >= lastScrollY - 2;
+            if (scrollingDown) markRevealAnimated();
+            else markRevealSettled();
           });
         },
         { threshold: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 1] }
       );
+
       revealIo.observe(root);
+    };
+
+    if ('IntersectionObserver' in window) {
+      window.setTimeout(startRevealScroll, REVEAL_IO_DELAY_MS);
 
       const rotateIo = new IntersectionObserver(
         (entries) => {
@@ -478,14 +545,14 @@
       );
       rotateIo.observe(root);
     } else {
-      markRevealed();
+      markRevealSettled();
       sectionVisible = true;
       rotationArmed = true;
       if (slides.length >= 2 && !prefersReducedMotion) scheduleRotation();
     }
 
     if (prefersReducedMotion) {
-      markRevealed();
+      markRevealSettled();
       sectionVisible = true;
       rotationArmed = false;
     }

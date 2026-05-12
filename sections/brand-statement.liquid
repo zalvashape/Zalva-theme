@@ -83,16 +83,16 @@
   }
 
   .brand-statement.is-visible .brand-statement__accent {
-    animation: brand-statement-accent-grow 1s ease both;
+    animation: brand-statement-accent-grow 1s ease forwards;
   }
 
   .brand-statement.is-visible .brand-statement__line--1 {
-    animation: brand-statement-line-reveal 0.8s ease both;
+    animation: brand-statement-line-reveal 0.8s ease forwards;
     animation-delay: 0.3s;
   }
 
   .brand-statement.is-visible .brand-statement__line--2 {
-    animation: brand-statement-line-reveal 0.8s ease both;
+    animation: brand-statement-line-reveal 0.8s ease forwards;
     animation-delay: 0.7s;
   }
 
@@ -159,53 +159,111 @@
     const root = document.querySelector('[data-brand-statement]');
     if (!root) return;
 
+    const REVEAL_IO_DELAY_MS = 100;
     const REVEAL_FALLBACK_MS = 1000;
     let revealDone = false;
     let fallbackTimer = 0;
+    let io = null;
+    let removeScrollListener = null;
 
     const clearRevealFallback = () => {
       if (fallbackTimer) window.clearTimeout(fallbackTimer);
       fallbackTimer = 0;
     };
 
-    const markRevealed = () => {
+    const disconnectIo = () => {
+      if (io) {
+        io.disconnect();
+        io = null;
+      }
+    };
+
+    const markSettled = () => {
       if (revealDone) return;
       revealDone = true;
       clearRevealFallback();
+      disconnectIo();
+      if (typeof removeScrollListener === 'function') {
+        removeScrollListener();
+        removeScrollListener = null;
+      }
+      root.classList.remove('is-visible');
+      root.classList.add('reveal-settled');
+    };
+
+    const markAnimated = () => {
+      if (revealDone) return;
+      revealDone = true;
+      clearRevealFallback();
+      disconnectIo();
+      if (typeof removeScrollListener === 'function') {
+        removeScrollListener();
+        removeScrollListener = null;
+      }
       root.classList.remove('reveal-settled');
       root.classList.add('is-visible');
     };
 
-    fallbackTimer = window.setTimeout(() => {
-      if (revealDone) return;
-      if (!root.classList.contains('is-visible')) root.classList.add('reveal-settled');
-    }, REVEAL_FALLBACK_MS);
+    const scheduleFallback = () => {
+      clearRevealFallback();
+      fallbackTimer = window.setTimeout(() => {
+        if (revealDone) return;
+        markSettled();
+      }, REVEAL_FALLBACK_MS);
+    };
+
+    const isInViewport = (el) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      return r.bottom > 0 && r.top < vh;
+    };
 
     const prefersReducedMotion =
       window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (prefersReducedMotion) {
-      markRevealed();
-      return;
-    }
+    const startReveal = () => {
+      if (prefersReducedMotion) {
+        markSettled();
+        return;
+      }
 
-    if (!('IntersectionObserver' in window)) {
-      markRevealed();
-      return;
-    }
+      if (!('IntersectionObserver' in window)) {
+        markSettled();
+        return;
+      }
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          markRevealed();
-          io.disconnect();
-        });
-      },
-      { threshold: 0.3 }
-    );
+      if (isInViewport(root)) {
+        markSettled();
+        return;
+      }
 
-    io.observe(root);
+      scheduleFallback();
+
+      let lastScrollY = window.scrollY || window.pageYOffset || 0;
+      const onScroll = () => {
+        lastScrollY = window.scrollY || window.pageYOffset || 0;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      removeScrollListener = () => window.removeEventListener('scroll', onScroll);
+
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            if (entry.intersectionRatio < 0.3) return;
+            const y = window.scrollY || window.pageYOffset || 0;
+            const scrollingDown = y >= lastScrollY - 2;
+            if (scrollingDown) markAnimated();
+            else markSettled();
+          });
+        },
+        { threshold: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 1] }
+      );
+
+      io.observe(root);
+    };
+
+    window.setTimeout(startReveal, REVEAL_IO_DELAY_MS);
   })();
 </script>
 
