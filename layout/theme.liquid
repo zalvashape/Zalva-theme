@@ -55,16 +55,16 @@
         headerRoot.classList.remove('header-theme-light', 'header-theme-dark');
 
         const isHome = headerRoot.dataset.isHome === 'true';
-        const HERO_BG = '#1A1A1A';
-        const HERO_TEXT = '#FAF8F5';
         const DEFAULT_BAR_BG = '#FAF8F5';
         const DEFAULT_BAR_TEXT = '#1A1A1A';
+        const HERO_FALLBACK_BAR_BG = 'rgba(26,26,26,0.3)';
+        const HERO_FALLBACK_BAR_TEXT = '#FAF8F5';
         const ANNOUNCE_ON_LIGHT_BG = '#1A1A1A';
         const ANNOUNCE_ON_LIGHT_TEXT = '#C8A96E';
         const ANNOUNCE_ON_DARK_BG = '#FAF8F5';
         const ANNOUNCE_ON_DARK_TEXT = '#1A1A1A';
 
-        const sectionColorCache = new WeakMap();
+        let sectionColorCache = new WeakMap();
         let bgSections = [];
         let rafId = 0;
         let observer = null;
@@ -72,7 +72,9 @@
 
         const normalizeHex = (value) => (value || '').trim().toLowerCase();
 
-        const isNoirBackground = (bg) => normalizeHex(bg) === '#1a1a1a';
+        const shouldInverseAnnounce = (barText) => normalizeHex(barText) === '#faf8f5';
+
+        const isGlassBarBackground = (bg) => /\brgba\s*\(/i.test((bg || '').trim());
 
         const getCachedSectionColors = (el) => {
           let cached = sectionColorCache.get(el);
@@ -109,19 +111,24 @@
 
         const resolveBarColors = () => {
           if (isHome && window.scrollY < 0.5) {
-            return { barBg: HERO_BG, barText: HERO_TEXT, sectionBg: HERO_BG };
+            const heroEl = document.querySelector('[data-main-hero-section]');
+            if (heroEl) {
+              const { bg, text } = getCachedSectionColors(heroEl);
+              return { barBg: bg, barText: text };
+            }
+            return { barBg: HERO_FALLBACK_BAR_BG, barText: HERO_FALLBACK_BAR_TEXT };
           }
           const el = findSectionBehindHeader();
           if (!el) {
-            return { barBg: DEFAULT_BAR_BG, barText: DEFAULT_BAR_TEXT, sectionBg: DEFAULT_BAR_BG };
+            return { barBg: DEFAULT_BAR_BG, barText: DEFAULT_BAR_TEXT };
           }
           const { bg, text } = getCachedSectionColors(el);
-          return { barBg: bg, barText: text, sectionBg: bg };
+          return { barBg: bg, barText: text };
         };
 
         const applyHeaderStyles = () => {
-          const { barBg, barText, sectionBg } = resolveBarColors();
-          const announceInverse = isNoirBackground(sectionBg);
+          const { barBg, barText } = resolveBarColors();
+          const announceInverse = shouldInverseAnnounce(barText);
           const announceBg = announceInverse ? ANNOUNCE_ON_DARK_BG : ANNOUNCE_ON_LIGHT_BG;
           const announceText = announceInverse ? ANNOUNCE_ON_DARK_TEXT : ANNOUNCE_ON_LIGHT_TEXT;
 
@@ -131,9 +138,15 @@
 
           bar.style.backgroundColor = barBg;
           bar.style.color = barText;
-          bar.style.borderBottomColor = barBg;
-          bar.style.webkitBackdropFilter = 'none';
-          bar.style.backdropFilter = 'none';
+          if (isGlassBarBackground(barBg)) {
+            bar.style.borderBottomColor = 'transparent';
+            bar.style.webkitBackdropFilter = 'blur(10px)';
+            bar.style.backdropFilter = 'blur(10px)';
+          } else {
+            bar.style.borderBottomColor = barBg;
+            bar.style.webkitBackdropFilter = 'none';
+            bar.style.backdropFilter = 'none';
+          }
 
           announce.style.backgroundColor = announceBg;
           announce.style.color = announceText;
@@ -167,11 +180,22 @@
           bgSections.forEach((section) => observer.observe(section));
         };
 
+        const revealHeaderUi = () => {
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              document.documentElement.classList.add('zs-header-ui-revealed');
+            });
+          });
+        };
+
         const init = () => {
+          document.documentElement.classList.add('zs-header-js');
+          sectionColorCache = new WeakMap();
           bgSections = Array.from(document.querySelectorAll('[data-header-bg]'));
-          connectObserver();
           lastStyleKey = '';
           applyHeaderStyles();
+          connectObserver();
+          revealHeaderUi();
         };
 
         if (document.readyState === 'loading') {
