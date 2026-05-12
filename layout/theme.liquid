@@ -57,7 +57,7 @@
         const isHome = headerRoot.dataset.isHome === 'true';
         const DEFAULT_BAR_BG = '#FAF8F5';
         const DEFAULT_BAR_TEXT = '#1A1A1A';
-        const HERO_FALLBACK_BAR_BG = 'rgba(26,26,26,0.3)';
+        const HERO_FALLBACK_BAR_BG = '#1A1A1A';
         const HERO_FALLBACK_BAR_TEXT = '#FAF8F5';
         const ANNOUNCE_ON_LIGHT_BG = '#1A1A1A';
         const ANNOUNCE_ON_LIGHT_TEXT = '#C8A96E';
@@ -73,8 +73,6 @@
         const normalizeHex = (value) => (value || '').trim().toLowerCase();
 
         const shouldInverseAnnounce = (barText) => normalizeHex(barText) === '#faf8f5';
-
-        const isGlassBarBackground = (bg) => /\brgba\s*\(/i.test((bg || '').trim());
 
         const getCachedSectionColors = (el) => {
           let cached = sectionColorCache.get(el);
@@ -138,15 +136,9 @@
 
           bar.style.backgroundColor = barBg;
           bar.style.color = barText;
-          if (isGlassBarBackground(barBg)) {
-            bar.style.borderBottomColor = 'transparent';
-            bar.style.webkitBackdropFilter = 'blur(10px)';
-            bar.style.backdropFilter = 'blur(10px)';
-          } else {
-            bar.style.borderBottomColor = barBg;
-            bar.style.webkitBackdropFilter = 'none';
-            bar.style.backdropFilter = 'none';
-          }
+          bar.style.borderBottomColor = barBg;
+          bar.style.webkitBackdropFilter = 'none';
+          bar.style.backdropFilter = 'none';
 
           announce.style.backgroundColor = announceBg;
           announce.style.color = announceText;

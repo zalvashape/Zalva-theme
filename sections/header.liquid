@@ -136,8 +136,8 @@
     box-sizing: border-box;
     pointer-events: auto;
     padding-inline: 20px;
-    background-color: var(--zs-noir);
-    color: var(--zs-champagne);
+    background-color: #faf8f5;
+    color: #1a1a1a;
     will-change: background-color, color, opacity;
     transition:
       background-color 0.5s ease,
@@ -191,33 +191,23 @@
     display: flex;
     align-items: center;
     pointer-events: auto;
-    background-color: rgba(250, 248, 245, 0.92);
-    color: var(--zs-noir);
-    border-bottom: 1px solid transparent;
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    background-color: #1a1a1a;
+    color: #faf8f5;
+    border-bottom: 1px solid #1a1a1a;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     will-change: background-color, color, opacity;
     transition:
       background-color 0.5s ease,
       color 0.5s ease,
       border-color 0.5s ease,
-      backdrop-filter 0.5s ease,
-      -webkit-backdrop-filter 0.5s ease,
       opacity 0.3s ease;
   }
 
-  /* Homepage: hero-appropriate bar + strip before adaptive script runs */
-  body.zalva-home .zs-header__bar {
-    background-color: rgba(26, 26, 26, 0.3);
-    color: #faf8f5;
-    border-bottom-color: transparent;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-  }
-
-  body.zalva-home .zs-header__announce {
-    background-color: #faf8f5;
-    color: #1a1a1a;
+  @media (min-width: 769px) {
+    .zs-header__bar {
+      height: 96px;
+    }
   }
 
   html.zs-header-js:not(.zs-header-ui-revealed) .zs-header__bar,
@@ -228,12 +218,6 @@
   html.zs-header-ui-revealed .zs-header__bar,
   html.zs-header-ui-revealed .zs-header__announce {
     opacity: 1;
-  }
-
-  @media (min-width: 769px) {
-    .zs-header__bar {
-      height: 96px;
-    }
   }
 
   .zs-header__inner {
