@@ -140,8 +140,8 @@
     color: var(--zs-champagne);
     will-change: background-color, color;
     transition:
-      background-color 0.4s ease,
-      color 0.4s ease;
+      background-color 0.5s ease,
+      color 0.5s ease;
   }
 
   @media (min-width: 769px) {
@@ -192,49 +192,22 @@
     pointer-events: auto;
     background-color: rgba(250, 248, 245, 0.92);
     color: var(--zs-noir);
-    border-bottom: 1px solid var(--zs-border);
+    border-bottom: 1px solid transparent;
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     will-change: background-color, color;
     transition:
-      background-color 0.4s ease,
-      color 0.4s ease,
-      border-color 0.4s ease,
-      backdrop-filter 0.4s ease,
-      -webkit-backdrop-filter 0.4s ease;
+      background-color 0.5s ease,
+      color 0.5s ease,
+      border-color 0.5s ease,
+      backdrop-filter 0.5s ease,
+      -webkit-backdrop-filter 0.5s ease;
   }
 
   @media (min-width: 769px) {
     .zs-header__bar {
       height: 96px;
     }
-  }
-
-  /* Adaptive themes (classes applied by layout/theme.liquid script). */
-  .zs-header.header-theme-light .zs-header__bar {
-    background-color: #faf8f5;
-    color: #1a1a1a;
-    border-bottom-color: var(--zs-border);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-  }
-
-  .zs-header.header-theme-light .zs-header__announce {
-    background-color: var(--zs-noir);
-    color: var(--zs-champagne);
-  }
-
-  .zs-header.header-theme-dark .zs-header__bar {
-    background-color: #1a1a1a;
-    color: #faf8f5;
-    border-bottom-color: rgba(255, 255, 255, 0.12);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
-
-  .zs-header.header-theme-dark .zs-header__announce {
-    background-color: #faf8f5;
-    color: #1a1a1a;
   }
 
   .zs-header__inner {
@@ -507,10 +480,6 @@
     .zs-header__cart-count {
       font-size: 11px;
     }
-  }
-
-  .zs-header.header-theme-dark .zs-header__cart-count {
-    color: var(--zs-champagne);
   }
 
   .zs-header__overlay {

@@ -48,16 +48,48 @@
         const headerRoot = document.querySelector('[data-zs-header]');
         if (!headerRoot) return;
 
+        const bar = headerRoot.querySelector('[data-zs-header-bar]');
+        const announce = headerRoot.querySelector('.zs-header__announce');
+        if (!bar || !announce) return;
+
+        headerRoot.classList.remove('header-theme-light', 'header-theme-dark');
+
         const isHome = headerRoot.dataset.isHome === 'true';
-        let themedSections = document.querySelectorAll('[data-header-theme]');
-        let lastClass = '';
+        const HERO_BG = '#1A1A1A';
+        const HERO_TEXT = '#FAF8F5';
+        const DEFAULT_BAR_BG = '#FAF8F5';
+        const DEFAULT_BAR_TEXT = '#1A1A1A';
+        const ANNOUNCE_ON_LIGHT_BG = '#1A1A1A';
+        const ANNOUNCE_ON_LIGHT_TEXT = '#C8A96E';
+        const ANNOUNCE_ON_DARK_BG = '#FAF8F5';
+        const ANNOUNCE_ON_DARK_TEXT = '#1A1A1A';
+
+        const sectionColorCache = new WeakMap();
+        let bgSections = [];
         let rafId = 0;
         let observer = null;
+        let lastStyleKey = '';
+
+        const normalizeHex = (value) => (value || '').trim().toLowerCase();
+
+        const isNoirBackground = (bg) => normalizeHex(bg) === '#1a1a1a';
+
+        const getCachedSectionColors = (el) => {
+          let cached = sectionColorCache.get(el);
+          if (!cached) {
+            cached = {
+              bg: el.getAttribute('data-header-bg') || DEFAULT_BAR_BG,
+              text: el.getAttribute('data-header-text') || DEFAULT_BAR_TEXT,
+            };
+            sectionColorCache.set(el, cached);
+          }
+          return cached;
+        };
 
         const getHeaderStackHeight = () => {
-          const announce = headerRoot.querySelector('.zs-header__announce');
-          const bar = headerRoot.querySelector('[data-zs-header-bar]');
-          return (announce?.offsetHeight ?? 0) + (bar?.offsetHeight ?? 0);
+          const ann = headerRoot.querySelector('.zs-header__announce');
+          const b = headerRoot.querySelector('[data-zs-header-bar]');
+          return (ann?.offsetHeight ?? 0) + (b?.offsetHeight ?? 0);
         };
 
         const getProbeY = () => {
@@ -65,30 +97,50 @@
           return Math.max(0, Math.min(h * 0.5, window.innerHeight - 1));
         };
 
-        const resolveTheme = () => {
-          if (isHome && window.scrollY < 0.5) return 'dark';
-          if (!themedSections.length) return 'light';
+        const findSectionBehindHeader = () => {
           const probeY = getProbeY();
-          for (let i = 0; i < themedSections.length; i++) {
-            const el = themedSections[i];
+          for (let i = 0; i < bgSections.length; i++) {
+            const el = bgSections[i];
             const r = el.getBoundingClientRect();
-            if (r.top <= probeY && r.bottom > probeY) {
-              return el.getAttribute('data-header-theme') === 'dark' ? 'dark' : 'light';
-            }
+            if (r.top <= probeY && r.bottom > probeY) return el;
           }
-          return 'light';
+          return null;
         };
 
-        const applyTheme = (theme) => {
-          const next = theme === 'dark' ? 'header-theme-dark' : 'header-theme-light';
-          if (lastClass === next) return;
-          lastClass = next;
-          headerRoot.classList.remove('header-theme-light', 'header-theme-dark');
-          headerRoot.classList.add(next);
+        const resolveBarColors = () => {
+          if (isHome && window.scrollY < 0.5) {
+            return { barBg: HERO_BG, barText: HERO_TEXT, sectionBg: HERO_BG };
+          }
+          const el = findSectionBehindHeader();
+          if (!el) {
+            return { barBg: DEFAULT_BAR_BG, barText: DEFAULT_BAR_TEXT, sectionBg: DEFAULT_BAR_BG };
+          }
+          const { bg, text } = getCachedSectionColors(el);
+          return { barBg: bg, barText: text, sectionBg: bg };
+        };
+
+        const applyHeaderStyles = () => {
+          const { barBg, barText, sectionBg } = resolveBarColors();
+          const announceInverse = isNoirBackground(sectionBg);
+          const announceBg = announceInverse ? ANNOUNCE_ON_DARK_BG : ANNOUNCE_ON_LIGHT_BG;
+          const announceText = announceInverse ? ANNOUNCE_ON_DARK_TEXT : ANNOUNCE_ON_LIGHT_TEXT;
+
+          const key = `${barBg}|${barText}|${announceBg}|${announceText}`;
+          if (key === lastStyleKey) return;
+          lastStyleKey = key;
+
+          bar.style.backgroundColor = barBg;
+          bar.style.color = barText;
+          bar.style.borderBottomColor = barBg;
+          bar.style.webkitBackdropFilter = 'none';
+          bar.style.backdropFilter = 'none';
+
+          announce.style.backgroundColor = announceBg;
+          announce.style.color = announceText;
         };
 
         const runDetection = () => {
-          applyTheme(resolveTheme());
+          applyHeaderStyles();
         };
 
         const scheduleUpdate = () => {
@@ -112,13 +164,14 @@
               threshold: [0, 0.05, 0.1, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95, 1],
             }
           );
-          themedSections.forEach((section) => observer.observe(section));
+          bgSections.forEach((section) => observer.observe(section));
         };
 
         const init = () => {
-          themedSections = document.querySelectorAll('[data-header-theme]');
+          bgSections = Array.from(document.querySelectorAll('[data-header-bg]'));
           connectObserver();
-          applyTheme(resolveTheme());
+          lastStyleKey = '';
+          applyHeaderStyles();
         };
 
         if (document.readyState === 'loading') {
@@ -130,6 +183,7 @@
         window.addEventListener('scroll', scheduleUpdate, { passive: true });
         window.addEventListener('resize', () => {
           connectObserver();
+          lastStyleKey = '';
           scheduleUpdate();
         });
       })();

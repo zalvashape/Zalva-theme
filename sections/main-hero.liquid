@@ -15,7 +15,12 @@
   assign explore_href = section.settings.explore_link | default: routes.all_products_collection_url
 %}
 
-<div class="main-hero full-width" data-main-hero-section data-header-theme="dark">
+<div
+  class="main-hero full-width"
+  data-main-hero-section
+  data-header-bg="#1A1A1A"
+  data-header-text="#FAF8F5"
+>
   <img
     class="main-hero__bg"
     src="{{ hero_src }}"
