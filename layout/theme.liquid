@@ -55,10 +55,10 @@
         headerRoot.classList.remove('header-theme-light', 'header-theme-dark');
 
         const isHome = headerRoot.dataset.isHome === 'true';
-        const DEFAULT_BAR_BG = '#FAF8F5';
+        const DEFAULT_BAR_BG = '#F0E8DF';
         const DEFAULT_BAR_TEXT = '#1A1A1A';
-        const HERO_FALLBACK_BAR_BG = '#1A1A1A';
-        const HERO_FALLBACK_BAR_TEXT = '#FAF8F5';
+        const HERO_FALLBACK_BAR_BG = '#F0E8DF';
+        const HERO_FALLBACK_BAR_TEXT = '#1A1A1A';
         const ANNOUNCE_ON_LIGHT_BG = '#1A1A1A';
         const ANNOUNCE_ON_LIGHT_TEXT = '#C8A96E';
         const ANNOUNCE_ON_DARK_BG = '#FAF8F5';
@@ -69,6 +69,7 @@
         let rafId = 0;
         let observer = null;
         let lastStyleKey = '';
+        let headerIoUpdatesEnabled = false;
 
         const normalizeHex = (value) => (value || '').trim().toLowerCase();
 
@@ -161,6 +162,7 @@
           const topInset = Math.max(1, Math.ceil(getHeaderStackHeight()));
           observer = new IntersectionObserver(
             () => {
+              if (!headerIoUpdatesEnabled) return;
               scheduleUpdate();
             },
             {
@@ -185,8 +187,11 @@
           sectionColorCache = new WeakMap();
           bgSections = Array.from(document.querySelectorAll('[data-header-bg]'));
           lastStyleKey = '';
+          if (window.scrollY > 0.5) headerIoUpdatesEnabled = true;
           applyHeaderStyles();
-          connectObserver();
+          window.setTimeout(() => {
+            connectObserver();
+          }, 50);
           revealHeaderUi();
         };
 
@@ -196,8 +201,16 @@
           init();
         }
 
-        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener(
+          'scroll',
+          () => {
+            headerIoUpdatesEnabled = true;
+            scheduleUpdate();
+          },
+          { passive: true }
+        );
         window.addEventListener('resize', () => {
+          headerIoUpdatesEnabled = true;
           connectObserver();
           lastStyleKey = '';
           scheduleUpdate();
