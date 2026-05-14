@@ -36,12 +36,19 @@
       </div>
 
       <div class="zs-header__col zs-header__col--right">
-        <a class="zs-header__icon-link" href="{{ routes.search_url }}" aria-label="Search">
+        <button
+          type="button"
+          class="zs-header__icon-link zs-header__icon-btn"
+          data-zs-search-open
+          aria-expanded="false"
+          aria-controls="zs-search-overlay-dialog"
+          aria-label="Search"
+        >
           <svg class="zs-header__icon-svg" width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/>
             <path d="M12.5 12.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
-        </a>
+        </button>
         {% if shop.customer_accounts_enabled %}
           <a class="zs-header__icon-link" href="{{ routes.account_url }}" aria-label="Account">
             <svg class="zs-header__icon-svg" width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -422,6 +429,14 @@
     position: relative;
   }
 
+  button.zs-header__icon-btn {
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+
   .zs-header__icon-link:focus-visible {
     outline: 2px solid var(--zs-champagne);
     outline-offset: 4px;
@@ -700,9 +715,9 @@
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && panel?.classList.contains('is-active')) {
-        setPanelOpen(false);
-      }
+      if (e.key !== 'Escape' || !panel?.classList.contains('is-active')) return;
+      if (document.querySelector('[data-zs-search-overlay].is-open')) return;
+      setPanelOpen(false);
     });
 
   })();
