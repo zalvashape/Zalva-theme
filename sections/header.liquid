@@ -41,7 +41,7 @@
           class="zs-header__icon-link zs-header__icon-btn"
           data-zs-search-open
           aria-expanded="false"
-          aria-controls="zs-search-overlay-dialog"
+          aria-controls="zs-search-dropdown-dialog"
           aria-label="Search"
         >
           <svg class="zs-header__icon-svg" width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -82,7 +82,99 @@
         </a>
       </div>
     </div>
+
+    <div
+      id="zs-search-dropdown-dialog"
+      class="zs-search-dropdown"
+      data-zs-search-dropdown
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="zs-search-dropdown-eyebrow"
+    >
+      <div class="zs-search-dropdown__inner">
+        <button
+          type="button"
+          class="zs-search-dropdown__close"
+          data-zs-search-close
+          aria-label="Close search"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <p id="zs-search-dropdown-eyebrow" class="zs-search-dropdown__eyebrow">Search</p>
+
+        <form class="zs-search-dropdown__form" action="{{ routes.search_url }}" method="get" role="search" data-zs-search-form>
+          <label class="zs-search-dropdown__visually-hidden" for="zs-search-dropdown-input">Search</label>
+          <input
+            id="zs-search-dropdown-input"
+            class="zs-search-dropdown__input"
+            type="search"
+            name="q"
+            value=""
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="What are you looking for?"
+            data-zs-search-input
+          >
+        </form>
+
+        <div class="zs-search-dropdown__body">
+          <div class="zs-search-dropdown__columns" data-zs-search-columns>
+            <div class="zs-search-dropdown__col">
+              <p class="zs-search-dropdown__col-label">Popular searches</p>
+              <ul class="zs-search-dropdown__links" role="list">
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/waist-trainers">Waist trainers</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/fajas">Fajas</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=best-selling">Best sellers</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=created-descending">New arrivals</a>
+                </li>
+              </ul>
+            </div>
+            <div class="zs-search-dropdown__col">
+              <p class="zs-search-dropdown__col-label">Quick links</p>
+              <ul class="zs-search-dropdown__links" role="list">
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}">Shop All</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}pages/about">The Story</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}pages/size-guide">Size Guide</a>
+                </li>
+                <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}pages/contact">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="zs-search-dropdown__live" data-zs-search-live hidden>
+            <ul class="zs-search-dropdown__grid" data-zs-search-product-grid role="list"></ul>
+            <p class="zs-search-dropdown__noresults" data-zs-search-noresults hidden>No results found.</p>
+            <a class="zs-search-dropdown__view-all" href="{{ routes.search_url }}" data-zs-search-view-all hidden>VIEW ALL RESULTS →</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </header>
+
+  <div class="zs-header__search-dim" data-zs-search-dim aria-hidden="true"></div>
 
   <div class="zs-header__overlay" data-zs-overlay hidden></div>
 
@@ -114,6 +206,13 @@
       <p class="zs-header__panel-social">INSTAGRAM · TIKTOK</p>
     </div>
   </div>
+
+  <script type="application/json" data-zs-search-config>
+    {
+      "suggestUrl": {{ routes.predictive_search_url | append: '.json' | json }},
+      "searchUrl": {{ routes.search_url | json }}
+    }
+  </script>
 </div>
 
 {% stylesheet %}
@@ -198,9 +297,9 @@
     z-index: 101;
     width: 100%;
     box-sizing: border-box;
-    height: 72px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     pointer-events: auto;
     background-color: #f0e8df;
     color: #1a1a1a;
@@ -213,12 +312,6 @@
       color 0.5s ease,
       border-color 0.5s ease,
       opacity 0.3s ease;
-  }
-
-  @media (min-width: 769px) {
-    .zs-header__bar {
-      height: 96px;
-    }
   }
 
   html.zs-header-js:not(.zs-header-ui-revealed) .zs-header__bar,
@@ -239,6 +332,7 @@
     width: 100%;
     box-sizing: border-box;
     padding-inline: 20px 16px;
+    min-height: 72px;
   }
 
   @media (min-width: 769px) {
@@ -246,6 +340,7 @@
       display: flex;
       justify-content: space-between;
       padding-inline: 40px;
+      min-height: 96px;
     }
   }
 
@@ -511,6 +606,372 @@
     }
   }
 
+  .zs-header__search-dim {
+    position: fixed;
+    top: var(--zs-search-dim-top, 104px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    background-color: rgba(26, 26, 26, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s ease;
+  }
+
+  .zs-header__search-dim.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .zs-search-dropdown {
+    --zs-sd-champagne: #c8a96e;
+
+    width: 100%;
+    flex-shrink: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+    background-color: inherit;
+    color: inherit;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.3);
+    transition:
+      max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0.5s;
+  }
+
+  .zs-search-dropdown.is-open {
+    max-height: 480px;
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+      max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0s;
+  }
+
+  .zs-search-dropdown:not(.is-open) .zs-search-dropdown__inner {
+    pointer-events: none;
+  }
+
+  .zs-search-dropdown.is-open .zs-search-dropdown__inner {
+    pointer-events: auto;
+  }
+
+  .zs-search-dropdown__inner {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  .zs-search-dropdown.is-open .zs-search-dropdown__inner {
+    padding: 56px 20px 40px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-search-dropdown.is-open .zs-search-dropdown__inner {
+      padding: 56px 40px 48px;
+    }
+  }
+
+  .zs-search-dropdown__close {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      color 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  @media (min-width: 769px) {
+    .zs-search-dropdown__close {
+      top: 24px;
+      right: 28px;
+    }
+  }
+
+  .zs-search-dropdown__close:hover {
+    color: var(--zs-sd-champagne);
+    transform: scale(1.08);
+  }
+
+  .zs-search-dropdown__close:focus-visible {
+    outline: 2px solid var(--zs-sd-champagne);
+    outline-offset: 3px;
+  }
+
+  .zs-search-dropdown__eyebrow {
+    margin: 0 0 12px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .zs-search-dropdown__form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .zs-search-dropdown__input {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid currentColor;
+    border-radius: 0;
+    background: transparent;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 28px;
+    line-height: 1.2;
+    color: inherit;
+    caret-color: var(--zs-sd-champagne);
+    outline: none;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  @media (min-width: 769px) {
+    .zs-search-dropdown__input {
+      font-size: clamp(24px, 3.5vw, 36px);
+    }
+  }
+
+  .zs-search-dropdown__input::placeholder {
+    font-style: italic;
+    opacity: 0.5;
+  }
+
+  .zs-search-dropdown__body {
+    margin-top: 32px;
+  }
+
+  .zs-search-dropdown__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-search-dropdown__columns {
+      gap: 60px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .zs-search-dropdown__columns {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .zs-search-dropdown__col-label {
+    margin: 0 0 16px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .zs-search-dropdown__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .zs-search-dropdown__link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 6px 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.3;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .zs-search-dropdown__link:hover {
+    color: var(--zs-sd-champagne);
+    transform: translateX(4px);
+  }
+
+  .zs-search-dropdown__link:focus-visible {
+    outline: 2px solid var(--zs-sd-champagne);
+    outline-offset: 3px;
+  }
+
+  .zs-search-dropdown__live[hidden] {
+    display: none !important;
+  }
+
+  .zs-search-dropdown__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-search-dropdown__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .zs-search-dropdown__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .zs-search-dropdown__card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .zs-search-dropdown__card:focus-visible {
+    outline: 2px solid var(--zs-sd-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-search-dropdown__media {
+    display: block;
+    aspect-ratio: 3 / 4;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: rgba(26, 26, 26, 0.06);
+  }
+
+  .zs-search-dropdown__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.35s ease;
+  }
+
+  .zs-search-dropdown__card:hover .zs-search-dropdown__media img {
+    opacity: 0.85;
+  }
+
+  .zs-search-dropdown__name {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.25;
+    color: inherit;
+  }
+
+  .zs-search-dropdown__price {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  .zs-search-dropdown__noresults {
+    margin: 0;
+    text-align: center;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 20px;
+    font-style: italic;
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  .zs-search-dropdown__noresults[hidden] {
+    display: none !important;
+  }
+
+  .zs-search-dropdown__view-all {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 32px auto 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    color: var(--zs-sd-champagne);
+    padding: 8px 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .zs-search-dropdown__view-all:hover {
+    opacity: 0.85;
+  }
+
+  .zs-search-dropdown__view-all:focus-visible {
+    outline: 2px solid var(--zs-sd-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-search-dropdown__view-all[hidden] {
+    display: none !important;
+  }
+
+  .zs-search-dropdown__visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .zs-header__overlay {
     position: fixed;
     inset: 0;
@@ -659,6 +1120,29 @@
     const closeEls = [root.querySelector('[data-zs-menu-close]'), overlay].filter(Boolean);
     const announceEl = root.querySelector('[data-zs-announce-text]');
 
+    const searchDropdown = root.querySelector('[data-zs-search-dropdown]');
+    const searchDim = root.querySelector('[data-zs-search-dim]');
+    const searchOpenBtn = root.querySelector('[data-zs-search-open]');
+    const searchCloseBtn = root.querySelector('[data-zs-search-close]');
+    const searchInput = root.querySelector('[data-zs-search-input]');
+    const searchForm = root.querySelector('[data-zs-search-form]');
+    const columnsEl = root.querySelector('[data-zs-search-columns]');
+    const liveEl = root.querySelector('[data-zs-search-live]');
+    const gridEl = root.querySelector('[data-zs-search-product-grid]');
+    const noResEl = root.querySelector('[data-zs-search-noresults]');
+    const viewAllEl = root.querySelector('[data-zs-search-view-all]');
+
+    const cfgEl = root.querySelector('[data-zs-search-config]');
+    let suggestUrl = '/search/suggest.json';
+    let searchUrl = '/search';
+    if (cfgEl) {
+      try {
+        const cfg = JSON.parse(cfgEl.textContent);
+        if (cfg.suggestUrl) suggestUrl = cfg.suggestUrl;
+        if (cfg.searchUrl) searchUrl = cfg.searchUrl;
+      } catch (_) {}
+    }
+
     const messages = [
       'COMPLIMENTARY SHIPPING OVER $75',
       'FREE 30-DAY RETURNS',
@@ -678,8 +1162,182 @@
       window.setInterval(rotateAnnounce, 5000);
     }
 
-    const setPanelOpen = (open) => {
+    const DEBOUNCE_MS = 300;
+    const MIN_QUERY = 2;
+    const MAX_RESULTS = 4;
+    let debounceTimer = 0;
+    let abortController = null;
+
+    const syncSearchDim = () => {
+      const barEl = root.querySelector('[data-zs-header-bar]');
+      if (!searchDim || !barEl) return;
+      const top = Math.round(barEl.getBoundingClientRect().bottom);
+      searchDim.style.setProperty('--zs-search-dim-top', `${top}px`);
+    };
+
+    const formatPrice = (p) => {
+      if (p == null) return '';
+      if (typeof p === 'string') return p;
+      if (typeof p.price === 'string') return p.price;
+      if (typeof p.price === 'number') return String(p.price);
+      if (typeof p.price_min === 'string') return p.price_min;
+      if (typeof p.price_min === 'number') return String(p.price_min);
+      return '';
+    };
+
+    const imageUrl = (p) => {
+      if (!p) return '';
+      if (typeof p.featured_image === 'string') return p.featured_image;
+      if (p.featured_image?.url) return p.featured_image.url;
+      if (p.image) return p.image;
+      return '';
+    };
+
+    const parseProducts = (data) => {
+      try {
+        const products = data?.resources?.results?.products;
+        return Array.isArray(products) ? products : [];
+      } catch (_) {
+        return [];
+      }
+    };
+
+    const resetSearchResults = () => {
+      if (columnsEl) columnsEl.hidden = false;
+      if (liveEl) liveEl.hidden = true;
+      if (gridEl) gridEl.innerHTML = '';
+      if (noResEl) noResEl.hidden = true;
+      if (viewAllEl) {
+        viewAllEl.hidden = true;
+        viewAllEl.href = searchUrl;
+      }
+    };
+
+    const renderProducts = (products) => {
+      if (!gridEl) return;
+      gridEl.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      products.slice(0, MAX_RESULTS).forEach((p) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'zs-search-dropdown__card';
+        a.href = p.url || '#';
+        const media = document.createElement('span');
+        media.className = 'zs-search-dropdown__media';
+        const src = imageUrl(p);
+        if (src) {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = '';
+          img.loading = 'lazy';
+          media.append(img);
+        }
+        const name = document.createElement('p');
+        name.className = 'zs-search-dropdown__name';
+        name.textContent = p.title || '';
+        const price = document.createElement('p');
+        price.className = 'zs-search-dropdown__price';
+        price.textContent = formatPrice(p);
+        a.append(media, name, price);
+        li.append(a);
+        frag.append(li);
+      });
+      gridEl.append(frag);
+    };
+
+    const buildSuggestUrl = (q) => {
+      const u = new URL(suggestUrl, window.location.origin);
+      u.searchParams.set('q', q);
+      u.searchParams.set('resources[type]', 'product');
+      u.searchParams.set('resources[limit]', String(MAX_RESULTS));
+      return u.toString();
+    };
+
+    const runFetch = async (q) => {
+      if (abortController) abortController.abort();
+      abortController = new AbortController();
+      const res = await fetch(buildSuggestUrl(q), {
+        signal: abortController.signal,
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) throw new Error('Suggest failed');
+      return res.json();
+    };
+
+    const scheduleSearch = (q) => {
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(async () => {
+        try {
+          const data = await runFetch(q);
+          const products = parseProducts(data);
+          if (!products.length) {
+            if (gridEl) gridEl.innerHTML = '';
+            if (noResEl) noResEl.hidden = false;
+            if (viewAllEl) viewAllEl.hidden = true;
+            return;
+          }
+          if (noResEl) noResEl.hidden = true;
+          renderProducts(products);
+          if (viewAllEl) {
+            const u = new URL(searchUrl, window.location.origin);
+            u.searchParams.set('q', q);
+            viewAllEl.href = u.pathname + u.search;
+            viewAllEl.hidden = false;
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+          if (gridEl) gridEl.innerHTML = '';
+          if (noResEl) noResEl.hidden = false;
+          if (viewAllEl) viewAllEl.hidden = true;
+        }
+      }, DEBOUNCE_MS);
+    };
+
+    let searchRelayout = null;
+
+    function setSearchOpen(open) {
+      if (!searchDropdown || !searchOpenBtn) return;
+      if (open && searchDropdown.classList.contains('is-open')) return;
+      if (!open && !searchDropdown.classList.contains('is-open')) return;
+      if (open && panel?.classList.contains('is-active')) {
+        setPanelOpen(false);
+      }
+      searchDropdown.classList.toggle('is-open', open);
+      searchDropdown.setAttribute('aria-hidden', open ? 'false' : 'true');
+      searchOpenBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      searchDim?.classList.toggle('is-active', open);
+      if (open) {
+        syncSearchDim();
+        searchRelayout = () => syncSearchDim();
+        window.addEventListener('resize', searchRelayout);
+        window.addEventListener('scroll', searchRelayout, { passive: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            syncSearchDim();
+            searchInput?.focus({ preventScroll: true });
+          });
+        });
+      } else {
+        if (searchRelayout) {
+          window.removeEventListener('resize', searchRelayout);
+          window.removeEventListener('scroll', searchRelayout);
+          searchRelayout = null;
+        }
+        if (abortController) abortController.abort();
+        window.clearTimeout(debounceTimer);
+        if (searchInput) searchInput.value = '';
+        resetSearchResults();
+        searchInput?.blur();
+        searchOpenBtn.focus({ preventScroll: true });
+        searchDim?.classList.remove('is-active');
+      }
+    }
+
+    function setPanelOpen(open) {
       if (!panel || !overlay) return;
+      if (open && searchDropdown?.classList.contains('is-open')) {
+        setSearchOpen(false);
+      }
       document.documentElement.classList.toggle('zs-header--panel-open', open);
       openBtn?.setAttribute('aria-expanded', open ? 'true' : 'false');
       if (open) {
@@ -699,7 +1357,7 @@
           overlay.hidden = true;
         }, 500);
       }
-    };
+    }
 
     openBtn?.addEventListener('click', () => {
       const expanded = openBtn.getAttribute('aria-expanded') === 'true';
@@ -714,12 +1372,44 @@
       link.addEventListener('click', () => setPanelOpen(false));
     });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape' || !panel?.classList.contains('is-active')) return;
-      if (document.querySelector('[data-zs-search-overlay].is-open')) return;
-      setPanelOpen(false);
+    searchOpenBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const next = !searchDropdown.classList.contains('is-open');
+      setSearchOpen(next);
     });
 
+    searchCloseBtn?.addEventListener('click', () => setSearchOpen(false));
+    searchDim?.addEventListener('click', () => setSearchOpen(false));
+
+    searchInput?.addEventListener('input', () => {
+      const q = searchInput.value.trim();
+      if (q.length < MIN_QUERY) {
+        if (abortController) abortController.abort();
+        window.clearTimeout(debounceTimer);
+        resetSearchResults();
+        return;
+      }
+      if (columnsEl) columnsEl.hidden = true;
+      if (liveEl) liveEl.hidden = false;
+      if (noResEl) noResEl.hidden = true;
+      scheduleSearch(q);
+    });
+
+    searchForm?.addEventListener('submit', () => {
+      setSearchOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (searchDropdown?.classList.contains('is-open')) {
+        e.preventDefault();
+        setSearchOpen(false);
+        return;
+      }
+      if (panel?.classList.contains('is-active')) {
+        setPanelOpen(false);
+      }
+    });
   })();
 </script>
 
