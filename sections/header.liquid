@@ -1351,6 +1351,19 @@
     let abortController = null;
     let scrollProgressRaf = 0;
     let searchScrollWasAtEnd = false;
+    let searchDropdownHasAutoScrolledToTop = false;
+
+    const resetSearchDropdownTypeSessionScroll = () => {
+      searchDropdownHasAutoScrolledToTop = false;
+    };
+
+    const maybeScrollSearchDropdownToTopForTyping = () => {
+      if (!searchScroll || searchDropdownHasAutoScrolledToTop) return;
+      if (searchScroll.scrollTop <= 0) return;
+      searchScroll.scrollTo({ top: 0, behavior: 'smooth' });
+      searchDropdownHasAutoScrolledToTop = true;
+      scheduleSearchScrollProgress();
+    };
 
     const updateSearchScrollProgress = () => {
       if (!searchScroll || !searchProgressFill) return;
@@ -1444,6 +1457,7 @@
     };
 
     const resetSearchResults = () => {
+      resetSearchDropdownTypeSessionScroll();
       if (columnsEl) columnsEl.hidden = false;
       if (liveEl) liveEl.hidden = true;
       if (productListEl) productListEl.innerHTML = '';
@@ -1584,6 +1598,7 @@
           window.requestAnimationFrame(() => {
             syncSearchDim();
             searchInput?.focus({ preventScroll: true });
+            resetSearchDropdownTypeSessionScroll();
             scheduleSearchScrollProgress();
           });
         });
@@ -1664,6 +1679,7 @@
         resetSearchResults();
         return;
       }
+      maybeScrollSearchDropdownToTopForTyping();
       if (columnsEl) columnsEl.hidden = true;
       if (liveEl) liveEl.hidden = false;
       if (noResWrapEl) noResWrapEl.hidden = true;
