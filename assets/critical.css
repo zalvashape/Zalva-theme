@@ -13,15 +13,30 @@ body {
   min-height: 100svh;
 }
 
-/* Offset for fixed premium header (announce + bar); matches sections/header.liquid heights */
-body:has([data-zs-header]) {
-  padding-top: 100px;
+/**
+ * Fixed header offset: must match sections/header.liquid
+ * — announce: 32px mobile / 36px desktop (min-width 769px)
+ * — bar inner: min-height 72px mobile / 96px desktop
+ */
+:root {
+  --zs-header-stack: calc(32px + 72px);
 }
 
 @media (min-width: 769px) {
-  body:has([data-zs-header]) {
-    padding-top: 132px;
+  :root {
+    --zs-header-stack: calc(36px + 96px);
   }
+}
+
+/* Reserve space for fixed header + Ivory body band so padding never flashes theme default (e.g. white) */
+body:has([data-zs-header]) {
+  padding-top: var(--zs-header-stack);
+  background-color: #faf8f5;
+}
+
+/* Homepage hero is full-viewport and sits under the fixed header — pull it up by the full stack height */
+body.zalva-home [data-main-hero-section].main-hero {
+  margin-top: calc(-1 * var(--zs-header-stack));
 }
 
 /* Homepage: remove default inter-section margins for seamless stacked sections */
