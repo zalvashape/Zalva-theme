@@ -123,10 +123,11 @@
           >
         </form>
 
-        <div class="zs-search-dropdown__body">
-          <div class="zs-search-dropdown__columns" data-zs-search-columns>
-            <div class="zs-search-dropdown__col">
-              <p class="zs-search-dropdown__col-label">Popular searches</p>
+        <div class="zs-search-dropdown__scroll-area">
+          <div class="zs-search-dropdown__body" data-zs-search-scroll>
+            <div class="zs-search-dropdown__columns" data-zs-search-columns>
+              <div class="zs-search-dropdown__col">
+                <p class="zs-search-dropdown__col-label">Popular searches</p>
               <ul class="zs-search-dropdown__links" role="list">
                 <li>
                   <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a>
@@ -168,6 +169,11 @@
             <ul class="zs-search-dropdown__grid" data-zs-search-product-grid role="list"></ul>
             <p class="zs-search-dropdown__noresults" data-zs-search-noresults hidden>No results found.</p>
             <a class="zs-search-dropdown__view-all" href="{{ routes.search_url }}" data-zs-search-view-all hidden>VIEW ALL RESULTS →</a>
+          </div>
+          </div>
+          <div class="zs-search-dropdown__progress" data-zs-search-progress hidden aria-hidden="true">
+            <span class="zs-search-dropdown__progress-track" aria-hidden="true"></span>
+            <span class="zs-search-dropdown__progress-fill" data-zs-search-progress-fill></span>
           </div>
         </div>
       </div>
@@ -791,10 +797,20 @@
     opacity: 0.5;
   }
 
-  .zs-search-dropdown__body {
-    margin-top: 32px;
+  .zs-search-dropdown__scroll-area {
+    position: relative;
     flex: 1 1 auto;
     min-height: 0;
+    margin-top: 32px;
+  }
+
+  .zs-search-dropdown__body {
+    margin-top: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-right: 10px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
   .zs-search-dropdown.is-open .zs-search-dropdown__body {
@@ -803,6 +819,64 @@
     overscroll-behavior: contain;
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .zs-search-dropdown__body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .zs-search-dropdown__progress {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .zs-search-dropdown__progress[hidden] {
+    display: none !important;
+  }
+
+  .zs-search-dropdown__progress-track {
+    position: absolute;
+    inset: 0;
+    width: 2px;
+    background: rgba(200, 169, 110, 0.15);
+    border-radius: 0;
+  }
+
+  .zs-search-dropdown__progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background: #c8a96e;
+    border-radius: 0;
+    opacity: 0.85;
+    transition: height 0.1s ease-out, opacity 0.1s ease-out;
+  }
+
+  .zs-search-dropdown__progress.is-complete .zs-search-dropdown__progress-fill {
+    animation: zs-search-progress-complete 0.5s ease-out forwards;
+  }
+
+  @keyframes zs-search-progress-complete {
+    0% {
+      opacity: 0.85;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0.85;
+    }
   }
 
   .zs-search-dropdown__columns {
@@ -1161,6 +1235,9 @@
     const gridEl = root.querySelector('[data-zs-search-product-grid]');
     const noResEl = root.querySelector('[data-zs-search-noresults]');
     const viewAllEl = root.querySelector('[data-zs-search-view-all]');
+    const searchScroll = root.querySelector('[data-zs-search-scroll]');
+    const searchProgress = root.querySelector('[data-zs-search-progress]');
+    const searchProgressFill = root.querySelector('[data-zs-search-progress-fill]');
 
     const cfgEl = root.querySelector('[data-zs-search-config]');
     let suggestUrl = '/search/suggest.json';
@@ -1197,6 +1274,54 @@
     const MAX_RESULTS = 4;
     let debounceTimer = 0;
     let abortController = null;
+    let scrollProgressRaf = 0;
+    let searchScrollWasAtEnd = false;
+
+    const updateSearchScrollProgress = () => {
+      if (!searchScroll || !searchProgressFill) return;
+      const { scrollTop, scrollHeight, clientHeight } = searchScroll;
+      const maxScroll = scrollHeight - clientHeight;
+
+      if (maxScroll <= 1) {
+        searchProgress?.setAttribute('hidden', '');
+        searchProgress?.setAttribute('aria-hidden', 'true');
+        searchProgressFill.style.height = '0';
+        searchScrollWasAtEnd = false;
+        return;
+      }
+
+      searchProgress?.removeAttribute('hidden');
+      searchProgress?.setAttribute('aria-hidden', 'false');
+      const pct = Math.min(100, Math.max(0, (scrollTop / maxScroll) * 100));
+      searchProgressFill.style.height = `${pct}%`;
+
+      const atEnd = scrollTop >= maxScroll - 2;
+      if (atEnd && !searchScrollWasAtEnd) {
+        searchProgress?.classList.add('is-complete');
+        const onAnimEnd = () => {
+          searchProgress?.classList.remove('is-complete');
+          searchProgressFill.removeEventListener('animationend', onAnimEnd);
+        };
+        searchProgressFill.addEventListener('animationend', onAnimEnd);
+      }
+      searchScrollWasAtEnd = atEnd;
+    };
+
+    const scheduleSearchScrollProgress = () => {
+      if (scrollProgressRaf) return;
+      scrollProgressRaf = window.requestAnimationFrame(() => {
+        scrollProgressRaf = 0;
+        updateSearchScrollProgress();
+      });
+    };
+
+    if (searchScroll) {
+      searchScroll.addEventListener('scroll', scheduleSearchScrollProgress, { passive: true });
+      if (typeof ResizeObserver !== 'undefined') {
+        const scrollResizeObserver = new ResizeObserver(() => scheduleSearchScrollProgress());
+        scrollResizeObserver.observe(searchScroll);
+      }
+    }
 
     const syncSearchDim = () => {
       const barEl = root.querySelector('[data-zs-header-bar]');
@@ -1241,6 +1366,7 @@
         viewAllEl.hidden = true;
         viewAllEl.href = searchUrl;
       }
+      scheduleSearchScrollProgress();
     };
 
     const renderProducts = (products) => {
@@ -1273,6 +1399,7 @@
         frag.append(li);
       });
       gridEl.append(frag);
+      scheduleSearchScrollProgress();
     };
 
     const buildSuggestUrl = (q) => {
@@ -1304,6 +1431,7 @@
             if (gridEl) gridEl.innerHTML = '';
             if (noResEl) noResEl.hidden = false;
             if (viewAllEl) viewAllEl.hidden = true;
+            scheduleSearchScrollProgress();
             return;
           }
           if (noResEl) noResEl.hidden = true;
@@ -1320,6 +1448,7 @@
           if (noResEl) noResEl.hidden = false;
           if (viewAllEl) viewAllEl.hidden = true;
         }
+        scheduleSearchScrollProgress();
       }, DEBOUNCE_MS);
     };
 
@@ -1345,6 +1474,7 @@
           window.requestAnimationFrame(() => {
             syncSearchDim();
             searchInput?.focus({ preventScroll: true });
+            scheduleSearchScrollProgress();
           });
         });
       } else {
@@ -1360,6 +1490,11 @@
         searchInput?.blur();
         searchOpenBtn.focus({ preventScroll: true });
         searchDim?.classList.remove('is-active');
+        searchProgress?.setAttribute('hidden', '');
+        searchProgress?.setAttribute('aria-hidden', 'true');
+        searchProgress?.classList.remove('is-complete');
+        if (searchProgressFill) searchProgressFill.style.height = '0';
+        searchScrollWasAtEnd = false;
       }
     }
 
@@ -1422,6 +1557,7 @@
       if (columnsEl) columnsEl.hidden = true;
       if (liveEl) liveEl.hidden = false;
       if (noResEl) noResEl.hidden = true;
+      scheduleSearchScrollProgress();
       scheduleSearch(q);
     });
 
