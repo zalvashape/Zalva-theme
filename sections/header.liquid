@@ -107,6 +107,7 @@
         <p id="zs-search-dropdown-eyebrow" class="zs-search-dropdown__eyebrow">Search</p>
 
         <form class="zs-search-dropdown__form" action="{{ routes.search_url }}" method="get" role="search" data-zs-search-form>
+          <input type="hidden" name="type" value="product">
           <label class="zs-search-dropdown__visually-hidden" for="zs-search-dropdown-input">Search</label>
           <input
             id="zs-search-dropdown-input"
