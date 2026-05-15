@@ -1563,7 +1563,8 @@
 
     let searchRelayout = null;
 
-    function setSearchOpen(open) {
+    function setSearchOpen(open, options = {}) {
+      const preserveInput = options.preserveInput === true;
       if (!searchDropdown || !searchOpenBtn) return;
       if (open && searchDropdown.classList.contains('is-open')) return;
       if (!open && !searchDropdown.classList.contains('is-open')) return;
@@ -1594,7 +1595,7 @@
         }
         if (abortController) abortController.abort();
         window.clearTimeout(debounceTimer);
-        if (searchInput) searchInput.value = '';
+        if (searchInput && !preserveInput) searchInput.value = '';
         resetSearchResults();
         searchInput?.blur();
         searchOpenBtn.focus({ preventScroll: true });
@@ -1671,7 +1672,7 @@
     });
 
     searchForm?.addEventListener('submit', () => {
-      setSearchOpen(false);
+      setSearchOpen(false, { preserveInput: true });
     });
 
     document.addEventListener('keydown', (e) => {
