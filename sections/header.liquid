@@ -193,32 +193,187 @@
 
   <div class="zs-header__overlay" data-zs-overlay hidden></div>
 
+  {% assign cabinet_preview = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/GENERA_1.png?v=1778497924' %}
   <div
-    class="zs-header__panel"
+    class="zs-cabinet-menu"
     id="zs-header-panel"
     role="dialog"
     aria-modal="true"
-    aria-label="Menu"
+    aria-label="Main navigation"
     data-zs-panel
+    data-cabinet-default-preview="{{ cabinet_preview | escape }}"
+    data-cabinet-default-eyebrow="SHOP ALL"
+    data-cabinet-default-tagline="The complete collection."
     hidden
   >
-    <button type="button" class="zs-header__panel-close" data-zs-menu-close aria-label="Close menu">
-      <span aria-hidden="true">&times;</span>
+    <button type="button" class="zs-cabinet-menu__close" data-zs-menu-close aria-label="Close menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
     </button>
-    <nav class="zs-header__panel-nav" aria-label="Primary">
-      <ul class="zs-header__panel-list">
-        <li><a class="zs-header__panel-link" href="{{ routes.all_products_collection_url }}">Shop</a></li>
-        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a></li>
-        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}collections/waist-trainers">Waist Trainers</a></li>
-        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}collections/fajas">Fajas</a></li>
-        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}pages/about">The Story</a></li>
-        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}pages/size-guide">Size Guide</a></li>
-        <li><a class="zs-header__panel-link" href="{{ routes.root_url }}pages/contact">Contact</a></li>
-      </ul>
-    </nav>
-    <div class="zs-header__panel-footer">
-      <span class="zs-header__panel-line" aria-hidden="true"></span>
-      <p class="zs-header__panel-social">INSTAGRAM Â· TIKTOK</p>
+    <div class="zs-cabinet-menu__grid">
+      <div class="zs-cabinet-menu__left" data-zs-cabinet-nav-zone>
+        <nav class="zs-cabinet-menu__nav" aria-label="Primary">
+          <ul class="zs-cabinet-menu__list" role="list" data-zs-cabinet-nav-list>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 0">
+              <a
+                class="zs-cabinet-menu__link"
+                href="{{ routes.all_products_collection_url }}"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="SHOP ALL"
+                data-cabinet-tagline="The complete collection."
+              >
+                Shop All
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 1">
+              <a
+                class="zs-cabinet-menu__link zs-cabinet-menu__link--thumb-wrap"
+                href="{{ routes.root_url }}collections/bodysuits"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="BODYSUITS"
+                data-cabinet-tagline="Sculpting essentials."
+              >
+                <span class="zs-cabinet-menu__thumb" aria-hidden="true">
+                  <img src="{{ cabinet_preview | escape }}" width="40" height="52" alt="">
+                </span>
+                <span class="zs-cabinet-menu__link-text">Bodysuits</span>
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 2">
+              <a
+                class="zs-cabinet-menu__link zs-cabinet-menu__link--thumb-wrap"
+                href="{{ routes.root_url }}collections/waist-trainers"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="WAIST TRAINERS"
+                data-cabinet-tagline="Define your silhouette."
+              >
+                <span class="zs-cabinet-menu__thumb" aria-hidden="true">
+                  <img src="{{ cabinet_preview | escape }}" width="40" height="52" alt="">
+                </span>
+                <span class="zs-cabinet-menu__link-text">Waist Trainers</span>
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 3">
+              <a
+                class="zs-cabinet-menu__link zs-cabinet-menu__link--thumb-wrap"
+                href="{{ routes.root_url }}collections/fajas"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="FAJAS"
+                data-cabinet-tagline="Confidence, tailored."
+              >
+                <span class="zs-cabinet-menu__thumb" aria-hidden="true">
+                  <img src="{{ cabinet_preview | escape }}" width="40" height="52" alt="">
+                </span>
+                <span class="zs-cabinet-menu__link-text">Fajas</span>
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--divider zs-cabinet-menu__item--stagger" style="--cabinet-i: 4" aria-hidden="true">
+              <span class="zs-cabinet-menu__rule"></span>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 5">
+              <a
+                class="zs-cabinet-menu__link"
+                href="{{ routes.root_url }}pages/about"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="THE STORY"
+                data-cabinet-tagline="Who we are."
+              >
+                The Story
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 6">
+              <a
+                class="zs-cabinet-menu__link"
+                href="{{ routes.root_url }}pages/size-guide"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="SIZE GUIDE"
+                data-cabinet-tagline="Find your fit."
+              >
+                Size Guide
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 7">
+              <a
+                class="zs-cabinet-menu__link"
+                href="{{ routes.root_url }}pages/contact"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="CONTACT"
+                data-cabinet-tagline="We're here to help."
+              >
+                Contact
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="zs-cabinet-menu__bottom">
+          <div class="zs-cabinet-menu__editors">
+            <p class="zs-cabinet-menu__editors-label">Editor&rsquo;s pick</p>
+            <a class="zs-cabinet-menu__editors-card" href="{{ routes.root_url }}products/contour-bodysuit">
+              <span class="zs-cabinet-menu__editors-media">
+                <img src="{{ cabinet_preview | escape }}" width="60" height="80" alt="">
+              </span>
+              <span class="zs-cabinet-menu__editors-meta">
+                <span class="zs-cabinet-menu__editors-name">Contour Bodysuit</span>
+                <span class="zs-cabinet-menu__editors-cta">Discover &rarr;</span>
+              </span>
+            </a>
+          </div>
+          <div class="zs-cabinet-menu__tagline-rotator" data-cabinet-rotator aria-live="polite">
+            <p class="zs-cabinet-menu__tagline-line is-visible" data-cabinet-rotator-line>She wears herself.</p>
+          </div>
+          <div class="zs-cabinet-menu__social" aria-label="Social">
+            <a class="zs-cabinet-menu__social-link" href="#" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+              </svg>
+            </a>
+            <a class="zs-cabinet-menu__social-link" href="#" aria-label="TikTok">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M10 8v10a3 3 0 1 1-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M14 6c2 2 4 2 6 1v5a6 6 0 0 1-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </a>
+            <a class="zs-cabinet-menu__social-link" href="#" aria-label="Pinterest">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3C8 3 5 6 5 10c0 3 1.5 5 4 6v4l3-3c3 1 6-1 7-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="zs-cabinet-menu__right" data-zs-cabinet-preview aria-hidden="true">
+        <div class="zs-cabinet-menu__preview-visual" data-cabinet-preview-visual>
+          <img
+            class="zs-cabinet-menu__preview-img zs-cabinet-menu__preview-img--a is-active"
+            data-cabinet-layer="a"
+            src="{{ cabinet_preview | escape }}"
+            alt=""
+            width="1200"
+            height="1800"
+            loading="lazy"
+            decoding="async"
+          >
+          <img
+            class="zs-cabinet-menu__preview-img zs-cabinet-menu__preview-img--b"
+            data-cabinet-layer="b"
+            src="{{ cabinet_preview | escape }}"
+            alt=""
+            width="1200"
+            height="1800"
+            loading="lazy"
+            decoding="async"
+          >
+        </div>
+        <div class="zs-cabinet-menu__preview-gradient"></div>
+        <div class="zs-cabinet-menu__preview-copy">
+          <p class="zs-cabinet-menu__preview-eyebrow" data-cabinet-preview-eyebrow>SHOP ALL</p>
+          <p class="zs-cabinet-menu__preview-tagline" data-cabinet-preview-tagline>The complete collection.</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1152,13 +1307,15 @@
     position: fixed;
     inset: 0;
     z-index: 150;
-    background-color: rgba(26, 26, 26, 0.4);
+    background-color: rgba(26, 26, 26, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition:
-      opacity 0.4s ease,
-      visibility 0.4s ease;
+      opacity 0.5s ease,
+      visibility 0.5s ease;
   }
 
   .zs-header__overlay.is-active {
@@ -1171,112 +1328,439 @@
     display: block;
   }
 
-  .zs-header__panel {
+  /* ——— The Cabinet mega menu ——— */
+  .zs-cabinet-menu {
+    --cabinet-ivory: #faf8f5;
+    --cabinet-noir: #1a1a1a;
+    --cabinet-champagne: #c8a96e;
+    --cabinet-taupe: #a07060;
+    --cabinet-editorial: #3d2b24;
+
     position: fixed;
     top: 0;
     left: 0;
     z-index: 200;
-    width: 400px;
-    max-width: 100%;
+    width: min(60vw, 1100px);
     height: 100vh;
     height: 100dvh;
-    background-color: var(--zs-ivory);
-    color: var(--zs-noir);
-    transform: translateX(-100%);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    padding-top: 60px;
+    max-height: 100vh;
+    max-height: 100dvh;
+    background-color: var(--cabinet-ivory);
+    color: var(--cabinet-noir);
     box-sizing: border-box;
+    overflow: hidden;
+    transform: translateX(-100%);
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
   }
 
-  .zs-header__panel.is-active {
+  .zs-cabinet-menu.is-active {
     transform: translateX(0);
     pointer-events: auto;
   }
 
-  .zs-header__panel:not(.is-active) {
+  .zs-cabinet-menu:not(.is-active) {
     pointer-events: none;
   }
 
-  .zs-header__panel[hidden] {
+  .zs-cabinet-menu[hidden] {
     display: block;
   }
 
   @media (max-width: 768px) {
-    .zs-header__panel {
-      width: 100%;
+    .zs-cabinet-menu {
+      width: 100vw;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
   }
 
-  .zs-header__panel-close {
+  .zs-cabinet-menu__close {
     position: absolute;
-    top: 20px;
-    right: 24px;
+    top: 32px;
+    right: 32px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
     padding: 0;
     border: none;
     background: transparent;
-    color: var(--zs-noir);
-    font-size: 16px;
-    line-height: 1;
+    color: var(--cabinet-noir);
     cursor: pointer;
+    transition:
+      color 0.3s ease,
+      transform 0.35s ease;
   }
 
-  .zs-header__panel-close:focus-visible {
-    outline: 2px solid var(--zs-champagne);
-    outline-offset: 2px;
+  .zs-cabinet-menu__close:hover {
+    color: var(--cabinet-champagne);
+    transform: rotate(90deg);
   }
 
-  .zs-header__panel-nav {
-    padding-left: 60px;
-    padding-right: 24px;
+  .zs-cabinet-menu__close:focus-visible {
+    outline: 2px solid var(--cabinet-champagne);
+    outline-offset: 4px;
   }
 
-  .zs-header__panel-list {
+  .zs-cabinet-menu__grid {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  @media (max-width: 768px) {
+    .zs-cabinet-menu__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .zs-cabinet-menu__left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px 0 60px 80px;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 768px) {
+    .zs-cabinet-menu__left {
+      padding: 80px 40px 60px 40px;
+      min-height: min-content;
+    }
+  }
+
+  .zs-cabinet-menu__nav {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  .zs-cabinet-menu__list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
   }
 
-  .zs-header__panel-link {
+  .zs-cabinet-menu__item--divider {
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .zs-cabinet-menu__rule {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin-block: 0;
+    background-color: var(--cabinet-champagne);
+  }
+
+  .zs-cabinet-menu__link {
+    display: inline-block;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
-    font-size: clamp(28px, 4vw, 36px);
-    color: var(--zs-noir);
-    letter-spacing: 0.02em;
+    font-size: clamp(28px, 3vw, 42px);
+    letter-spacing: 0.01em;
+    color: var(--cabinet-noir);
     text-decoration: none;
-    transition: color 0.3s ease;
+    padding: 6px 0;
+    cursor: pointer;
+    transition:
+      color 0.3s ease,
+      transform 0.3s ease;
   }
 
-  .zs-header__panel-link:hover {
-    color: var(--zs-taupe);
+  @media (max-width: 768px) {
+    .zs-cabinet-menu__link {
+      font-size: clamp(24px, 6vw, 32px);
+    }
   }
 
-  .zs-header__panel-footer {
-    position: absolute;
-    bottom: 40px;
-    left: 60px;
-    right: 24px;
+  @media (min-width: 769px) {
+    .zs-cabinet-menu__link:hover {
+      color: var(--cabinet-taupe);
+      transform: translateX(8px);
+    }
   }
 
-  .zs-header__panel-line {
+  .zs-cabinet-menu__link:focus-visible {
+    outline: 2px solid var(--cabinet-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-cabinet-menu__link--thumb-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .zs-cabinet-menu__thumb {
+    flex-shrink: 0;
+    display: none;
+    width: 40px;
+    height: 52px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: rgba(26, 26, 26, 0.06);
+  }
+
+  .zs-cabinet-menu__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
     display: block;
-    width: 24px;
-    height: 1px;
-    background-color: var(--zs-champagne);
-    margin-bottom: 16px;
   }
 
-  .zs-header__panel-social {
-    margin: 0;
+  @media (max-width: 768px) {
+    .zs-cabinet-menu__thumb {
+      display: block;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .zs-cabinet-menu__link--thumb-wrap {
+      display: inline-block;
+    }
+  }
+
+  .zs-cabinet-menu:not(.is-active) .zs-cabinet-menu__item--stagger {
+    animation: none;
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+
+  .zs-cabinet-menu.is-active .zs-cabinet-menu__item--stagger {
+    animation: zs-cabinet-stagger 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: calc(0.08s + var(--cabinet-i, 0) * 0.05s);
+    will-change: opacity, transform;
+  }
+
+  @keyframes zs-cabinet-stagger {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .zs-cabinet-menu__bottom {
+    flex-shrink: 0;
+    padding-top: 32px;
+    min-width: 0;
+  }
+
+  .zs-cabinet-menu__editors-label {
+    margin: 0 0 16px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cabinet-champagne);
+  }
+
+  .zs-cabinet-menu__editors-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    max-width: 320px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.3s ease;
+  }
+
+  .zs-cabinet-menu__editors-card:hover {
+    opacity: 0.88;
+  }
+
+  .zs-cabinet-menu__editors-media {
+    flex-shrink: 0;
+    width: 60px;
+    height: 80px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: rgba(26, 26, 26, 0.06);
+  }
+
+  .zs-cabinet-menu__editors-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .zs-cabinet-menu__editors-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .zs-cabinet-menu__editors-name {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.3;
+    color: var(--cabinet-noir);
+  }
+
+  .zs-cabinet-menu__editors-cta {
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
     font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.12em;
+    color: var(--cabinet-champagne);
+  }
+
+  .zs-cabinet-menu__tagline-rotator {
+    position: relative;
+    margin-top: 32px;
+    min-height: 1.6em;
+  }
+
+  .zs-cabinet-menu__tagline-line {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--cabinet-editorial);
+    transition: opacity 0.6s ease;
+  }
+
+  .zs-cabinet-menu__tagline-line:not(.is-visible) {
+    opacity: 0;
+  }
+
+  .zs-cabinet-menu__tagline-line.is-visible {
+    opacity: 1;
+  }
+
+  .zs-cabinet-menu__social {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    margin-top: 32px;
+  }
+
+  .zs-cabinet-menu__social-link {
+    display: flex;
+    color: var(--cabinet-noir);
+    transition: color 0.3s ease;
+  }
+
+  .zs-cabinet-menu__social-link:hover {
+    color: var(--cabinet-champagne);
+  }
+
+  .zs-cabinet-menu__social-link:focus-visible {
+    outline: 2px solid var(--cabinet-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-cabinet-menu__right {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    min-height: 0;
+    background: #1a1a1a;
+  }
+
+  @media (max-width: 768px) {
+    .zs-cabinet-menu__right {
+      display: none;
+    }
+  }
+
+  .zs-cabinet-menu__preview-visual {
+    position: absolute;
+    inset: 0;
+    will-change: contents;
+  }
+
+  .zs-cabinet-menu__preview-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    transform: scale(1.03);
+    will-change: opacity, transform;
+  }
+
+  .zs-cabinet-menu__preview-img.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .zs-cabinet-menu--intro .zs-cabinet-menu__preview-img.is-active {
+    animation: zs-cabinet-preview-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes zs-cabinet-preview-in {
+    from {
+      opacity: 0;
+      transform: scale(1.03);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .zs-cabinet-menu__preview-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, rgba(26, 26, 26, 0.6) 0%, transparent 55%);
+    pointer-events: none;
+  }
+
+  .zs-cabinet-menu__preview-copy {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 60px;
+    pointer-events: none;
+  }
+
+  .zs-cabinet-menu__preview-eyebrow {
+    margin: 0 0 10px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--zs-taupe);
+    color: var(--cabinet-champagne);
+  }
+
+  .zs-cabinet-menu__preview-tagline {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--cabinet-ivory);
+    max-width: 20ch;
   }
 
   html.zs-header--panel-open,
@@ -1312,6 +1796,13 @@
     const searchScroll = root.querySelector('[data-zs-search-scroll]');
     const searchProgress = root.querySelector('[data-zs-search-progress]');
     const searchProgressFill = root.querySelector('[data-zs-search-progress-fill]');
+
+    const cabinetNavList = root.querySelector('[data-zs-cabinet-nav-list]');
+    const cabinetPreviewEyebrow = root.querySelector('[data-cabinet-preview-eyebrow]');
+    const cabinetPreviewTagline = root.querySelector('[data-cabinet-preview-tagline]');
+    const cabinetImgA = root.querySelector('[data-cabinet-layer="a"]');
+    const cabinetImgB = root.querySelector('[data-cabinet-layer="b"]');
+    const cabinetRotatorLine = root.querySelector('[data-cabinet-rotator-line]');
 
     const cfgEl = root.querySelector('[data-zs-search-config]');
     let suggestUrl = '/search/suggest.json';
@@ -1623,6 +2114,165 @@
       }
     }
 
+    const CABINET_TAGLINES = ['She wears herself.', 'Sculpted to feel held.', 'For every body.'];
+    let cabinetLayerFront = 'a';
+    let cabinetTaglineTimer = 0;
+    let cabinetTaglineIndex = 0;
+    let cabinetFocusTrapHandler = null;
+    let cabinetPreviewLeaveTimer = 0;
+
+    const getCabinetDefaultPreview = () => ({
+      url: panel?.dataset.cabinetDefaultPreview || '',
+      eyebrow: panel?.dataset.cabinetDefaultEyebrow || 'SHOP ALL',
+      tagline: panel?.dataset.cabinetDefaultTagline || 'The complete collection.',
+    });
+
+    function preloadCabinetImages() {
+      if (!panel) return;
+      const urls = new Set();
+      panel.querySelectorAll('[data-cabinet-preview]').forEach((el) => {
+        const u = el.getAttribute('data-cabinet-preview');
+        if (u) urls.add(u);
+      });
+      const d = getCabinetDefaultPreview().url;
+      if (d) urls.add(d);
+      urls.forEach((u) => {
+        const im = new Image();
+        im.src = u;
+      });
+    }
+
+    function setCabinetPreviewCopy(eyebrow, tagline) {
+      if (cabinetPreviewEyebrow) cabinetPreviewEyebrow.textContent = eyebrow;
+      if (cabinetPreviewTagline) cabinetPreviewTagline.textContent = tagline;
+    }
+
+    function swapCabinetPreviewImage(url) {
+      if (!cabinetImgA || !cabinetImgB || !url) return;
+      const front = cabinetLayerFront === 'a' ? cabinetImgA : cabinetImgB;
+      const back = cabinetLayerFront === 'a' ? cabinetImgB : cabinetImgA;
+      const swap = () => {
+        back.classList.add('is-active');
+        front.classList.remove('is-active');
+        cabinetLayerFront = cabinetLayerFront === 'a' ? 'b' : 'a';
+      };
+      const attr = back.getAttribute('src') || '';
+      if (attr === url || back.src === url) {
+        swap();
+        return;
+      }
+      const done = () => {
+        back.onload = null;
+        swap();
+      };
+      back.onload = done;
+      back.src = url;
+      if (back.complete) done();
+    }
+
+    function applyCabinetPreviewFromLink(linkEl) {
+      if (!linkEl || window.matchMedia('(max-width: 768px)').matches) return;
+      const url = linkEl.getAttribute('data-cabinet-preview');
+      const eyebrow = linkEl.getAttribute('data-cabinet-eyebrow');
+      const tagline = linkEl.getAttribute('data-cabinet-tagline');
+      if (url) swapCabinetPreviewImage(url);
+      if (eyebrow && tagline) setCabinetPreviewCopy(eyebrow, tagline);
+    }
+
+    function resetCabinetPreview() {
+      if (window.matchMedia('(max-width: 768px)').matches) return;
+      const d = getCabinetDefaultPreview();
+      if (d.url) swapCabinetPreviewImage(d.url);
+      setCabinetPreviewCopy(d.eyebrow, d.tagline);
+    }
+
+    function scheduleCabinetPreviewReset() {
+      window.clearTimeout(cabinetPreviewLeaveTimer);
+      cabinetPreviewLeaveTimer = window.setTimeout(() => {
+        const hovering = cabinetNavList?.querySelector('a.zs-cabinet-menu__link:hover');
+        if (!hovering) resetCabinetPreview();
+      }, 80);
+    }
+
+    function wireCabinetPreview() {
+      if (!cabinetNavList) return;
+      cabinetNavList.querySelectorAll('a[data-cabinet-preview]').forEach((link) => {
+        link.addEventListener('mouseenter', () => {
+          window.clearTimeout(cabinetPreviewLeaveTimer);
+          applyCabinetPreviewFromLink(link);
+        });
+        link.addEventListener('mouseleave', scheduleCabinetPreviewReset);
+        link.addEventListener('focus', () => applyCabinetPreviewFromLink(link));
+      });
+      cabinetNavList.addEventListener('focusout', (e) => {
+        if (!cabinetNavList.contains(e.relatedTarget)) {
+          window.setTimeout(() => resetCabinetPreview(), 0);
+        }
+      });
+    }
+
+    function startCabinetTaglines() {
+      stopCabinetTaglines();
+      if (!cabinetRotatorLine) return;
+      cabinetTaglineIndex = 0;
+      cabinetRotatorLine.textContent = CABINET_TAGLINES[0];
+      cabinetRotatorLine.classList.add('is-visible');
+      cabinetTaglineTimer = window.setInterval(() => {
+        cabinetRotatorLine.classList.remove('is-visible');
+        window.setTimeout(() => {
+          cabinetTaglineIndex = (cabinetTaglineIndex + 1) % CABINET_TAGLINES.length;
+          cabinetRotatorLine.textContent = CABINET_TAGLINES[cabinetTaglineIndex];
+          cabinetRotatorLine.classList.add('is-visible');
+        }, 600);
+      }, 8000);
+    }
+
+    function stopCabinetTaglines() {
+      if (cabinetTaglineTimer) {
+        window.clearInterval(cabinetTaglineTimer);
+        cabinetTaglineTimer = 0;
+      }
+    }
+
+    function getCabinetFocusables() {
+      if (!panel) return [];
+      return Array.from(
+        panel.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => {
+        if (!panel.contains(el)) return false;
+        const st = window.getComputedStyle(el);
+        return st.display !== 'none' && st.visibility !== 'hidden';
+      });
+    }
+
+    function bindCabinetFocusTrap() {
+      unbindCabinetFocusTrap();
+      cabinetFocusTrapHandler = (e) => {
+        if (e.key !== 'Tab' || !panel?.classList.contains('is-active')) return;
+        const f = getCabinetFocusables();
+        if (f.length === 0) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      };
+      document.addEventListener('keydown', cabinetFocusTrapHandler, true);
+    }
+
+    function unbindCabinetFocusTrap() {
+      if (cabinetFocusTrapHandler) {
+        document.removeEventListener('keydown', cabinetFocusTrapHandler, true);
+        cabinetFocusTrapHandler = null;
+      }
+    }
+
     function setPanelOpen(open) {
       if (!panel || !overlay) return;
       if (open && searchDropdown?.classList.contains('is-open')) {
@@ -1631,21 +2281,43 @@
       document.documentElement.classList.toggle('zs-header--panel-open', open);
       openBtn?.setAttribute('aria-expanded', open ? 'true' : 'false');
       if (open) {
+        preloadCabinetImages();
         panel.hidden = false;
         overlay.hidden = false;
+        cabinetLayerFront = 'a';
+        const d = getCabinetDefaultPreview();
+        if (cabinetImgA && d.url) {
+          cabinetImgA.src = d.url;
+          cabinetImgA.classList.add('is-active');
+        }
+        if (cabinetImgB && d.url) {
+          cabinetImgB.src = d.url;
+          cabinetImgB.classList.remove('is-active');
+        }
+        setCabinetPreviewCopy(d.eyebrow, d.tagline);
         window.requestAnimationFrame(() => {
           window.requestAnimationFrame(() => {
             panel.classList.add('is-active');
             overlay.classList.add('is-active');
+            panel.classList.add('zs-cabinet-menu--intro');
+            window.setTimeout(() => panel.classList.remove('zs-cabinet-menu--intro'), 850);
+            startCabinetTaglines();
+            bindCabinetFocusTrap();
+            const firstLink = cabinetNavList?.querySelector('a.zs-cabinet-menu__link');
+            firstLink?.focus({ preventScroll: true });
           });
         });
       } else {
+        stopCabinetTaglines();
+        unbindCabinetFocusTrap();
+        window.clearTimeout(cabinetPreviewLeaveTimer);
+        panel.classList.remove('zs-cabinet-menu--intro');
         panel.classList.remove('is-active');
         overlay.classList.remove('is-active');
         window.setTimeout(() => {
           panel.hidden = true;
           overlay.hidden = true;
-        }, 500);
+        }, 600);
       }
     }
 
@@ -1658,9 +2330,23 @@
       el?.addEventListener('click', () => setPanelOpen(false));
     });
 
-    panel?.querySelectorAll('a.zs-header__panel-link').forEach((link) => {
+    panel?.querySelectorAll('a.zs-cabinet-menu__link, a.zs-cabinet-menu__editors-card, a.zs-cabinet-menu__social-link').forEach((link) => {
       link.addEventListener('click', () => setPanelOpen(false));
     });
+
+    cabinetNavList?.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      if (!panel?.classList.contains('is-active') || !cabinetNavList.contains(document.activeElement)) return;
+      const links = Array.from(cabinetNavList.querySelectorAll('a.zs-cabinet-menu__link'));
+      if (links.length === 0) return;
+      const i = links.indexOf(document.activeElement);
+      if (i < 0) return;
+      e.preventDefault();
+      const next = e.key === 'ArrowDown' ? Math.min(i + 1, links.length - 1) : Math.max(i - 1, 0);
+      links[next]?.focus();
+    });
+
+    wireCabinetPreview();
 
     searchOpenBtn?.addEventListener('click', (e) => {
       e.preventDefault();
@@ -1699,6 +2385,7 @@
         return;
       }
       if (panel?.classList.contains('is-active')) {
+        e.preventDefault();
         setPanelOpen(false);
       }
     });
