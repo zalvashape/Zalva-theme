@@ -1,0 +1,862 @@
+{% comment %}
+  Premium search results — products only, editorial layout matching main-collection.
+{% endcomment %}
+
+{% liquid
+  assign products_per_page = section.settings.products_per_page | default: 12
+  assign eyebrow = section.settings.eyebrow | default: 'Search results'
+  assign empty_message = section.settings.empty_message | default: "We couldn't find anything matching this."
+  assign empty_subtitle = section.settings.empty_subtitle | default: 'Try one of these instead:'
+  assign no_query_message = section.settings.no_query_message | default: 'Start typing to discover...'
+  assign cta_label = section.settings.cta_label | default: 'Browse all products'
+  assign cta_url = section.settings.cta_url | default: routes.all_products_collection_url
+  assign sort_label = section.settings.sort_label | default: 'Sort by:'
+%}
+
+<div
+  class="zs-search full-width"
+  data-header-bg="#FAF8F5"
+  data-header-text="#1A1A1A"
+  {{ section.shopify_attributes }}
+>
+  <header class="zs-search__header">
+    <div class="zs-search__header-inner">
+      <p class="zs-search__eyebrow">{{ eyebrow }}</p>
+
+      {% if search.performed and search.terms != blank %}
+        <h1 class="zs-search__headline">Results for &lsquo;{{ search.terms | escape }}&rsquo;</h1>
+        <p class="zs-search__count-meta">
+          {{ search.results_count }}
+          {% if search.results_count == 1 %}
+            {{ section.settings.product_count_singular | default: 'product found' }}
+          {% else %}
+            {{ section.settings.product_count_plural | default: 'products found' }}
+          {% endif %}
+        </p>
+      {% elsif search.performed %}
+        <h1 class="zs-search__headline">{{ section.settings.empty_query_title | default: 'Search' }}</h1>
+      {% else %}
+        <h1 class="zs-search__headline">{{ section.settings.empty_query_title | default: 'Search' }}</h1>
+        <p class="zs-search__no-query">{{ no_query_message }}</p>
+      {% endif %}
+
+      <span class="zs-search__line" aria-hidden="true"></span>
+    </div>
+  </header>
+
+  {% unless search.performed and search.terms != blank %}
+    <div class="zs-search__empty zs-search__empty--prompt">
+      <div class="zs-search__empty-inner">
+        {% render 'zs-search-popular', section: section %}
+        <a class="zs-search__cta" href="{{ section.settings.cta_url | default: routes.all_products_collection_url }}">{{ cta_label }}</a>
+      </div>
+    </div>
+  {% elsif search.results_count == 0 %}
+    <div class="zs-search__empty zs-search__empty--no-results">
+      <div class="zs-search__empty-inner">
+        <p class="zs-search__empty-message">{{ empty_message }}</p>
+        <p class="zs-search__empty-subtitle">{{ empty_subtitle }}</p>
+        {% render 'zs-search-popular', section: section %}
+        <a class="zs-search__cta" href="{{ section.settings.cta_url | default: routes.all_products_collection_url }}">{{ cta_label }}</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="zs-search__results">
+      <div class="zs-search__results-inner">
+        {% paginate search.results by products_per_page %}
+          <div class="zs-search__toolbar">
+            <p class="zs-search__toolbar-count">
+              {{ search.results_count }}
+              {% if search.results_count == 1 %}product{% else %}products{% endif %}
+            </p>
+
+            <form
+              class="zs-search__sort"
+              method="get"
+              action="{{ routes.search_url }}"
+              id="SearchSort-{{ section.id }}"
+            >
+              <input type="hidden" name="q" value="{{ search.terms | escape }}">
+              <input type="hidden" name="type" value="product">
+              {% if search.filters %}
+                {% for filter in search.filters %}
+                  {% if filter.type == 'list' %}
+                    {% for value in filter.active_values %}
+                      <input type="hidden" name="{{ filter.param_name }}" value="{{ value.value }}">
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
+              <label class="zs-search__sort-label" for="SortBy-{{ section.id }}">{{ sort_label }}</label>
+              <select
+                class="zs-search__select"
+                name="sort_by"
+                id="SortBy-{{ section.id }}"
+                aria-label="{{ sort_label }}"
+              >
+                {% assign current_sort = search.sort_by | default: search.default_sort_by %}
+                <option value="relevance" {% if current_sort == 'relevance' %}selected{% endif %}>Featured</option>
+                <option value="best-selling" {% if current_sort == 'best-selling' %}selected{% endif %}>Best selling</option>
+                <option value="price-ascending" {% if current_sort == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price-descending" {% if current_sort == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+                <option value="created-descending" {% if current_sort == 'created-descending' %}selected{% endif %}>Newest</option>
+              </select>
+            </form>
+          </div>
+
+          <ul class="zs-search__grid" role="list">
+            {% for item in search.results %}
+              {% if item.object_type != 'product' %}
+                {% continue %}
+              {% endif %}
+              {% assign product = item %}
+              <li class="zs-search__item">
+                <article class="zs-search__card">
+                  <div class="zs-search__card-visual">
+                    <a href="{{ product.url }}" class="zs-search__card-media" tabindex="-1" aria-hidden="true">
+                      <div class="zs-search__card-media-inner">
+                        {% if product.featured_image %}
+                          {% assign card_alt = product.featured_image.alt | default: product.title %}
+                          {{
+                            product.featured_image
+                            | image_url: width: 900
+                            | image_tag:
+                              class: 'zs-search__card-img zs-search__card-img--primary',
+                              loading: 'lazy',
+                              sizes: '(min-width: 990px) 33vw, (min-width: 640px) 50vw, 100vw',
+                              widths: '300, 450, 600, 900',
+                              alt: card_alt
+                          }}
+                          {% if product.images.size > 1 %}
+                            {% assign hover_image = product.images[1] %}
+                            {{
+                              hover_image
+                              | image_url: width: 900
+                              | image_tag:
+                                class: 'zs-search__card-img zs-search__card-img--secondary',
+                                loading: 'lazy',
+                                sizes: '(min-width: 990px) 33vw, (min-width: 640px) 50vw, 100vw',
+                                widths: '300, 450, 600, 900',
+                                alt: ''
+                            }}
+                          {% endif %}
+                        {% else %}
+                          <div class="zs-search__card-placeholder" aria-hidden="true"></div>
+                        {% endif %}
+                      </div>
+                    </a>
+                    <div class="zs-search__card-quick">
+                      {% form 'product', product, class: 'zs-search__quick-form' %}
+                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button
+                          type="submit"
+                          name="add"
+                          class="zs-search__quick-btn"
+                          {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+                        >
+                          {{ section.settings.quick_add_label | default: 'Quick add' }}
+                        </button>
+                      {% endform %}
+                    </div>
+                  </div>
+                  <div class="zs-search__card-body">
+                    <a href="{{ product.url }}" class="zs-search__card-title">{{ product.title }}</a>
+                    <div class="zs-search__card-price">
+                      {% if product.compare_at_price > product.price %}
+                        <span class="zs-search__price-current">{{ product.price | money }}</span>
+                        <span class="zs-search__price-compare">{{ product.compare_at_price | money }}</span>
+                      {% else %}
+                        <span class="zs-search__price-current">{{ product.price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </article>
+              </li>
+            {% endfor %}
+          </ul>
+
+          {% if paginate.pages > 1 %}
+            <nav class="zs-search__pagination" aria-label="Search results pagination">
+              {{ paginate | default_pagination }}
+            </nav>
+          {% endif %}
+        {% endpaginate %}
+      </div>
+    </div>
+  {% endunless %}
+</div>
+
+<script>
+  (() => {
+    const sel = document.getElementById('SortBy-{{ section.id }}');
+    const form = document.getElementById('SearchSort-{{ section.id }}');
+    if (sel && form) {
+      sel.addEventListener('change', () => form.submit());
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  .zs-search {
+    --zs-ivory: #faf8f5;
+    --zs-noir: #1a1a1a;
+    --zs-champagne: #c8a96e;
+    --zs-taupe: #a07060;
+    --zs-deep-brown: #3d2b24;
+
+    background-color: var(--zs-ivory);
+    color: var(--zs-noir);
+  }
+
+  .zs-search__header {
+    width: 100%;
+    background-color: var(--zs-ivory);
+    padding-block: 60px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-search__header {
+      padding-block: 100px;
+    }
+  }
+
+  .zs-search__header-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    box-sizing: border-box;
+  }
+
+  .zs-search__eyebrow {
+    margin: 0 0 16px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--zs-champagne);
+  }
+
+  .zs-search__headline {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.2;
+    color: var(--zs-noir);
+    max-width: 20ch;
+  }
+
+  .zs-search__count-meta,
+  .zs-search__no-query {
+    margin: 16px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--zs-taupe);
+  }
+
+  .zs-search__no-query {
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-size: 22px;
+    color: var(--zs-deep-brown);
+  }
+
+  .zs-search__line {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin-top: 24px;
+    background-color: var(--zs-champagne);
+  }
+
+  .zs-search__empty {
+    width: 100%;
+    background-color: var(--zs-ivory);
+    padding-block: 50px 80px;
+  }
+
+  .zs-search__empty-inner {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .zs-search__empty--no-results .zs-search__empty-inner {
+    margin-top: 60px;
+  }
+
+  .zs-search__empty-message {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--zs-deep-brown);
+  }
+
+  .zs-search__empty-subtitle {
+    margin: 32px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--zs-taupe);
+  }
+
+  .zs-search__popular {
+    margin-top: 32px;
+  }
+
+  .zs-search__popular-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 24px;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 990px) {
+    .zs-search__popular-grid {
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 100%;
+    }
+  }
+
+  .zs-search__popular-link {
+    display: block;
+    padding: 8px 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--zs-noir);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .zs-search__popular-link:hover {
+    color: var(--zs-champagne);
+  }
+
+  .zs-search__popular-link:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-search__cta {
+    display: inline-block;
+    margin-top: 56px;
+    padding: 16px 40px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--zs-champagne);
+    background-color: var(--zs-noir);
+    border: 1px solid var(--zs-noir);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .zs-search__cta:hover {
+    background-color: transparent;
+    color: var(--zs-noir);
+  }
+
+  .zs-search__cta:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-search__results {
+    width: 100%;
+    background-color: var(--zs-ivory);
+    padding-block: 50px 80px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-search__results {
+      padding-block: 80px 100px;
+    }
+  }
+
+  .zs-search__results-inner {
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: 20px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 990px) {
+    .zs-search__results-inner {
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-search__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 48px;
+  }
+
+  .zs-search__toolbar-count {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--zs-taupe);
+  }
+
+  .zs-search__sort {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .zs-search__sort-label {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--zs-taupe);
+    white-space: nowrap;
+  }
+
+  .zs-search__select {
+    margin: 0;
+    padding: 4px 1.5rem 4px 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.3;
+    color: var(--zs-noir);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231a1a1a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m19 9-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 14px;
+  }
+
+  .zs-search__select:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-search__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .zs-search__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .zs-search__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .zs-search__card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  .zs-search__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08);
+  }
+
+  .zs-search__card-visual {
+    position: relative;
+    overflow: hidden;
+    background-color: #f0ebe4;
+  }
+
+  .zs-search__card-media {
+    display: block;
+    text-decoration: none;
+  }
+
+  .zs-search__card-media-inner {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+  }
+
+  .zs-search__card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition:
+      opacity 0.5s ease,
+      transform 0.45s ease;
+  }
+
+  .zs-search__card-img--primary {
+    opacity: 1;
+  }
+
+  .zs-search__card-img--secondary {
+    opacity: 0;
+  }
+
+  .zs-search__card:has(.zs-search__card-img--secondary):hover .zs-search__card-img--primary {
+    opacity: 0;
+  }
+
+  .zs-search__card:has(.zs-search__card-img--secondary):hover .zs-search__card-img--secondary {
+    opacity: 1;
+  }
+
+  .zs-search__card:not(:has(.zs-search__card-img--secondary)):hover .zs-search__card-img--primary {
+    transform: scale(1.03);
+  }
+
+  .zs-search__card-placeholder {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #f0ebe4, #e8ddd4);
+  }
+
+  .zs-search__card-quick {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .zs-search__card-visual:hover .zs-search__card-quick,
+  .zs-search__card-visual:focus-within .zs-search__card-quick {
+    transform: translateY(0);
+  }
+
+  .zs-search__quick-form {
+    margin: 0;
+  }
+
+  .zs-search__quick-btn {
+    display: block;
+    width: 100%;
+    height: 44px;
+    margin: 0;
+    padding: 0 16px;
+    border: none;
+    background-color: var(--zs-noir);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--zs-ivory);
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .zs-search__quick-btn:hover:not(:disabled) {
+    background-color: var(--zs-champagne);
+    color: var(--zs-noir);
+  }
+
+  .zs-search__quick-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .zs-search__quick-btn:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: -2px;
+  }
+
+  .zs-search__card-body {
+    padding-top: 16px;
+  }
+
+  .zs-search__card-title {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1.35;
+    color: var(--zs-noir);
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .zs-search__card-title:hover {
+    color: var(--zs-champagne);
+  }
+
+  .zs-search__card-title:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 3px;
+  }
+
+  .zs-search__card-price {
+    margin-top: 4px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .zs-search__price-current {
+    color: var(--zs-taupe);
+  }
+
+  .zs-search__price-compare {
+    color: var(--zs-taupe);
+    opacity: 0.65;
+    text-decoration: line-through;
+    font-size: 13px;
+  }
+
+  .zs-search__pagination {
+    margin-top: 80px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .zs-search__pagination,
+  .zs-search__pagination .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .zs-search__pagination a {
+    text-decoration: none;
+    color: var(--zs-noir);
+    padding: 0.25rem 0.5rem;
+    border-bottom: 1px solid transparent;
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .zs-search__pagination a:hover {
+    color: var(--zs-champagne);
+    border-bottom-color: var(--zs-champagne);
+  }
+
+  .zs-search__pagination .current,
+  .zs-search__pagination .page.current {
+    color: var(--zs-champagne);
+    border-bottom-color: var(--zs-champagne);
+  }
+
+  .zs-search__pagination .deco {
+    color: rgba(26, 26, 26, 0.35);
+    border: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Search results",
+  "tag": "section",
+  "class": "section-main-search",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page header"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Search results"
+    },
+    {
+      "type": "text",
+      "id": "empty_query_title",
+      "label": "Title when no query",
+      "default": "Search"
+    },
+    {
+      "type": "text",
+      "id": "no_query_message",
+      "label": "Message when no query",
+      "default": "Start typing to discover..."
+    },
+    {
+      "type": "text",
+      "id": "product_count_singular",
+      "label": "Count label (singular)",
+      "default": "product found"
+    },
+    {
+      "type": "text",
+      "id": "product_count_plural",
+      "label": "Count label (plural)",
+      "default": "products found"
+    },
+    {
+      "type": "header",
+      "content": "Empty results"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty message",
+      "default": "We couldn't find anything matching this."
+    },
+    {
+      "type": "text",
+      "id": "empty_subtitle",
+      "label": "Empty subtitle",
+      "default": "Try one of these instead:"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA button label",
+      "default": "Browse all products"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA button link"
+    },
+    {
+      "type": "header",
+      "content": "Results grid"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 6,
+      "max": 36,
+      "step": 3,
+      "default": 12,
+      "label": "Products per page"
+    },
+    {
+      "type": "text",
+      "id": "sort_label",
+      "label": "Sort label",
+      "default": "Sort by:"
+    },
+    {
+      "type": "text",
+      "id": "quick_add_label",
+      "label": "Quick add button label",
+      "default": "Quick add"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "popular_link",
+      "name": "Popular search link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Bodysuits"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search results",
+      "blocks": [
+        {
+          "type": "popular_link",
+          "settings": {
+            "label": "Bodysuits",
+            "url": "/collections/bodysuits"
+          }
+        },
+        {
+          "type": "popular_link",
+          "settings": {
+            "label": "Waist trainers",
+            "url": "/collections/waist-trainers"
+          }
+        },
+        {
+          "type": "popular_link",
+          "settings": {
+            "label": "Fajas",
+            "url": "/collections/fajas"
+          }
+        },
+        {
+          "type": "popular_link",
+          "settings": {
+            "label": "Best sellers",
+            "url": "/collections/all?sort_by=best-selling"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
