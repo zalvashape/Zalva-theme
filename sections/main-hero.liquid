@@ -1,9 +1,17 @@
 {% liquid
-  assign default_image_url = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/GENERA_1.png?v=1778497924'
+  assign default_desktop_url = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/GENERA_1.png?v=1778497924'
+  assign default_mobile_url = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/Hero_banner_mobile_2.png?v=1778879980'
+
   if section.settings.hero_image != blank
     assign hero_src = section.settings.hero_image | image_url: width: 3840
   else
-    assign hero_src = default_image_url
+    assign hero_src = default_desktop_url
+  endif
+
+  if section.settings.hero_image_mobile != blank
+    assign hero_mobile_src = section.settings.hero_image_mobile | image_url: width: 1600
+  else
+    assign hero_mobile_src = default_mobile_url
   endif
 
   assign top_text = section.settings.top_text | default: 'MADE TO BE WORN. NOT JUST SEEN.'
@@ -11,7 +19,7 @@
   assign w2 = section.settings.headline_word_2 | default: 'wears'
   assign w3 = section.settings.headline_word_3 | default: 'herself.'
   assign subtitle = section.settings.subtitle | default: 'Premium shapewear · Sculpted for every body.'
-  assign hero_alt = section.settings.hero_image_alt | default: 'Zalva Shape'
+  assign hero_alt = section.settings.hero_image_alt | default: 'Zalva Shape model in premium sculpting shapewear, editorial hero portrait'
   assign explore_href = section.settings.explore_link | default: routes.all_products_collection_url
 %}
 
@@ -21,16 +29,19 @@
   data-header-bg="#F0E8DF"
   data-header-text="#1A1A1A"
 >
-  <img
-    class="main-hero__bg"
-    src="{{ hero_src }}"
-    alt="{{ hero_alt | escape }}"
-    width="2000"
-    height="3000"
-    loading="eager"
-    fetchpriority="high"
-    decoding="async"
-  >
+  <picture class="main-hero__media">
+    <source media="(max-width: 768px)" srcset="{{ hero_mobile_src }}">
+    <img
+      class="main-hero__image"
+      src="{{ hero_src }}"
+      alt="{{ hero_alt | escape }}"
+      width="2000"
+      height="3000"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    >
+  </picture>
   <div class="main-hero__overlay" aria-hidden="true"></div>
 
   <div class="main-hero__content">
@@ -75,14 +86,36 @@
     color: var(--hero-ivory);
   }
 
-  .main-hero__bg {
+  .main-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .main-hero__image {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    z-index: 0;
+  }
+
+  @media (max-width: 768px) {
+    .main-hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    .main-hero__image {
+      object-fit: cover;
+      object-position: center;
+    }
   }
 
   .main-hero__overlay {
@@ -336,14 +369,20 @@
     {
       "type": "image_picker",
       "id": "hero_image",
-      "label": "Hero image",
-      "info": "Optional. Default hero image when empty: https://cdn.shopify.com/s/files/1/0998/1086/9562/files/GENERA_1.png?v=1778497924"
+      "label": "Desktop hero image",
+      "info": "Landscape hero for screens wider than 768px. Default when empty: GENERA_1.png"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Mobile hero image (9:16 vertical)",
+      "info": "Portrait hero for screens 768px and below. Default when empty: Hero_banner_mobile_2.png"
     },
     {
       "type": "text",
       "id": "hero_image_alt",
       "label": "Hero image alt text",
-      "default": "Zalva Shape"
+      "default": "Zalva Shape model in premium sculpting shapewear, editorial hero portrait"
     },
     {
       "type": "text",
