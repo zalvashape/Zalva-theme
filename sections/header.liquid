@@ -1,4 +1,4 @@
-<div
+﻿<div
   class="zs-header full-width"
   data-zs-header
   data-is-home="{% if request.page_type == 'index' %}true{% else %}false{% endif %}"
@@ -123,28 +123,42 @@
           >
         </form>
 
+        <span class="zs-search-dropdown__divider" aria-hidden="true"></span>
+
         <div class="zs-search-dropdown__scroll-area">
           <div class="zs-search-dropdown__body" data-zs-search-scroll>
+            <div class="zs-search-dropdown__live" data-zs-search-live hidden>
+              <p class="zs-search-dropdown__results-line" data-zs-search-results-head hidden>
+                <span data-zs-search-results-count></span>
+              </p>
+              <ul class="zs-search-dropdown__results" data-zs-search-product-list role="list"></ul>
+              <div class="zs-search-dropdown__noresults-wrap" data-zs-search-noresults-wrap hidden>
+                <p class="zs-search-dropdown__noresults-empty">No products found.</p>
+                <p class="zs-search-dropdown__noresults-hint">Try searching for &lsquo;bodysuit&rsquo; or &lsquo;shapewear&rsquo;</p>
+              </div>
+              <a class="zs-search-dropdown__view-all" href="{{ routes.search_url }}" data-zs-search-view-all hidden>View all results →</a>
+            </div>
+
             <div class="zs-search-dropdown__columns" data-zs-search-columns>
               <div class="zs-search-dropdown__col">
                 <p class="zs-search-dropdown__col-label">Popular searches</p>
-              <ul class="zs-search-dropdown__links" role="list">
-                <li>
-                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a>
-                </li>
-                <li>
-                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/waist-trainers">Waist trainers</a>
-                </li>
-                <li>
-                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/fajas">Fajas</a>
-                </li>
-                <li>
-                  <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=best-selling">Best sellers</a>
-                </li>
-                <li>
-                  <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=created-descending">New arrivals</a>
-                </li>
-              </ul>
+                <ul class="zs-search-dropdown__links" role="list">
+                  <li>
+                    <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a>
+                  </li>
+                  <li>
+                    <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/waist-trainers">Waist trainers</a>
+                  </li>
+                  <li>
+                    <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/fajas">Fajas</a>
+                  </li>
+                  <li>
+                    <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=best-selling">Best sellers</a>
+                  </li>
+                  <li>
+                    <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=created-descending">New arrivals</a>
+                  </li>
+                </ul>
             </div>
             <div class="zs-search-dropdown__col">
               <p class="zs-search-dropdown__col-label">Quick links</p>
@@ -163,12 +177,6 @@
                 </li>
               </ul>
             </div>
-          </div>
-
-          <div class="zs-search-dropdown__live" data-zs-search-live hidden>
-            <ul class="zs-search-dropdown__grid" data-zs-search-product-grid role="list"></ul>
-            <p class="zs-search-dropdown__noresults" data-zs-search-noresults hidden>No results found.</p>
-            <a class="zs-search-dropdown__view-all" href="{{ routes.search_url }}" data-zs-search-view-all hidden>VIEW ALL RESULTS →</a>
           </div>
           </div>
           <div class="zs-search-dropdown__progress" data-zs-search-progress hidden aria-hidden="true">
@@ -209,7 +217,7 @@
     </nav>
     <div class="zs-header__panel-footer">
       <span class="zs-header__panel-line" aria-hidden="true"></span>
-      <p class="zs-header__panel-social">INSTAGRAM · TIKTOK</p>
+      <p class="zs-header__panel-social">INSTAGRAM Â· TIKTOK</p>
     </div>
   </div>
 
@@ -636,6 +644,7 @@
 
   .zs-search-dropdown {
     --zs-sd-champagne: #c8a96e;
+    --zs-sd-taupe: #a07060;
     --zs-sd-bar-h: 72px;
 
     width: 100%;
@@ -765,13 +774,22 @@
     flex-shrink: 0;
   }
 
+  .zs-search-dropdown__divider {
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin: 16px 0 24px;
+    flex-shrink: 0;
+    background-color: var(--zs-sd-champagne);
+  }
+
   .zs-search-dropdown__input {
     display: block;
     width: 100%;
     margin: 0;
-    padding: 12px 0;
+    padding: 12px 0 0;
     border: none;
-    border-bottom: 1px solid currentColor;
+    border-bottom: none;
     border-radius: 0;
     background: transparent;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
@@ -801,7 +819,7 @@
     position: relative;
     flex: 1 1 auto;
     min-height: 0;
-    margin-top: 32px;
+    margin-top: 0;
     overflow: visible;
   }
 
@@ -962,112 +980,150 @@
     display: none !important;
   }
 
-  .zs-search-dropdown__grid {
+  .zs-search-dropdown__live {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .zs-search-dropdown__results-line {
+    margin: 0 0 16px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.5;
+  }
+
+  .zs-search-dropdown__results-line[hidden] {
+    display: none !important;
+  }
+
+  .zs-search-dropdown__results {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
   }
 
-  @media (min-width: 769px) {
-    .zs-search-dropdown__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .zs-search-dropdown__result-item:last-child .zs-search-dropdown__result-row {
+    border-bottom: none;
   }
 
-  @media (min-width: 990px) {
-    .zs-search-dropdown__grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .zs-search-dropdown__card {
+  .zs-search-dropdown__result-row {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    padding: 12px 0;
     text-decoration: none;
     color: inherit;
+    cursor: pointer;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+    transition: background-color 0.25s ease;
   }
 
-  .zs-search-dropdown__card:focus-visible {
+  .zs-search-dropdown__result-row:hover {
+    background-color: rgba(200, 169, 110, 0.05);
+  }
+
+  .zs-search-dropdown__result-row:focus-visible {
     outline: 2px solid var(--zs-sd-champagne);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
-  .zs-search-dropdown__media {
-    display: block;
-    aspect-ratio: 3 / 4;
-    border-radius: 4px;
+  .zs-search-dropdown__result-thumb {
+    flex-shrink: 0;
+    width: 60px;
+    height: 80px;
+    border-radius: 2px;
     overflow: hidden;
     background-color: rgba(26, 26, 26, 0.06);
   }
 
-  .zs-search-dropdown__media img {
+  .zs-search-dropdown__result-thumb img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.35s ease;
+    object-position: center;
+    transition: opacity 0.3s ease;
   }
 
-  .zs-search-dropdown__card:hover .zs-search-dropdown__media img {
+  .zs-search-dropdown__result-row:hover .zs-search-dropdown__result-thumb img {
     opacity: 0.85;
   }
 
-  .zs-search-dropdown__name {
+  .zs-search-dropdown__result-meta {
+    margin-left: 16px;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .zs-search-dropdown__result-name {
     margin: 0;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
     font-size: 16px;
-    line-height: 1.25;
+    line-height: 1.3;
     color: inherit;
   }
 
-  .zs-search-dropdown__price {
-    margin: 0;
+  .zs-search-dropdown__result-price {
+    margin: 4px 0 0;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: inherit;
-    opacity: 0.85;
-  }
-
-  .zs-search-dropdown__noresults {
-    margin: 0;
-    text-align: center;
-    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-size: 12px;
     font-weight: 300;
-    font-size: 20px;
-    font-style: italic;
-    color: inherit;
-    opacity: 0.6;
+    letter-spacing: 0.05em;
+    color: var(--zs-sd-taupe);
   }
 
-  .zs-search-dropdown__noresults[hidden] {
+  .zs-search-dropdown__noresults-wrap[hidden] {
     display: none !important;
   }
 
+  .zs-search-dropdown__noresults-empty {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.4;
+    color: inherit;
+    opacity: 0.5;
+  }
+
+  .zs-search-dropdown__noresults-hint {
+    margin: 8px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--zs-sd-taupe);
+  }
+
   .zs-search-dropdown__view-all {
-    display: block;
+    display: inline-block;
     width: fit-content;
     max-width: 100%;
-    margin: 32px auto 0;
+    margin: 20px 0 0;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    text-align: center;
     text-decoration: none;
     color: var(--zs-sd-champagne);
-    padding: 8px 0;
-    transition: opacity 0.25s ease;
+    padding: 0;
+    transition:
+      color 0.25s ease,
+      text-decoration-color 0.25s ease;
   }
 
   .zs-search-dropdown__view-all:hover {
-    opacity: 0.85;
+    text-decoration: underline;
+    text-decoration-color: var(--zs-sd-champagne);
+    text-underline-offset: 3px;
   }
 
   .zs-search-dropdown__view-all:focus-visible {
@@ -1247,8 +1303,10 @@
     const searchForm = root.querySelector('[data-zs-search-form]');
     const columnsEl = root.querySelector('[data-zs-search-columns]');
     const liveEl = root.querySelector('[data-zs-search-live]');
-    const gridEl = root.querySelector('[data-zs-search-product-grid]');
-    const noResEl = root.querySelector('[data-zs-search-noresults]');
+    const productListEl = root.querySelector('[data-zs-search-product-list]');
+    const resultsHeadEl = root.querySelector('[data-zs-search-results-head]');
+    const resultsCountEl = root.querySelector('[data-zs-search-results-count]');
+    const noResWrapEl = root.querySelector('[data-zs-search-noresults-wrap]');
     const viewAllEl = root.querySelector('[data-zs-search-view-all]');
     const searchScroll = root.querySelector('[data-zs-search-scroll]');
     const searchProgress = root.querySelector('[data-zs-search-progress]');
@@ -1286,7 +1344,8 @@
 
     const DEBOUNCE_MS = 300;
     const MIN_QUERY = 2;
-    const MAX_RESULTS = 4;
+    const MAX_VISIBLE = 4;
+    const SUGGEST_LIMIT = 10;
     let debounceTimer = 0;
     let abortController = null;
     let scrollProgressRaf = 0;
@@ -1372,48 +1431,84 @@
       }
     };
 
+    const setResultsHead = (total) => {
+      if (!resultsHeadEl || !resultsCountEl) return;
+      if (total <= 0) {
+        resultsHeadEl.hidden = true;
+        resultsCountEl.textContent = '';
+        return;
+      }
+      resultsHeadEl.hidden = false;
+      resultsCountEl.textContent = total === 1 ? '1 RESULT' : `${total} RESULTS`;
+    };
+
     const resetSearchResults = () => {
       if (columnsEl) columnsEl.hidden = false;
       if (liveEl) liveEl.hidden = true;
-      if (gridEl) gridEl.innerHTML = '';
-      if (noResEl) noResEl.hidden = true;
+      if (productListEl) productListEl.innerHTML = '';
+      if (noResWrapEl) noResWrapEl.hidden = true;
+      if (resultsHeadEl) resultsHeadEl.hidden = true;
+      if (resultsCountEl) resultsCountEl.textContent = '';
       if (viewAllEl) {
         viewAllEl.hidden = true;
         viewAllEl.href = searchUrl;
+        viewAllEl.textContent = 'View all results →';
       }
       scheduleSearchScrollProgress();
     };
 
-    const renderProducts = (products) => {
-      if (!gridEl) return;
-      gridEl.innerHTML = '';
+    const renderProducts = (allProducts, query) => {
+      if (!productListEl) return;
+      const visible = allProducts.slice(0, MAX_VISIBLE);
+      productListEl.innerHTML = '';
       const frag = document.createDocumentFragment();
-      products.slice(0, MAX_RESULTS).forEach((p) => {
+      visible.forEach((p) => {
         const li = document.createElement('li');
+        li.className = 'zs-search-dropdown__result-item';
         const a = document.createElement('a');
-        a.className = 'zs-search-dropdown__card';
+        a.className = 'zs-search-dropdown__result-row';
         a.href = p.url || '#';
-        const media = document.createElement('span');
-        media.className = 'zs-search-dropdown__media';
+        const thumb = document.createElement('span');
+        thumb.className = 'zs-search-dropdown__result-thumb';
         const src = imageUrl(p);
         if (src) {
           const img = document.createElement('img');
           img.src = src;
           img.alt = '';
           img.loading = 'lazy';
-          media.append(img);
+          img.width = 60;
+          img.height = 80;
+          thumb.append(img);
         }
-        const name = document.createElement('p');
-        name.className = 'zs-search-dropdown__name';
+        const meta = document.createElement('span');
+        meta.className = 'zs-search-dropdown__result-meta';
+        const name = document.createElement('span');
+        name.className = 'zs-search-dropdown__result-name';
         name.textContent = p.title || '';
-        const price = document.createElement('p');
-        price.className = 'zs-search-dropdown__price';
+        const price = document.createElement('span');
+        price.className = 'zs-search-dropdown__result-price';
         price.textContent = formatPrice(p);
-        a.append(media, name, price);
+        meta.append(name, price);
+        a.append(thumb, meta);
         li.append(a);
         frag.append(li);
       });
-      gridEl.append(frag);
+      productListEl.append(frag);
+      setResultsHead(allProducts.length);
+
+      if (viewAllEl && query) {
+        const u = new URL(searchUrl, window.location.origin);
+        u.searchParams.set('q', query);
+        u.searchParams.set('type', 'product');
+        viewAllEl.href = u.pathname + u.search;
+        const showViewAll = allProducts.length > MAX_VISIBLE;
+        viewAllEl.hidden = !showViewAll;
+        if (showViewAll) {
+          const atSuggestCap = allProducts.length >= SUGGEST_LIMIT;
+          const n = atSuggestCap ? `${SUGGEST_LIMIT}+` : String(allProducts.length);
+          viewAllEl.textContent = `View all ${n} results →`;
+        }
+      }
       scheduleSearchScrollProgress();
     };
 
@@ -1421,7 +1516,7 @@
       const u = new URL(suggestUrl, window.location.origin);
       u.searchParams.set('q', q);
       u.searchParams.set('resources[type]', 'product');
-      u.searchParams.set('resources[limit]', String(MAX_RESULTS));
+      u.searchParams.set('resources[limit]', String(SUGGEST_LIMIT));
       return u.toString();
     };
 
@@ -1443,24 +1538,22 @@
           const data = await runFetch(q);
           const products = parseProducts(data);
           if (!products.length) {
-            if (gridEl) gridEl.innerHTML = '';
-            if (noResEl) noResEl.hidden = false;
+            if (productListEl) productListEl.innerHTML = '';
+            if (resultsHeadEl) resultsHeadEl.hidden = true;
+            if (resultsCountEl) resultsCountEl.textContent = '';
+            if (noResWrapEl) noResWrapEl.hidden = false;
             if (viewAllEl) viewAllEl.hidden = true;
             scheduleSearchScrollProgress();
             return;
           }
-          if (noResEl) noResEl.hidden = true;
-          renderProducts(products);
-          if (viewAllEl) {
-            const u = new URL(searchUrl, window.location.origin);
-            u.searchParams.set('q', q);
-            viewAllEl.href = u.pathname + u.search;
-            viewAllEl.hidden = false;
-          }
+          if (noResWrapEl) noResWrapEl.hidden = true;
+          renderProducts(products, q);
         } catch (err) {
           if (err.name === 'AbortError') return;
-          if (gridEl) gridEl.innerHTML = '';
-          if (noResEl) noResEl.hidden = false;
+          if (productListEl) productListEl.innerHTML = '';
+          if (resultsHeadEl) resultsHeadEl.hidden = true;
+          if (resultsCountEl) resultsCountEl.textContent = '';
+          if (noResWrapEl) noResWrapEl.hidden = false;
           if (viewAllEl) viewAllEl.hidden = true;
         }
         scheduleSearchScrollProgress();
@@ -1571,7 +1664,7 @@
       }
       if (columnsEl) columnsEl.hidden = true;
       if (liveEl) liveEl.hidden = false;
-      if (noResEl) noResEl.hidden = true;
+      if (noResWrapEl) noResWrapEl.hidden = true;
       scheduleSearchScrollProgress();
       scheduleSearch(q);
     });
@@ -1602,3 +1695,4 @@
   "settings": []
 }
 {% endschema %}
+
