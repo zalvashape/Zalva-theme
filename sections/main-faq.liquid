@@ -462,7 +462,14 @@
         </ul>
         <p class="zs-faq__search-empty-contact">
           Still can't find what you need? Reach out at
-          <a href="mailto:hello@zalvashape.com">hello@zalvashape.com</a>
+          <button
+            type="button"
+            class="zs-email-copy-btn zs-email-copy--inline"
+            data-zs-email-copy
+            data-email="hello@zalvashape.com"
+            data-email-label="hello@zalvashape.com"
+            aria-label="Copy email address to clipboard"
+          >hello@zalvashape.com</button>
         </p>
       </div>
     </div>
@@ -485,7 +492,15 @@
       </p>
       <a class="zs-faq__cta-btn zs-faq__reveal" data-faq-delay="4" href="{{ routes.root_url }}pages/contact">Contact Us</a>
       <p class="zs-faq__cta-email zs-faq__reveal" data-faq-delay="5">
-        Or write to us at <a href="mailto:hello@zalvashape.com">hello@zalvashape.com</a>
+        Or write to us at
+        <button
+          type="button"
+          class="zs-email-copy-btn zs-email-copy--inline"
+          data-zs-email-copy
+          data-email="hello@zalvashape.com"
+          data-email-label="hello@zalvashape.com"
+          aria-label="Copy email address to clipboard"
+        >hello@zalvashape.com</button>
       </p>
     </div>
   </section>
@@ -1348,15 +1363,8 @@
     color: var(--zf-taupe);
   }
 
-  .zs-faq__search-empty-contact a {
+  .zs-faq__search-empty-contact .zs-email-copy--inline {
     color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    transition: color 0.3s ease;
-  }
-
-  .zs-faq__search-empty-contact a:hover {
-    color: var(--zf-champagne);
   }
 
   .zs-faq__item {
@@ -1592,15 +1600,8 @@
     color: rgba(212, 181, 160, 0.7);
   }
 
-  .zs-faq__cta-email a {
+  .zs-faq__cta-email .zs-email-copy--inline {
     color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    transition: color 0.3s ease;
-  }
-
-  .zs-faq__cta-email a:hover {
-    color: var(--zf-blush);
   }
 
   @media (prefers-reduced-motion: reduce) {

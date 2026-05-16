@@ -43,6 +43,10 @@
 
     {% section 'footer' %}
 
+    {% render 'zs-email-copy-toast' %}
+
+    {{ 'zs-email-copy.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'zs-email-copy.js' | asset_url }}" defer></script>
     <script src="{{ 'zs-search-clear.js' | asset_url }}" defer></script>
 
     <script>

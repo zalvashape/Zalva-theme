@@ -1,0 +1,149 @@
+/* Shared copy-to-clipboard email pattern */
+.zs-email-copy-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 32px;
+  background: #1a1a1a;
+  color: #faf8f5;
+  border: 1px solid #c8a96e;
+  border-radius: 0;
+  font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translate(-50%, 20px);
+  pointer-events: none;
+  transition:
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zs-email-copy-toast.is-active {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.zs-email-copy-toast__icon {
+  display: flex;
+  flex-shrink: 0;
+  color: #c8a96e;
+}
+
+.zs-email-copy-toast__text {
+  white-space: nowrap;
+}
+
+.zs-email-copy-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.zs-email-copy-btn:focus-visible {
+  outline: 2px solid #c8a96e;
+  outline-offset: 3px;
+}
+
+.zs-email-copy-btn.is-pressing {
+  transform: scale(0.97);
+}
+
+.zs-email-copy-btn.is-copied {
+  color: #c8a96e;
+}
+
+/* Contact card CTA */
+.zs-contact-email-copy {
+  display: inline-block;
+  margin-top: 24px;
+  font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .zs-contact-email-copy:hover:not(.is-copied) {
+    color: #c8a96e;
+    border-bottom-color: #c8a96e;
+    transform: translateX(4px);
+  }
+}
+
+.zs-contact-email-copy.is-pressing {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .zs-contact-email-copy.is-pressing:hover {
+    transform: scale(0.97);
+  }
+}
+
+.zs-contact-email-copy.is-copied {
+  color: #c8a96e;
+  border-bottom-color: #c8a96e;
+  transform: none;
+}
+
+/* Footer */
+.zs-footer__email-copy {
+  font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--zf-noir);
+  transition: color 0.3s ease;
+}
+
+.zs-footer__email-copy:hover:not(.is-copied) {
+  color: var(--zf-taupe);
+}
+
+.zs-footer__email-copy.is-copied {
+  color: var(--zf-champagne);
+}
+
+/* FAQ inline */
+.zs-email-copy--inline {
+  display: inline;
+  vertical-align: baseline;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.3s ease;
+}
+
+.zs-faq__search-empty-contact .zs-email-copy--inline:hover:not(.is-copied) {
+  color: var(--zf-champagne);
+}
+
+.zs-faq__cta-email .zs-email-copy--inline:hover:not(.is-copied) {
+  color: var(--zf-blush);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-email-copy-toast,
+  .zs-email-copy-btn.is-pressing,
+  .zs-contact-email-copy.is-pressing {
+    transition: none;
+  }
+}
