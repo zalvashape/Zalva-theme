@@ -64,6 +64,7 @@
     data-zs-faq-list-zone
     aria-label="Questions and answers"
   >
+    <div class="zs-faq__zone-sentinel" data-zs-faq-zone-sentinel aria-hidden="true"></div>
     <div class="zs-faq__list-inner">
       <p class="zs-faq__search-meta" data-zs-faq-search-meta hidden role="status"></p>
       <div class="zs-faq__list" data-zs-faq-list>
@@ -381,6 +382,7 @@
   {% comment %} Zone 4 — CTA {% endcomment %}
   <section
     class="zs-faq__zone zs-faq__zone--cta"
+    data-zs-faq-cta-zone
     data-header-bg="#1A1A1A"
     data-header-text="#FAF8F5"
     data-zs-faq-reveal
@@ -478,9 +480,6 @@
 
       root.classList.toggle('is-searching', useSearch);
 
-      if (useSearch) {
-        filterBar?.classList.remove('is-hidden');
-      }
 
       items.forEach((item) => {
         const matchSearch = itemMatchesSearch(item, query);
@@ -514,155 +513,89 @@
       if (searchEmpty) searchEmpty.hidden = !(useSearch && visibleCount === 0);
       if (faqList) faqList.hidden = useSearch && visibleCount === 0;
 
-      if (!useSearch) syncFilterBarForZone();
+      if (!useSearch) applyFilterBarVisibility();
     };
 
     const faqListZone = root.querySelector('[data-zs-faq-list-zone]');
-    const SCROLL_HIDE_THRESHOLD = 200;
-    const SCROLL_DELTA_MIN = 8;
-    const FILTER_REVEAL_MS = 500;
+    const faqZoneSentinel = root.querySelector('[data-zs-faq-zone-sentinel]');
+    const faqCtaZone = root.querySelector('[data-zs-faq-cta-zone]');
 
-    let isInFaqZone = false;
-    let filterScrollY = window.scrollY || window.pageYOffset || 0;
-    let filterScrollRaf = 0;
-    let filterRevealTimer = 0;
-    let faqZoneIo = null;
+    let sentinelNearTop = false;
+    let listZoneInView = false;
+    let ctaZoneInView = false;
 
     const isFilterBarHidden = () => filterBar?.classList.contains('is-hidden');
 
-    const setOutsideFaqZone = (outside) => {
-      if (!filterBar) return;
-      filterBar.classList.toggle('is-outside-zone', outside);
-    };
+    const shouldShowFilterBar = () =>
+      !getSearchQuery() && listZoneInView && !ctaZoneInView && sentinelNearTop;
 
-    const hideFilterBar = ({ force = false } = {}) => {
+    const applyFilterBarVisibility = () => {
       if (!filterBar) return;
+
+      if (prefersReducedMotion) {
+        filterBar.classList.remove('is-hidden', 'is-outside-zone');
+        return;
+      }
+
       if (getSearchQuery()) {
         filterBar.classList.add('is-hidden');
-        filterBar.classList.remove('is-revealing');
-        return;
-      }
-      if (!force && isFilterBarHidden()) return;
-
-      window.clearTimeout(filterRevealTimer);
-      filterBar.classList.remove('is-revealing');
-      filterBar.classList.add('is-hidden');
-    };
-
-    const showFilterBar = () => {
-      if (!filterBar || getSearchQuery() || !isInFaqZone) return;
-      if (filterBar.classList.contains('is-outside-zone')) return;
-      if (!isFilterBarHidden()) return;
-
-      filterBar.classList.remove('is-hidden');
-      filterBar.classList.add('is-revealing');
-      window.clearTimeout(filterRevealTimer);
-      filterRevealTimer = window.setTimeout(() => {
-        filterBar?.classList.remove('is-revealing');
-      }, FILTER_REVEAL_MS);
-    };
-
-    const syncFilterBarForZone = () => {
-      if (!filterBar || prefersReducedMotion) return;
-
-      if (getSearchQuery()) {
-        hideFilterBar({ force: true });
+        filterBar.classList.remove('is-outside-zone');
         return;
       }
 
-      if (!isInFaqZone) {
-        setOutsideFaqZone(true);
-        hideFilterBar({ force: true });
-        return;
-      }
+      const outsideList = !listZoneInView || ctaZoneInView;
+      filterBar.classList.toggle('is-outside-zone', outsideList);
 
-      setOutsideFaqZone(false);
-      updateFilterBarOnScroll(true);
-    };
-
-    const updateFilterBarOnScroll = (fromZoneSync = false) => {
-      if (!filterBar || prefersReducedMotion) {
-        filterBar?.classList.remove('is-hidden', 'is-outside-zone');
-        return;
-      }
-
-      if (getSearchQuery()) {
-        hideFilterBar({ force: true });
-        return;
-      }
-
-      if (!isInFaqZone) {
-        setOutsideFaqZone(true);
-        hideFilterBar({ force: true });
-        return;
-      }
-
-      setOutsideFaqZone(false);
-
-      const y = window.scrollY || window.pageYOffset || 0;
-
-      if (!fromZoneSync) {
-        const delta = y - filterScrollY;
-        if (Math.abs(delta) < SCROLL_DELTA_MIN) return;
-
-        if (y <= 0 || delta < 0) {
-          showFilterBar();
-        } else if (delta > 0 && y > SCROLL_HIDE_THRESHOLD) {
-          hideFilterBar();
+      if (shouldShowFilterBar()) {
+        if (isFilterBarHidden()) {
+          filterBar.classList.remove('is-hidden');
         }
-
-        filterScrollY = y;
         return;
       }
 
-      if (y <= SCROLL_HIDE_THRESHOLD || y < filterScrollY) {
-        showFilterBar();
-      } else {
-        hideFilterBar();
+      if (!isFilterBarHidden()) {
+        filterBar.classList.add('is-hidden');
       }
-      filterScrollY = y;
     };
 
-    const scheduleFilterScrollUpdate = () => {
-      if (filterScrollRaf) {
-        window.cancelAnimationFrame(filterScrollRaf);
-      }
-      filterScrollRaf = window.requestAnimationFrame(() => {
-        filterScrollRaf = 0;
-        updateFilterBarOnScroll();
-      });
-    };
-
-    const onFilterScroll = () => {
-      scheduleFilterScrollUpdate();
-    };
-
-    if (!prefersReducedMotion && faqListZone) {
-      faqZoneIo = new IntersectionObserver(
+    if (!prefersReducedMotion && faqListZone && faqZoneSentinel) {
+      const topBandIo = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            const wasInZone = isInFaqZone;
-            isInFaqZone = entry.isIntersecting && entry.intersectionRatio > 0;
-
-            if (isInFaqZone && !wasInZone) {
-              filterScrollY = window.scrollY || window.pageYOffset || 0;
-            }
-
-            syncFilterBarForZone();
-          });
+          sentinelNearTop = Boolean(entries[0]?.isIntersecting);
+          applyFilterBarVisibility();
         },
         {
           root: null,
-          rootMargin: '0px 0px -10% 0px',
-          threshold: [0, 0.01, 0.05],
+          rootMargin: '0px 0px -70% 0px',
+          threshold: 0,
         }
       );
 
-      faqZoneIo.observe(faqListZone);
-      window.addEventListener('scroll', onFilterScroll, { passive: true });
-    } else if (faqListZone) {
-      isInFaqZone = true;
-      setOutsideFaqZone(false);
+      const listZoneIo = new IntersectionObserver(
+        (entries) => {
+          listZoneInView = Boolean(entries[0]?.isIntersecting);
+          applyFilterBarVisibility();
+        },
+        { root: null, threshold: 0 }
+      );
+
+      topBandIo.observe(faqZoneSentinel);
+      listZoneIo.observe(faqListZone);
+
+      if (faqCtaZone) {
+        const ctaZoneIo = new IntersectionObserver(
+          (entries) => {
+            ctaZoneInView = Boolean(entries[0]?.isIntersecting);
+            applyFilterBarVisibility();
+          },
+          { root: null, threshold: 0 }
+        );
+        ctaZoneIo.observe(faqCtaZone);
+      }
+
+      applyFilterBarVisibility();
+    } else if (filterBar) {
+      filterBar.classList.remove('is-hidden', 'is-outside-zone');
     }
 
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
@@ -671,7 +604,7 @@
         activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
         setActiveChip(activeCategory);
         applyFilters();
-        if (isInFaqZone) showFilterBar();
+        applyFilterBarVisibility();
         filterBar?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
@@ -959,10 +892,22 @@
     }
   }
 
+  .zs-faq__zone-sentinel {
+    display: block;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
   /* Zone 2 — sticky filter (outer collapses layout; inner panel animates) */
   .zs-faq__zone--filter {
-    --zf-filter-ease-hide: cubic-bezier(0.4, 0, 0.2, 1);
-    --zf-filter-ease-show: cubic-bezier(0.22, 1, 0.36, 1);
+    --zf-filter-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --zf-filter-duration: 0.4s;
     --zf-filter-collapse-max: 180px;
 
     position: sticky;
@@ -973,8 +918,7 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    will-change: grid-template-rows, transform, opacity;
-    transition: grid-template-rows 0.3s var(--zf-filter-ease-hide);
+    transition: grid-template-rows var(--zf-filter-duration) var(--zf-filter-ease);
   }
 
   @media (min-width: 769px) {
@@ -995,10 +939,6 @@
     pointer-events: none;
   }
 
-  .zs-faq__zone--filter.is-revealing:not(.is-hidden) {
-    transition: grid-template-rows 0.5s var(--zf-filter-ease-show);
-  }
-
   .zs-faq__zone--filter.is-hidden {
     grid-template-rows: 0fr;
     margin: 0;
@@ -1009,17 +949,12 @@
     min-height: 0;
     max-height: var(--zf-filter-collapse-max);
     overflow: hidden;
-    will-change: max-height;
-    transition: max-height 0.3s var(--zf-filter-ease-hide);
+    transition: max-height var(--zf-filter-duration) var(--zf-filter-ease);
   }
 
   .zs-faq__zone--filter.is-hidden .zs-faq__filter-collapse,
   .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-collapse {
     max-height: 0;
-  }
-
-  .zs-faq__zone--filter.is-revealing:not(.is-hidden):not(.is-outside-zone) .zs-faq__filter-collapse {
-    transition: max-height 0.5s var(--zf-filter-ease-show);
   }
 
   .zs-faq__filter-panel {
@@ -1029,16 +964,9 @@
     margin: 0;
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    will-change: transform, opacity;
     transition:
-      transform 0.3s var(--zf-filter-ease-hide),
-      opacity 0.3s var(--zf-filter-ease-hide);
-  }
-
-  .zs-faq__zone--filter.is-revealing:not(.is-hidden) .zs-faq__filter-panel {
-    transition:
-      transform 0.5s var(--zf-filter-ease-show),
-      opacity 0.5s var(--zf-filter-ease-show);
+      transform var(--zf-filter-duration) var(--zf-filter-ease),
+      opacity var(--zf-filter-duration) var(--zf-filter-ease);
   }
 
   .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel,
@@ -1060,8 +988,7 @@
     margin: 0;
     pointer-events: none;
     visibility: hidden;
-    will-change: auto;
-    transition: grid-template-rows 0.4s var(--zf-filter-ease-hide);
+    transition: grid-template-rows var(--zf-filter-duration) var(--zf-filter-ease);
   }
 
   .zs-faq.is-searching .zs-faq__zone--filter .zs-faq__filter-panel {
@@ -1069,8 +996,8 @@
     opacity: 0;
     pointer-events: none;
     transition:
-      transform 0.4s var(--zf-filter-ease-hide),
-      opacity 0.4s var(--zf-filter-ease-hide);
+      transform var(--zf-filter-duration) var(--zf-filter-ease),
+      opacity var(--zf-filter-duration) var(--zf-filter-ease);
   }
 
   .zs-faq__filter-inner {
