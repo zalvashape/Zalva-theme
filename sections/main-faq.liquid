@@ -59,7 +59,11 @@
   </section>
 
   {% comment %} Zone 3 — FAQ accordion {% endcomment %}
-  <section class="zs-faq__zone zs-faq__zone--list" aria-label="Questions and answers">
+  <section
+    class="zs-faq__zone zs-faq__zone--list"
+    data-zs-faq-list-zone
+    aria-label="Questions and answers"
+  >
     <div class="zs-faq__list-inner">
       <p class="zs-faq__search-meta" data-zs-faq-search-meta hidden role="status"></p>
       <div class="zs-faq__list" data-zs-faq-list>
@@ -510,59 +514,155 @@
       if (searchEmpty) searchEmpty.hidden = !(useSearch && visibleCount === 0);
       if (faqList) faqList.hidden = useSearch && visibleCount === 0;
 
-      if (!useSearch) updateFilterBarOnScroll();
+      if (!useSearch) syncFilterBarForZone();
     };
 
+    const faqListZone = root.querySelector('[data-zs-faq-list-zone]');
     const SCROLL_HIDE_THRESHOLD = 200;
-    let filterScrollY = window.scrollY || window.pageYOffset || 0;
-    let filterScrollRaf = 0;
-
+    const SCROLL_DELTA_MIN = 8;
     const FILTER_REVEAL_MS = 500;
 
-    const showFilterBar = () => {
-      if (!filterBar || getSearchQuery()) return;
-      filterBar.classList.remove('is-hidden');
-      filterBar.classList.add('is-revealing');
-      window.setTimeout(() => {
-        filterBar.classList.remove('is-revealing');
-      }, FILTER_REVEAL_MS);
+    let isInFaqZone = false;
+    let filterScrollY = window.scrollY || window.pageYOffset || 0;
+    let filterScrollRaf = 0;
+    let filterRevealTimer = 0;
+    let faqZoneIo = null;
+
+    const isFilterBarHidden = () => filterBar?.classList.contains('is-hidden');
+
+    const setOutsideFaqZone = (outside) => {
+      if (!filterBar) return;
+      filterBar.classList.toggle('is-outside-zone', outside);
     };
 
-    const hideFilterBar = () => {
-      if (!filterBar || getSearchQuery()) return;
+    const hideFilterBar = ({ force = false } = {}) => {
+      if (!filterBar) return;
+      if (getSearchQuery()) {
+        filterBar.classList.add('is-hidden');
+        filterBar.classList.remove('is-revealing');
+        return;
+      }
+      if (!force && isFilterBarHidden()) return;
+
+      window.clearTimeout(filterRevealTimer);
       filterBar.classList.remove('is-revealing');
       filterBar.classList.add('is-hidden');
     };
 
-    const updateFilterBarOnScroll = () => {
-      if (!filterBar || prefersReducedMotion || getSearchQuery()) {
-        filterBar?.classList.remove('is-hidden');
+    const showFilterBar = () => {
+      if (!filterBar || getSearchQuery() || !isInFaqZone) return;
+      if (filterBar.classList.contains('is-outside-zone')) return;
+      if (!isFilterBarHidden()) return;
+
+      filterBar.classList.remove('is-hidden');
+      filterBar.classList.add('is-revealing');
+      window.clearTimeout(filterRevealTimer);
+      filterRevealTimer = window.setTimeout(() => {
+        filterBar?.classList.remove('is-revealing');
+      }, FILTER_REVEAL_MS);
+    };
+
+    const syncFilterBarForZone = () => {
+      if (!filterBar || prefersReducedMotion) return;
+
+      if (getSearchQuery()) {
+        hideFilterBar({ force: true });
         return;
       }
 
-      const y = window.scrollY || window.pageYOffset || 0;
-
-      if (y <= 0) {
-        showFilterBar();
-      } else if (y < filterScrollY - 2) {
-        showFilterBar();
-      } else if (y > filterScrollY + 2 && y > SCROLL_HIDE_THRESHOLD) {
-        hideFilterBar();
+      if (!isInFaqZone) {
+        setOutsideFaqZone(true);
+        hideFilterBar({ force: true });
+        return;
       }
 
+      setOutsideFaqZone(false);
+      updateFilterBarOnScroll(true);
+    };
+
+    const updateFilterBarOnScroll = (fromZoneSync = false) => {
+      if (!filterBar || prefersReducedMotion) {
+        filterBar?.classList.remove('is-hidden', 'is-outside-zone');
+        return;
+      }
+
+      if (getSearchQuery()) {
+        hideFilterBar({ force: true });
+        return;
+      }
+
+      if (!isInFaqZone) {
+        setOutsideFaqZone(true);
+        hideFilterBar({ force: true });
+        return;
+      }
+
+      setOutsideFaqZone(false);
+
+      const y = window.scrollY || window.pageYOffset || 0;
+
+      if (!fromZoneSync) {
+        const delta = y - filterScrollY;
+        if (Math.abs(delta) < SCROLL_DELTA_MIN) return;
+
+        if (y <= 0 || delta < 0) {
+          showFilterBar();
+        } else if (delta > 0 && y > SCROLL_HIDE_THRESHOLD) {
+          hideFilterBar();
+        }
+
+        filterScrollY = y;
+        return;
+      }
+
+      if (y <= SCROLL_HIDE_THRESHOLD || y < filterScrollY) {
+        showFilterBar();
+      } else {
+        hideFilterBar();
+      }
       filterScrollY = y;
     };
 
-    const onFilterScroll = () => {
-      if (filterScrollRaf) return;
+    const scheduleFilterScrollUpdate = () => {
+      if (filterScrollRaf) {
+        window.cancelAnimationFrame(filterScrollRaf);
+      }
       filterScrollRaf = window.requestAnimationFrame(() => {
         filterScrollRaf = 0;
         updateFilterBarOnScroll();
       });
     };
 
-    if (!prefersReducedMotion) {
+    const onFilterScroll = () => {
+      scheduleFilterScrollUpdate();
+    };
+
+    if (!prefersReducedMotion && faqListZone) {
+      faqZoneIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const wasInZone = isInFaqZone;
+            isInFaqZone = entry.isIntersecting && entry.intersectionRatio > 0;
+
+            if (isInFaqZone && !wasInZone) {
+              filterScrollY = window.scrollY || window.pageYOffset || 0;
+            }
+
+            syncFilterBarForZone();
+          });
+        },
+        {
+          root: null,
+          rootMargin: '0px 0px -10% 0px',
+          threshold: [0, 0.01, 0.05],
+        }
+      );
+
+      faqZoneIo.observe(faqListZone);
       window.addEventListener('scroll', onFilterScroll, { passive: true });
+    } else if (faqListZone) {
+      isInFaqZone = true;
+      setOutsideFaqZone(false);
     }
 
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
@@ -571,7 +671,7 @@
         activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
         setActiveChip(activeCategory);
         applyFilters();
-        showFilterBar();
+        if (isInFaqZone) showFilterBar();
         filterBar?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
@@ -594,7 +694,7 @@
     applyFilters();
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
-    const listZone = root.querySelector('.zs-faq__zone--list');
+    const listZone = faqListZone;
     const REVEAL_IO_DELAY_MS = 100;
     const REVEAL_FALLBACK_MS = 1200;
 
@@ -863,6 +963,7 @@
   .zs-faq__zone--filter {
     --zf-filter-ease-hide: cubic-bezier(0.4, 0, 0.2, 1);
     --zf-filter-ease-show: cubic-bezier(0.22, 1, 0.36, 1);
+    --zf-filter-collapse-max: 180px;
 
     position: sticky;
     top: var(--zs-header-stack);
@@ -872,8 +973,26 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    will-change: grid-template-rows;
+    will-change: grid-template-rows, transform, opacity;
     transition: grid-template-rows 0.3s var(--zf-filter-ease-hide);
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq__zone--filter {
+      --zf-filter-collapse-max: 200px;
+    }
+  }
+
+  .zs-faq__zone--filter.is-outside-zone {
+    grid-template-rows: 0fr;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-panel {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .zs-faq__zone--filter.is-revealing:not(.is-hidden) {
@@ -888,7 +1007,19 @@
 
   .zs-faq__filter-collapse {
     min-height: 0;
+    max-height: var(--zf-filter-collapse-max);
     overflow: hidden;
+    will-change: max-height;
+    transition: max-height 0.3s var(--zf-filter-ease-hide);
+  }
+
+  .zs-faq__zone--filter.is-hidden .zs-faq__filter-collapse,
+  .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-collapse {
+    max-height: 0;
+  }
+
+  .zs-faq__zone--filter.is-revealing:not(.is-hidden):not(.is-outside-zone) .zs-faq__filter-collapse {
+    transition: max-height 0.5s var(--zf-filter-ease-show);
   }
 
   .zs-faq__filter-panel {
@@ -897,7 +1028,7 @@
     padding-inline: 20px;
     margin: 0;
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     will-change: transform, opacity;
     transition:
       transform 0.3s var(--zf-filter-ease-hide),
@@ -910,8 +1041,9 @@
       opacity 0.5s var(--zf-filter-ease-show);
   }
 
-  .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel {
-    transform: translateY(-100%);
+  .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel,
+  .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-panel {
+    transform: translate3d(0, -100%, 0);
     opacity: 0;
     pointer-events: none;
   }
@@ -1377,11 +1509,13 @@
       visibility: hidden;
     }
 
-    .zs-faq__zone--filter.is-hidden {
+    .zs-faq__zone--filter.is-hidden,
+    .zs-faq__zone--filter.is-outside-zone {
       grid-template-rows: 0fr;
     }
 
-    .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel {
+    .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel,
+    .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-panel {
       transform: none;
       opacity: 0;
     }
