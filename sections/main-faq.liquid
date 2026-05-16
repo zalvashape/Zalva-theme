@@ -42,14 +42,18 @@
 
   {% comment %} Zone 2 — Category filter (sticky) {% endcomment %}
   <section class="zs-faq__zone zs-faq__zone--filter" data-zs-faq-filter aria-label="Filter by category">
-    <div class="zs-faq__filter-inner">
-      <div class="zs-faq__chips" role="tablist" data-zs-faq-chips>
-        <button type="button" class="zs-faq__chip is-active" role="tab" aria-selected="true" data-zs-faq-category="all">All Questions</button>
-        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="sizing-fit">Sizing &amp; Fit</button>
-        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="compression">Compression</button>
-        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="shipping-returns">Shipping &amp; Returns</button>
-        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="care-materials">Care &amp; Materials</button>
-        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="orders-payment">Orders &amp; Payment</button>
+    <div class="zs-faq__filter-collapse">
+      <div class="zs-faq__filter-panel">
+        <div class="zs-faq__filter-inner">
+          <div class="zs-faq__chips" role="tablist" data-zs-faq-chips>
+            <button type="button" class="zs-faq__chip is-active" role="tab" aria-selected="true" data-zs-faq-category="all">All Questions</button>
+            <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="sizing-fit">Sizing &amp; Fit</button>
+            <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="compression">Compression</button>
+            <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="shipping-returns">Shipping &amp; Returns</button>
+            <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="care-materials">Care &amp; Materials</button>
+            <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="orders-payment">Orders &amp; Payment</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -513,13 +517,20 @@
     let filterScrollY = window.scrollY || window.pageYOffset || 0;
     let filterScrollRaf = 0;
 
+    const FILTER_REVEAL_MS = 500;
+
     const showFilterBar = () => {
       if (!filterBar || getSearchQuery()) return;
       filterBar.classList.remove('is-hidden');
+      filterBar.classList.add('is-revealing');
+      window.setTimeout(() => {
+        filterBar.classList.remove('is-revealing');
+      }, FILTER_REVEAL_MS);
     };
 
     const hideFilterBar = () => {
       if (!filterBar || getSearchQuery()) return;
+      filterBar.classList.remove('is-revealing');
       filterBar.classList.add('is-hidden');
     };
 
@@ -848,37 +859,65 @@
     }
   }
 
-  /* Zone 2 — sticky filter */
+  /* Zone 2 — sticky filter (outer collapses layout; inner panel animates) */
   .zs-faq__zone--filter {
+    --zf-filter-ease-hide: cubic-bezier(0.4, 0, 0.2, 1);
+    --zf-filter-ease-show: cubic-bezier(0.22, 1, 0.36, 1);
+
     position: sticky;
     top: var(--zs-header-stack);
     z-index: 50;
     display: grid;
     grid-template-rows: 1fr;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    will-change: grid-template-rows;
+    transition: grid-template-rows 0.3s var(--zf-filter-ease-hide);
+  }
+
+  .zs-faq__zone--filter.is-revealing:not(.is-hidden) {
+    transition: grid-template-rows 0.5s var(--zf-filter-ease-show);
+  }
+
+  .zs-faq__zone--filter.is-hidden {
+    grid-template-rows: 0fr;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .zs-faq__filter-collapse {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .zs-faq__filter-panel {
     background-color: var(--zf-ivory);
     padding-block: 24px;
     padding-inline: 20px;
     margin: 0;
     opacity: 1;
-    overflow: hidden;
     transform: translateY(0);
     will-change: transform, opacity;
     transition:
-      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-      grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.3s var(--zf-filter-ease-hide),
+      opacity 0.3s var(--zf-filter-ease-hide);
   }
 
-  .zs-faq__zone--filter.is-hidden {
+  .zs-faq__zone--filter.is-revealing:not(.is-hidden) .zs-faq__filter-panel {
+    transition:
+      transform 0.5s var(--zf-filter-ease-show),
+      opacity 0.5s var(--zf-filter-ease-show);
+  }
+
+  .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel {
     transform: translateY(-100%);
     opacity: 0;
     pointer-events: none;
   }
 
   @media (min-width: 769px) {
-    .zs-faq__zone--filter {
+    .zs-faq__filter-panel {
       padding-block: 32px;
       padding-inline: 40px;
     }
@@ -886,27 +925,25 @@
 
   .zs-faq.is-searching .zs-faq__zone--filter {
     grid-template-rows: 0fr;
-    padding-block: 0;
-    padding-inline: 20px;
     margin: 0;
-    opacity: 0;
-    transform: translateY(-20px);
     pointer-events: none;
     visibility: hidden;
     will-change: auto;
+    transition: grid-template-rows 0.4s var(--zf-filter-ease-hide);
   }
 
-  @media (min-width: 769px) {
-    .zs-faq.is-searching .zs-faq__zone--filter {
-      padding-inline: 40px;
-    }
+  .zs-faq.is-searching .zs-faq__zone--filter .zs-faq__filter-panel {
+    transform: translateY(-12px);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 0.4s var(--zf-filter-ease-hide),
+      opacity 0.4s var(--zf-filter-ease-hide);
   }
 
   .zs-faq__filter-inner {
     max-width: 1080px;
     margin-inline: auto;
-    min-height: 0;
-    overflow: hidden;
   }
 
   .zs-faq__chips {
@@ -1341,9 +1378,12 @@
     }
 
     .zs-faq__zone--filter.is-hidden {
+      grid-template-rows: 0fr;
+    }
+
+    .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel {
       transform: none;
-      opacity: 1;
-      pointer-events: auto;
+      opacity: 0;
     }
   }
 {% endstylesheet %}
