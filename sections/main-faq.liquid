@@ -59,12 +59,7 @@
   </section>
 
   {% comment %} Zone 3 — FAQ accordion {% endcomment %}
-  <section
-    class="zs-faq__zone zs-faq__zone--list"
-    data-zs-faq-list-zone
-    aria-label="Questions and answers"
-  >
-    <div class="zs-faq__zone-sentinel" data-zs-faq-zone-sentinel aria-hidden="true"></div>
+  <section class="zs-faq__zone zs-faq__zone--list" aria-label="Questions and answers">
     <div class="zs-faq__list-inner">
       <p class="zs-faq__search-meta" data-zs-faq-search-meta hidden role="status"></p>
       <div class="zs-faq__list" data-zs-faq-list>
@@ -382,7 +377,6 @@
   {% comment %} Zone 4 — CTA {% endcomment %}
   <section
     class="zs-faq__zone zs-faq__zone--cta"
-    data-zs-faq-cta-zone
     data-header-bg="#1A1A1A"
     data-header-text="#FAF8F5"
     data-zs-faq-reveal
@@ -512,91 +506,7 @@
 
       if (searchEmpty) searchEmpty.hidden = !(useSearch && visibleCount === 0);
       if (faqList) faqList.hidden = useSearch && visibleCount === 0;
-
-      if (!useSearch) applyFilterBarVisibility();
     };
-
-    const faqListZone = root.querySelector('[data-zs-faq-list-zone]');
-    const faqZoneSentinel = root.querySelector('[data-zs-faq-zone-sentinel]');
-    const faqCtaZone = root.querySelector('[data-zs-faq-cta-zone]');
-
-    let sentinelNearTop = false;
-    let listZoneInView = false;
-    let ctaZoneInView = false;
-
-    const isFilterBarHidden = () => filterBar?.classList.contains('is-hidden');
-
-    const shouldShowFilterBar = () =>
-      !getSearchQuery() && listZoneInView && !ctaZoneInView && sentinelNearTop;
-
-    const applyFilterBarVisibility = () => {
-      if (!filterBar) return;
-
-      if (prefersReducedMotion) {
-        filterBar.classList.remove('is-hidden', 'is-outside-zone');
-        return;
-      }
-
-      if (getSearchQuery()) {
-        filterBar.classList.add('is-hidden');
-        filterBar.classList.remove('is-outside-zone');
-        return;
-      }
-
-      const outsideList = !listZoneInView || ctaZoneInView;
-      filterBar.classList.toggle('is-outside-zone', outsideList);
-
-      if (shouldShowFilterBar()) {
-        if (isFilterBarHidden()) {
-          filterBar.classList.remove('is-hidden');
-        }
-        return;
-      }
-
-      if (!isFilterBarHidden()) {
-        filterBar.classList.add('is-hidden');
-      }
-    };
-
-    if (!prefersReducedMotion && faqListZone && faqZoneSentinel) {
-      const topBandIo = new IntersectionObserver(
-        (entries) => {
-          sentinelNearTop = Boolean(entries[0]?.isIntersecting);
-          applyFilterBarVisibility();
-        },
-        {
-          root: null,
-          rootMargin: '0px 0px -70% 0px',
-          threshold: 0,
-        }
-      );
-
-      const listZoneIo = new IntersectionObserver(
-        (entries) => {
-          listZoneInView = Boolean(entries[0]?.isIntersecting);
-          applyFilterBarVisibility();
-        },
-        { root: null, threshold: 0 }
-      );
-
-      topBandIo.observe(faqZoneSentinel);
-      listZoneIo.observe(faqListZone);
-
-      if (faqCtaZone) {
-        const ctaZoneIo = new IntersectionObserver(
-          (entries) => {
-            ctaZoneInView = Boolean(entries[0]?.isIntersecting);
-            applyFilterBarVisibility();
-          },
-          { root: null, threshold: 0 }
-        );
-        ctaZoneIo.observe(faqCtaZone);
-      }
-
-      applyFilterBarVisibility();
-    } else if (filterBar) {
-      filterBar.classList.remove('is-hidden', 'is-outside-zone');
-    }
 
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
       chip.addEventListener('click', () => {
@@ -604,7 +514,6 @@
         activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
         setActiveChip(activeCategory);
         applyFilters();
-        applyFilterBarVisibility();
         filterBar?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
@@ -627,7 +536,7 @@
     applyFilters();
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
-    const listZone = faqListZone;
+    const listZone = root.querySelector('.zs-faq__zone--list');
     const REVEAL_IO_DELAY_MS = 100;
     const REVEAL_FALLBACK_MS = 1200;
 
@@ -892,19 +801,7 @@
     }
   }
 
-  .zs-faq__zone-sentinel {
-    display: block;
-    width: 100%;
-    height: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    overflow: hidden;
-    pointer-events: none;
-    visibility: hidden;
-  }
-
-  /* Zone 2 — sticky filter (outer collapses layout; inner panel animates) */
+  /* Zone 2 — sticky filter (collapses only during search) */
   .zs-faq__zone--filter {
     --zf-filter-ease: cubic-bezier(0.4, 0, 0.2, 1);
     --zf-filter-duration: 0.4s;
@@ -927,24 +824,6 @@
     }
   }
 
-  .zs-faq__zone--filter.is-outside-zone {
-    grid-template-rows: 0fr;
-    margin: 0;
-    pointer-events: none;
-  }
-
-  .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-panel {
-    transform: translateY(-100%);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .zs-faq__zone--filter.is-hidden {
-    grid-template-rows: 0fr;
-    margin: 0;
-    pointer-events: none;
-  }
-
   .zs-faq__filter-collapse {
     min-height: 0;
     max-height: var(--zf-filter-collapse-max);
@@ -952,8 +831,7 @@
     transition: max-height var(--zf-filter-duration) var(--zf-filter-ease);
   }
 
-  .zs-faq__zone--filter.is-hidden .zs-faq__filter-collapse,
-  .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-collapse {
+  .zs-faq.is-searching .zs-faq__filter-collapse {
     max-height: 0;
   }
 
@@ -967,13 +845,6 @@
     transition:
       transform var(--zf-filter-duration) var(--zf-filter-ease),
       opacity var(--zf-filter-duration) var(--zf-filter-ease);
-  }
-
-  .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel,
-  .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-panel {
-    transform: translate3d(0, -100%, 0);
-    opacity: 0;
-    pointer-events: none;
   }
 
   @media (min-width: 769px) {
@@ -1436,16 +1307,6 @@
       visibility: hidden;
     }
 
-    .zs-faq__zone--filter.is-hidden,
-    .zs-faq__zone--filter.is-outside-zone {
-      grid-template-rows: 0fr;
-    }
-
-    .zs-faq__zone--filter.is-hidden .zs-faq__filter-panel,
-    .zs-faq__zone--filter.is-outside-zone .zs-faq__filter-panel {
-      transform: none;
-      opacity: 0;
-    }
   }
 {% endstylesheet %}
 
