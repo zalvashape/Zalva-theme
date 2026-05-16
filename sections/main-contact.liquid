@@ -81,7 +81,7 @@
             <h3 class="zs-contact__card-title">Send a message</h3>
             <p class="zs-contact__card-subtitle">Detailed inquiry</p>
             <p class="zs-contact__card-desc">For more complex questions, fill out our form below.</p>
-            <a class="zs-contact__card-cta" href="#contact-form">Go to form ↓</a>
+            <a class="zs-contact__card-cta" href="#contact-form" data-zs-contact-scroll-form>Go to form ↓</a>
           </article>
         </li>
       </ul>
@@ -316,6 +316,47 @@
     window.setTimeout(() => {
       revealZones.forEach(setupZone);
     }, REVEAL_IO_DELAY_MS);
+
+    const FORM_SCROLL_EXTRA_PX = 40;
+
+    const getHeaderStackPx = () => {
+      const probe = document.createElement('div');
+      probe.style.cssText =
+        'position:absolute;visibility:hidden;pointer-events:none;height:var(--zs-header-stack)';
+      document.body.appendChild(probe);
+      const height = probe.offsetHeight;
+      probe.remove();
+      return height || 0;
+    };
+
+    const scrollToContactForm = (e) => {
+      const formSection = document.getElementById('contact-form');
+      if (!formSection) return;
+
+      e.preventDefault();
+
+      const headerHeight = getHeaderStackPx();
+      const top =
+        formSection.getBoundingClientRect().top +
+        (window.scrollY || window.pageYOffset || 0) -
+        headerHeight -
+        FORM_SCROLL_EXTRA_PX;
+
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      });
+
+      if (history.replaceState) {
+        history.replaceState(null, '', '#contact-form');
+      } else {
+        window.location.hash = 'contact-form';
+      }
+    };
+
+    root.querySelectorAll('[data-zs-contact-scroll-form]').forEach((link) => {
+      link.addEventListener('click', scrollToContactForm);
+    });
   })();
 </script>
 
@@ -857,14 +898,16 @@
   /* Zone 5 */
   .zs-contact__zone--promise {
     background-color: var(--zc-noir);
-    padding-block: 50px;
+    padding-top: 50px;
+    padding-bottom: 30px;
     padding-inline: 20px;
     text-align: center;
   }
 
   @media (min-width: 769px) {
     .zs-contact__zone--promise {
-      padding-block: 80px;
+      padding-top: 80px;
+      padding-bottom: 50px;
       padding-inline: 40px;
     }
   }
