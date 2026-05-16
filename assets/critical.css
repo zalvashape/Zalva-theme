@@ -39,6 +39,23 @@ body.zalva-home [data-main-hero-section].main-hero {
   margin-top: calc(-1 * var(--zs-header-stack));
 }
 
+/**
+ * Page templates: pull first section under fixed header so its background fills the
+ * body padding-top band (no Ivory gap). Add data-zs-page-pull-up on the first zone.
+ */
+body.template-page-size-guide .zs-size-guide__zone--header,
+body[class*='template-page'] [data-zs-page-pull-up] {
+  margin-top: calc(-1 * var(--zs-header-stack));
+  padding-top: calc(var(--zs-header-stack) + 40px);
+}
+
+@media (min-width: 769px) {
+  body.template-page-size-guide .zs-size-guide__zone--header,
+  body[class*='template-page'] [data-zs-page-pull-up] {
+    padding-top: calc(var(--zs-header-stack) + 60px);
+  }
+}
+
 /* Homepage: remove default inter-section margins for seamless stacked sections */
 body.zalva-home .shopify-section {
   margin-block: 0;

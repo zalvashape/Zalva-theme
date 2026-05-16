@@ -35,7 +35,7 @@
 
   </head>
 
-  <body class="template-{{ request.page_type }}{% if request.page_type == 'index' %} zalva-home{% endif %}">
+  <body class="template-{{ request.page_type }}{% if template.suffix != blank %} template-{{ request.page_type }}-{{ template.suffix }}{% endif %}{% if request.page_type == 'index' %} zalva-home{% endif %}">
     {% comment %} Premium header: announcement bar + main bar + side panel live in sections/header.liquid (header-group). {% endcomment %}
     {% sections 'header-group' %}
 

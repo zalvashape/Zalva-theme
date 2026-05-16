@@ -6,7 +6,12 @@
   {{ section.shopify_attributes }}
 >
   {% comment %} Zone 1 — Page header {% endcomment %}
-  <section class="zs-size-guide__zone zs-size-guide__zone--header" data-zs-sg-reveal aria-labelledby="zs-sg-page-title">
+  <section
+    class="zs-size-guide__zone zs-size-guide__zone--header"
+    data-zs-page-pull-up
+    data-zs-sg-reveal
+    aria-labelledby="zs-sg-page-title"
+  >
     <div class="zs-size-guide__header-inner">
       <span class="zs-size-guide__ornament zs-size-guide__reveal" data-sg-delay="0" aria-hidden="true"></span>
       <p class="zs-size-guide__eyebrow zs-size-guide__reveal" data-sg-delay="1">Fit guide</p>
@@ -420,18 +425,15 @@
     }
   }
 
-  /* Zone 1 */
+  /* Zone 1 — padding-top set in critical.css (header pull-up + content offset) */
   .zs-size-guide__zone--header {
     background-color: var(--sg-linen);
-    padding-top: 40px;
     padding-bottom: 50px;
     padding-inline: 20px;
-    margin-top: 0;
   }
 
   @media (min-width: 769px) {
     .zs-size-guide__zone--header {
-      padding-top: 60px;
       padding-bottom: 80px;
       padding-inline: 40px;
     }
