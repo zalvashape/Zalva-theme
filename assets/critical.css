@@ -45,7 +45,7 @@ body.zalva-home .shopify-section {
 }
 
 /* Avoid flex spacer opening a band of body background above the footer on the homepage */
-body.zalva-home .site-footer {
+body.zalva-home .zs-footer {
   margin-top: 0;
 }
 
