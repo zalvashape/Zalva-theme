@@ -177,6 +177,9 @@
                   <a class="zs-search-dropdown__link" href="{{ routes.root_url }}pages/size-guide">Size Guide</a>
                 </li>
                 <li>
+                  <a class="zs-search-dropdown__link" href="{{ routes.root_url }}pages/faq">FAQ</a>
+                </li>
+                <li>
                   <a class="zs-search-dropdown__link" href="{{ routes.root_url }}pages/contact">Contact</a>
                 </li>
               </ul>
@@ -291,6 +294,12 @@
             <li>
               <a class="zs-cabinet-menu__m-secondary-link" href="{{ routes.root_url }}pages/size-guide">
                 <span>Size Guide</span>
+                <span class="zs-cabinet-menu__m-secondary-arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            </li>
+            <li>
+              <a class="zs-cabinet-menu__m-secondary-link" href="{{ routes.root_url }}pages/faq">
+                <span>FAQ</span>
                 <span class="zs-cabinet-menu__m-secondary-arrow" aria-hidden="true">&rarr;</span>
               </a>
             </li>
@@ -434,6 +443,17 @@
               </a>
             </li>
             <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 7">
+              <a
+                class="zs-cabinet-menu__link"
+                href="{{ routes.root_url }}pages/faq"
+                data-cabinet-preview="{{ cabinet_preview | escape }}"
+                data-cabinet-eyebrow="FAQ"
+                data-cabinet-tagline="Quick answers."
+              >
+                FAQ
+              </a>
+            </li>
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 8">
               <a
                 class="zs-cabinet-menu__link"
                 href="{{ routes.root_url }}pages/contact"
