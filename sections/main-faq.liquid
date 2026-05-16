@@ -24,15 +24,18 @@
             <path d="M16 16l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </span>
-        <input
-          id="ZsFaqSearch-{{ section.id }}"
-          class="zs-faq__search-input"
-          type="search"
-          name="faq-search"
-          placeholder="Search a question..."
-          autocomplete="off"
-          data-zs-faq-search
-        >
+        <div class="search-input-wrapper">
+          <input
+            id="ZsFaqSearch-{{ section.id }}"
+            class="zs-faq__search-input zs-faq-search"
+            type="search"
+            name="faq-search"
+            placeholder="Search a question..."
+            autocomplete="off"
+            data-zs-faq-search
+          >
+          {% render 'search-clear-button' %}
+        </div>
       </div>
     </div>
   </section>
@@ -708,7 +711,7 @@
   .zs-faq__search-input {
     width: 100%;
     margin: 0;
-    padding: 14px 0 14px 36px;
+    padding: 14px 40px 14px 36px;
     border: none;
     border-radius: 0;
     background: transparent;
@@ -728,7 +731,7 @@
   @media (max-width: 768px) {
     .zs-faq__search-input {
       font-size: 13px;
-      padding: 12px 0 12px 32px;
+      padding: 12px 36px 12px 32px;
     }
 
     .zs-faq__search-wrap {

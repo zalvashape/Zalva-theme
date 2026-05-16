@@ -61,18 +61,21 @@
 
         <div class="zs-search__refine-field">
           <label class="zs-search__visually-hidden" for="SearchRefineInput-{{ section.id }}">Search</label>
-          <input
-            id="SearchRefineInput-{{ section.id }}"
-            class="zs-search__refine-input"
-            type="search"
-            name="q"
-            value="{% if has_search_query %}{{ search.terms | escape }}{% endif %}"
-            placeholder="What are you looking for?"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-          >
+          <div class="search-input-wrapper">
+            <input
+              id="SearchRefineInput-{{ section.id }}"
+              class="zs-search__refine-input zs-search-page-input"
+              type="search"
+              name="q"
+              value="{% if has_search_query %}{{ search.terms | escape }}{% endif %}"
+              placeholder="What are you looking for?"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            >
+            {% render 'search-clear-button' %}
+          </div>
         </div>
         <button type="submit" class="zs-search__refine-submit">Search</button>
       </form>
@@ -329,7 +332,7 @@
     display: block;
     width: 100%;
     margin: 0;
-    padding: 12px 0;
+    padding: 12px 40px 12px 0;
     border: none;
     border-radius: 0;
     border-bottom: 1px solid var(--zs-champagne);

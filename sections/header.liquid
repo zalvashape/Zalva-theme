@@ -109,19 +109,22 @@
         <form class="zs-search-dropdown__form" action="{{ routes.search_url }}" method="get" role="search" data-zs-search-form>
           <input type="hidden" name="type" value="product">
           <label class="zs-search-dropdown__visually-hidden" for="zs-search-dropdown-input">Search</label>
-          <input
-            id="zs-search-dropdown-input"
-            class="zs-search-dropdown__input"
-            type="search"
-            name="q"
-            value=""
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-            placeholder="What are you looking for?"
-            data-zs-search-input
-          >
+          <div class="search-input-wrapper">
+            <input
+              id="zs-search-dropdown-input"
+              class="zs-search-dropdown__input zs-search-input"
+              type="search"
+              name="q"
+              value=""
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="What are you looking for?"
+              data-zs-search-input
+            >
+            {% render 'search-clear-button' %}
+          </div>
         </form>
 
         <span class="zs-search-dropdown__divider" aria-hidden="true"></span>
@@ -1080,7 +1083,7 @@
     display: block;
     width: 100%;
     margin: 0;
-    padding: 12px 0 0;
+    padding: 12px 36px 0 0;
     border: none;
     border-bottom: none;
     border-radius: 0;
@@ -2730,7 +2733,10 @@
         }
         if (abortController) abortController.abort();
         window.clearTimeout(debounceTimer);
-        if (searchInput && !preserveInput) searchInput.value = '';
+        if (searchInput && !preserveInput) {
+          searchInput.value = '';
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
         resetSearchResults();
         searchInput?.blur();
         searchOpenBtn.focus({ preventScroll: true });
