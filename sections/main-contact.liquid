@@ -1,223 +1,902 @@
-<div class="main-contact full-width">
-  <div class="main-contact__inner">
-    <h1 class="main-contact__title">Contact Us</h1>
-    <p class="main-contact__subtitle">We'd love to hear from you.</p>
-
-    {% form 'contact', class: 'main-contact__form' %}
-      {% if form.posted_successfully? %}
-        <p class="main-contact__notice main-contact__notice--success" role="status">Thank you for your message. We'll be in touch soon.</p>
-      {% endif %}
-      {% if form.errors %}
-        <p class="main-contact__notice main-contact__notice--error" role="alert">Please correct the errors below and try again.</p>
-      {% endif %}
-
-      <div class="main-contact__fields">
-        <div class="main-contact__field">
-          <label class="main-contact__label" for="ContactName-{{ section.id }}">Name</label>
-          <input
-            class="main-contact__input"
-            type="text"
-            id="ContactName-{{ section.id }}"
-            name="contact[name]"
-            value="{% if form.name %}{{ form.name }}{% endif %}"
-            autocomplete="name"
-            required
-          >
-        </div>
-        <div class="main-contact__field">
-          <label class="main-contact__label" for="ContactEmail-{{ section.id }}">Email</label>
-          <input
-            class="main-contact__input"
-            type="email"
-            id="ContactEmail-{{ section.id }}"
-            name="contact[email]"
-            value="{% if form.email %}{{ form.email }}{% endif %}"
-            spellcheck="false"
-            autocapitalize="off"
-            autocomplete="email"
-            required
-          >
-        </div>
-        <div class="main-contact__field">
-          <label class="main-contact__label" for="ContactSubject-{{ section.id }}">Subject</label>
-          <input
-            class="main-contact__input"
-            type="text"
-            id="ContactSubject-{{ section.id }}"
-            name="contact[subject]"
-            value=""
-          >
-        </div>
-        <div class="main-contact__field">
-          <label class="main-contact__label" for="ContactBody-{{ section.id }}">Message</label>
-          <textarea
-            class="main-contact__textarea"
-            id="ContactBody-{{ section.id }}"
-            name="contact[body]"
-            rows="6"
-            required
-          >{{- form.body -}}</textarea>
-        </div>
-      </div>
-
-      <button type="submit" class="main-contact__submit">SEND MESSAGE</button>
-    {% endform %}
-
-    <div class="main-contact__meta">
-      <a class="main-contact__email" href="mailto:info@zalvashape.com">info@zalvashape.com</a>
-      <p class="main-contact__note">Response within 24 hours</p>
+<div class="zs-contact full-width" data-zs-contact {{ section.shopify_attributes }}>
+  {% comment %} Zone 1 — Page header {% endcomment %}
+  <section
+    class="zs-contact__zone zs-contact__zone--header"
+    data-zs-page-pull-up
+    data-header-bg="#F0E8DF"
+    data-header-text="#1A1A1A"
+    data-zs-contact-reveal
+    aria-labelledby="zs-contact-page-title"
+  >
+    <div class="zs-contact__header-inner">
+      <span class="zs-contact__ornament zs-contact__reveal" data-contact-delay="0" aria-hidden="true"></span>
+      <p class="zs-contact__eyebrow zs-contact__reveal" data-contact-delay="1">Get in touch</p>
+      <h1 id="zs-contact-page-title" class="zs-contact__page-title zs-contact__reveal" data-contact-delay="2">
+        We'd love to hear from you.
+      </h1>
+      <p class="zs-contact__page-sub zs-contact__reveal" data-contact-delay="3">
+        Real humans, real answers. We respond within 24 hours, Monday through Friday.
+      </p>
     </div>
-  </div>
+  </section>
+
+  {% comment %} Zone 2 — Contact options {% endcomment %}
+  <section class="zs-contact__zone zs-contact__zone--options" data-zs-contact-reveal aria-labelledby="zs-contact-options-title">
+    <div class="zs-contact__options-inner">
+      <header class="zs-contact__section-head zs-contact__reveal" data-contact-delay="0">
+        <p class="zs-contact__eyebrow">Ways to reach us</p>
+        <h2 id="zs-contact-options-title" class="zs-contact__section-title">Choose your path.</h2>
+      </header>
+
+      <ul class="zs-contact__cards" role="list">
+        <li class="zs-contact__card zs-contact__reveal" data-contact-delay="1">
+          <article class="zs-contact__card-inner">
+            <span class="zs-contact__card-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <h3 class="zs-contact__card-title">Email</h3>
+            <p class="zs-contact__card-subtitle">Direct line</p>
+            <p class="zs-contact__card-desc">Reach out to our team directly. We respond within 24 hours.</p>
+            <a class="zs-contact__card-cta" href="mailto:hello@zalvashape.com">hello@zalvashape.com →</a>
+          </article>
+        </li>
+        <li class="zs-contact__card zs-contact__reveal" data-contact-delay="2">
+          <article class="zs-contact__card-inner">
+            <span class="zs-contact__card-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+              </svg>
+            </span>
+            <h3 class="zs-contact__card-title">Instagram</h3>
+            <p class="zs-contact__card-subtitle">DM us</p>
+            <p class="zs-contact__card-desc">Send us a message — perfect for quick questions and styling advice.</p>
+            <a
+              class="zs-contact__card-cta"
+              href="https://instagram.com/zalvashape"
+              rel="noopener noreferrer"
+              target="_blank"
+            >@zalvashape →</a>
+          </article>
+        </li>
+        <li class="zs-contact__card zs-contact__reveal" data-contact-delay="3">
+          <article class="zs-contact__card-inner">
+            <span class="zs-contact__card-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M6 8h12M6 12h8M6 16h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M4 5h16v14H4V5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <h3 class="zs-contact__card-title">Send a message</h3>
+            <p class="zs-contact__card-subtitle">Detailed inquiry</p>
+            <p class="zs-contact__card-desc">For more complex questions, fill out our form below.</p>
+            <a class="zs-contact__card-cta" href="#contact-form">Go to form ↓</a>
+          </article>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  {% comment %} Zone 3 — FAQ suggestion {% endcomment %}
+  <section
+    class="zs-contact__zone zs-contact__zone--faq-strip"
+    data-header-bg="#1A1A1A"
+    data-header-text="#FAF8F5"
+    data-zs-contact-reveal
+  >
+    <div class="zs-contact__faq-strip-inner zs-contact__reveal" data-contact-delay="0">
+      <p class="zs-contact__faq-strip-text">Looking for something specific?</p>
+      <a class="zs-contact__faq-strip-cta" href="{{ routes.root_url }}pages/faq">Try our FAQ →</a>
+    </div>
+  </section>
+
+  {% comment %} Zone 4 — Contact form {% endcomment %}
+  <section
+    id="contact-form"
+    class="zs-contact__zone zs-contact__zone--form"
+    data-zs-contact-reveal
+    aria-labelledby="zs-contact-form-title"
+  >
+    <div class="zs-contact__form-inner">
+      <header class="zs-contact__section-head zs-contact__section-head--center zs-contact__reveal" data-contact-delay="0">
+        <p class="zs-contact__eyebrow">Write to us</p>
+        <h2 id="zs-contact-form-title" class="zs-contact__section-title zs-contact__section-title--lg">Send us a message.</h2>
+        <p class="zs-contact__form-intro">
+          Fill out the form and we'll get back to you within 24 hours.
+        </p>
+      </header>
+
+      {% if form.posted_successfully? %}
+        <div class="zs-contact__success zs-contact__reveal" data-contact-delay="1" role="status">
+          <span class="zs-contact__ornament" aria-hidden="true"></span>
+          <p class="zs-contact__success-lead">
+            Thank you. We've received your message and will get back to you within 24 hours.
+          </p>
+          <p class="zs-contact__success-follow">
+            Want to write another message?
+            <a class="zs-contact__success-link" href="{{ request.path }}">Click here to refresh</a>
+          </p>
+        </div>
+      {% else %}
+        {% form 'contact', class: 'zs-contact-form zs-contact__reveal', data-contact-delay: '1' %}
+          {% if form.errors %}
+            <div class="zs-contact__errors" role="alert" tabindex="-1">
+              <ul class="zs-contact__errors-list" role="list">
+                {% for field in form.errors %}
+                  <li>
+                    {{ form.errors.translated_fields[field] | capitalize }}
+                    {{ form.errors.messages[field] }}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <div class="zs-contact__fields">
+            <div class="zs-contact__field">
+              <label class="zs-contact__label" for="ContactName-{{ section.id }}">Your name</label>
+              <input
+                class="zs-contact__input"
+                type="text"
+                id="ContactName-{{ section.id }}"
+                name="contact[name]"
+                value="{% if form.name %}{{ form.name }}{% endif %}"
+                autocomplete="name"
+              >
+            </div>
+
+            <div class="zs-contact__field">
+              <label class="zs-contact__label" for="ContactEmail-{{ section.id }}">Email address</label>
+              <input
+                class="zs-contact__input"
+                type="email"
+                id="ContactEmail-{{ section.id }}"
+                name="contact[email]"
+                value="{% if form.email %}{{ form.email }}{% endif %}"
+                autocomplete="email"
+                spellcheck="false"
+                autocapitalize="off"
+                required
+                aria-required="true"
+              >
+            </div>
+
+            <div class="zs-contact__field">
+              <label class="zs-contact__label" for="ContactSubject-{{ section.id }}">What's this about?</label>
+              <div class="zs-contact__select-wrap">
+                <select
+                  class="zs-contact__select"
+                  id="ContactSubject-{{ section.id }}"
+                  name="contact[subject]"
+                >
+                  <option value="" disabled {% unless form.subject %}selected{% endunless %}>Select a category...</option>
+                  <option value="Order Issues" {% if form.subject == 'Order Issues' %}selected{% endif %}>Order Issues</option>
+                  <option value="Sizing Help" {% if form.subject == 'Sizing Help' %}selected{% endif %}>Sizing Help</option>
+                  <option value="Returns &amp; Exchanges" {% if form.subject == 'Returns & Exchanges' %}selected{% endif %}>Returns &amp; Exchanges</option>
+                  <option value="Other" {% if form.subject == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+                <span class="zs-contact__select-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="zs-contact__field">
+              <label class="zs-contact__label" for="ContactBody-{{ section.id }}">Your message</label>
+              <textarea
+                class="zs-contact__textarea"
+                id="ContactBody-{{ section.id }}"
+                name="contact[body]"
+                rows="5"
+                required
+                aria-required="true"
+              >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="zs-contact__submit">Send message</button>
+        {% endform %}
+      {% endif %}
+    </div>
+  </section>
+
+  {% comment %} Zone 5 — Response promise {% endcomment %}
+  <section
+    class="zs-contact__zone zs-contact__zone--promise"
+    data-header-bg="#1A1A1A"
+    data-header-text="#FAF8F5"
+    data-zs-contact-reveal
+    aria-labelledby="zs-contact-promise-title"
+  >
+    <div class="zs-contact__promise-inner">
+      <span class="zs-contact__ornament zs-contact__ornament--light zs-contact__reveal" data-contact-delay="0" aria-hidden="true"></span>
+      <p class="zs-contact__eyebrow zs-contact__eyebrow--light zs-contact__reveal" data-contact-delay="1">Our promise</p>
+      <h2 id="zs-contact-promise-title" class="zs-contact__promise-title zs-contact__reveal" data-contact-delay="2">
+        Within 24 hours, always.
+      </h2>
+      <p class="zs-contact__promise-sub zs-contact__reveal" data-contact-delay="3">
+        We respond to every message Monday through Friday. Real humans, every time.
+      </p>
+    </div>
+  </section>
 </div>
 
-{% stylesheet %}
-  .main-contact {
-    --zalva-ivory: #faf8f5;
-    --zalva-champagne: #c8a96e;
-    --zalva-noir: #1a1a1a;
-    --zalva-deep-brown: #3d2b24;
+<script>
+  (() => {
+    const root = document.querySelector('[data-zs-contact]');
+    if (!root) return;
 
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    padding-block: clamp(2.5rem, 6vw, 4rem);
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealZones = root.querySelectorAll('[data-zs-contact-reveal]');
+    const REVEAL_IO_DELAY_MS = 100;
+    const REVEAL_FALLBACK_MS = 1200;
+
+    const isInViewport = (el) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      return r.bottom > 0 && r.top < vh;
+    };
+
+    const markZoneSettled = (zone) => {
+      zone.classList.remove('is-visible');
+      zone.classList.add('reveal-settled');
+    };
+
+    const markZoneAnimated = (zone) => {
+      zone.classList.remove('reveal-settled');
+      zone.classList.add('is-visible');
+    };
+
+    const setupZone = (zone) => {
+      if (prefersReducedMotion) {
+        markZoneSettled(zone);
+        return;
+      }
+      if (!('IntersectionObserver' in window)) {
+        markZoneSettled(zone);
+        return;
+      }
+      if (isInViewport(zone)) {
+        markZoneSettled(zone);
+        return;
+      }
+
+      let done = false;
+      let fallbackTimer = 0;
+      let io = null;
+
+      const finish = (animated) => {
+        if (done) return;
+        done = true;
+        if (fallbackTimer) window.clearTimeout(fallbackTimer);
+        if (io) io.disconnect();
+        if (animated) markZoneAnimated(zone);
+        else markZoneSettled(zone);
+      };
+
+      fallbackTimer = window.setTimeout(() => finish(false), REVEAL_FALLBACK_MS);
+
+      let lastScrollY = window.scrollY || window.pageYOffset || 0;
+      const onScroll = () => {
+        lastScrollY = window.scrollY || window.pageYOffset || 0;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.15) return;
+            const y = window.scrollY || window.pageYOffset || 0;
+            const scrollingDown = y >= lastScrollY - 2;
+            window.removeEventListener('scroll', onScroll);
+            finish(scrollingDown);
+          });
+        },
+        { threshold: [0, 0.15, 0.3, 0.45, 0.6] }
+      );
+
+      io.observe(zone);
+    };
+
+    window.setTimeout(() => {
+      revealZones.forEach(setupZone);
+    }, REVEAL_IO_DELAY_MS);
+  })();
+</script>
+
+{% stylesheet %}
+  .zs-contact {
+    --zc-linen: #f0e8df;
+    --zc-ivory: #faf8f5;
+    --zc-noir: #1a1a1a;
+    --zc-champagne: #c8a96e;
+    --zc-deep: #3d2b24;
+    --zc-taupe: #a07060;
+    --zc-blush: #d4b5a0;
+    --zc-error: #a04040;
+
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
   }
 
-  .main-contact__inner {
-    max-width: 28rem;
-    margin-inline: auto;
-    padding-inline: var(--page-margin);
+  .zs-contact__zone {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .zs-contact__ornament {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin: 0 auto 32px;
+    background-color: var(--zc-champagne);
+  }
+
+  .zs-contact__ornament--light {
+    width: 24px;
+    margin-bottom: 24px;
+    background-color: var(--zc-champagne);
+  }
+
+  .zs-contact__eyebrow {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--zc-champagne);
+  }
+
+  .zs-contact__eyebrow--light {
+    color: var(--zc-champagne);
+  }
+
+  .zs-contact__reveal {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .zs-contact__zone.is-visible .zs-contact__reveal {
+    animation: zs-contact-rise 0.75s ease forwards;
+  }
+
+  .zs-contact__zone.is-visible .zs-contact__reveal[data-contact-delay='0'] { animation-delay: 0s; }
+  .zs-contact__zone.is-visible .zs-contact__reveal[data-contact-delay='1'] { animation-delay: 0.1s; }
+  .zs-contact__zone.is-visible .zs-contact__reveal[data-contact-delay='2'] { animation-delay: 0.2s; }
+  .zs-contact__zone.is-visible .zs-contact__reveal[data-contact-delay='3'] { animation-delay: 0.3s; }
+  .zs-contact__zone.is-visible .zs-contact__reveal[data-contact-delay='4'] { animation-delay: 0.4s; }
+
+  .zs-contact__zone.reveal-settled .zs-contact__reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  @keyframes zs-contact-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  /* Zone 1 */
+  .zs-contact__zone--header {
+    background-color: var(--zc-linen);
+    padding-bottom: 60px;
+    padding-inline: 20px;
     text-align: center;
   }
 
-  .main-contact__title {
+  @media (min-width: 769px) {
+    .zs-contact__zone--header {
+      padding-bottom: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-contact__header-inner {
+    max-width: 880px;
+    margin-inline: auto;
+  }
+
+  .zs-contact__page-title {
+    margin: 16px 0 0;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
-    font-size: clamp(2.25rem, 5vw, 3rem);
-    color: var(--zalva-deep-brown);
-    margin: 0 0 0.5rem;
-  }
-
-  .main-contact__subtitle {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 1rem;
     font-style: italic;
-    color: rgba(26, 26, 26, 0.75);
-    margin: 0 0 2rem;
+    font-size: clamp(36px, 5.5vw, 56px);
+    line-height: 1.2;
+    color: var(--zc-noir);
   }
 
-  .main-contact__form {
-    margin: 0;
-    text-align: left;
-  }
-
-  .main-contact__notice {
+  .zs-contact__page-sub {
+    margin: 24px auto 0;
+    max-width: 520px;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.875rem;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1.25rem;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+    color: var(--zc-deep);
+  }
+
+  /* Zone 2 */
+  .zs-contact__zone--options {
+    background-color: var(--zc-ivory);
+    padding-block: 50px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__zone--options {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-contact__options-inner {
+    max-width: 1080px;
+    margin-inline: auto;
+  }
+
+  .zs-contact__section-head {
+    margin-bottom: 48px;
     text-align: center;
   }
 
-  .main-contact__notice--success {
-    background-color: rgba(200, 169, 110, 0.15);
-    border: 1px solid var(--zalva-champagne);
-    color: var(--zalva-deep-brown);
+  .zs-contact__section-head--center {
+    margin-bottom: 56px;
   }
 
-  .main-contact__notice--error {
-    background-color: rgba(139, 41, 66, 0.08);
-    border: 1px solid rgba(139, 41, 66, 0.35);
-    color: #6b2438;
+  .zs-contact__section-title {
+    margin: 12px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.2;
+    color: var(--zc-noir);
   }
 
-  .main-contact__fields {
+  .zs-contact__section-title--lg {
+    font-size: clamp(28px, 4vw, 44px);
+  }
+
+  .zs-contact__cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .zs-contact__card {
+    margin: 0;
+  }
+
+  .zs-contact__card-inner {
     display: flex;
     flex-direction: column;
-    gap: 1.125rem;
+    align-items: center;
+    height: 100%;
+    padding: 40px 28px;
+    text-align: center;
+    background: transparent;
+    border: 1px solid rgba(160, 112, 96, 0.2);
+    box-sizing: border-box;
+    transition: all 0.4s ease;
   }
 
-  .main-contact__label {
+  @media (hover: hover) {
+    .zs-contact__card-inner:hover {
+      border-color: var(--zc-champagne);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08);
+    }
+  }
+
+  .zs-contact__card-icon {
+    display: flex;
+    color: var(--zc-champagne);
+  }
+
+  .zs-contact__card-title {
+    margin: 20px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--zc-noir);
+  }
+
+  .zs-contact__card-subtitle {
+    margin: 8px 0 0;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    display: block;
-    margin-bottom: 0.375rem;
-    color: var(--zalva-noir);
+    color: var(--zc-champagne);
   }
 
-  .main-contact__input,
-  .main-contact__textarea {
+  .zs-contact__card-desc {
+    margin: 12px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--zc-deep);
+  }
+
+  .zs-contact__card-cta {
+    display: inline-block;
+    margin-top: 24px;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.9375rem;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid rgba(26, 26, 26, 0.25);
-    border-radius: var(--style-border-radius-inputs, 2px);
-    background-color: #ffffff;
-    color: var(--zalva-noir);
-  }
-
-  .main-contact__textarea {
-    resize: vertical;
-    min-height: 8rem;
-  }
-
-  .main-contact__input:focus-visible,
-  .main-contact__textarea:focus-visible {
-    outline: 2px solid var(--zalva-champagne);
-    outline-offset: 1px;
-    border-color: var(--zalva-champagne);
-  }
-
-  .main-contact__submit {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    width: 100%;
-    margin-top: 1.5rem;
-    padding: 1rem 1.5rem;
-    min-height: 3.25rem;
-    border: none;
-    cursor: pointer;
-    background-color: var(--zalva-champagne);
-    color: var(--zalva-noir);
-    transition: background-color 0.2s ease, color 0.2s ease;
-  }
-
-  .main-contact__submit:hover {
-    background-color: var(--zalva-deep-brown);
-    color: #ffffff;
-  }
-
-  .main-contact__meta {
-    margin-top: 2.5rem;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(26, 26, 26, 0.1);
-  }
-
-  .main-contact__email {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.9375rem;
+    font-size: 11px;
     font-weight: 500;
-    color: var(--zalva-champagne);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
     text-decoration: none;
-    border-bottom: 1px solid var(--zalva-champagne);
+    color: var(--zc-noir);
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
   }
 
-  .main-contact__email:hover {
-    color: var(--zalva-deep-brown);
-    border-bottom-color: var(--zalva-deep-brown);
+  @media (hover: hover) {
+    .zs-contact__card-cta:hover {
+      color: var(--zc-champagne);
+      border-bottom-color: var(--zc-champagne);
+      transform: translateX(4px);
+    }
   }
 
-  .main-contact__note {
+  /* Zone 3 */
+  .zs-contact__zone--faq-strip {
+    background-color: var(--zc-noir);
+    padding-block: 24px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__zone--faq-strip {
+      padding-block: 32px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-contact__faq-strip-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1080px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .zs-contact__faq-strip-text {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--zc-ivory);
+  }
+
+  .zs-contact__faq-strip-cta {
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.8125rem;
-    color: rgba(26, 26, 26, 0.6);
-    margin: 0.75rem 0 0;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--zc-champagne);
+    border-bottom: 1px solid var(--zc-champagne);
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .zs-contact__faq-strip-cta:hover {
+      color: var(--zc-ivory);
+      border-bottom-color: var(--zc-ivory);
+    }
+  }
+
+  /* Zone 4 */
+  .zs-contact__zone--form {
+    background-color: var(--zc-ivory);
+    padding-block: 60px;
+    padding-inline: 20px;
+    scroll-margin-top: calc(var(--zs-header-stack) + 24px);
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__zone--form {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-contact__form-inner {
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  .zs-contact__form-intro {
+    margin: 16px auto 0;
+    max-width: 480px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--zc-deep);
+    text-align: center;
+  }
+
+  .zs-contact-form {
+    margin: 0;
+  }
+
+  .zs-contact__errors {
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background-color: rgba(160, 64, 64, 0.05);
+    border-left: 2px solid var(--zc-error);
+  }
+
+  .zs-contact__errors-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--zc-error);
+  }
+
+  .zs-contact__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .zs-contact__label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--zc-taupe);
+  }
+
+  .zs-contact__input,
+  .zs-contact__textarea,
+  .zs-contact__select {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid rgba(160, 112, 96, 0.4);
+    border-radius: 0;
+    background: transparent;
+    color: var(--zc-noir);
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.5;
+    caret-color: var(--zc-champagne);
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__input,
+    .zs-contact__textarea,
+    .zs-contact__select {
+      font-size: 18px;
+    }
+  }
+
+  .zs-contact__textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .zs-contact__input:focus,
+  .zs-contact__textarea:focus,
+  .zs-contact__select:focus {
+    border-bottom-color: var(--zc-champagne);
+  }
+
+  .zs-contact__input:focus-visible,
+  .zs-contact__textarea:focus-visible,
+  .zs-contact__select:focus-visible {
+    outline: 2px solid var(--zc-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-contact__select-wrap {
+    position: relative;
+  }
+
+  .zs-contact__select {
+    padding-right: 28px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+
+  .zs-contact__select:invalid,
+  .zs-contact__select option[value=''] {
+    font-style: italic;
+    color: rgba(61, 43, 36, 0.65);
+  }
+
+  .zs-contact__select option {
+    font-style: normal;
+    color: var(--zc-noir);
+    background-color: var(--zc-ivory);
+  }
+
+  .zs-contact__select-arrow {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    display: flex;
+    pointer-events: none;
+    color: var(--zc-champagne);
+    transform: translateY(-50%);
+  }
+
+  .zs-contact__submit {
+    display: block;
+    width: 100%;
+    margin-top: 32px;
+    padding: 18px 56px;
+    border: none;
+    background-color: var(--zc-noir);
+    color: var(--zc-champagne);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__submit {
+      width: fit-content;
+    }
+  }
+
+  @media (hover: hover) {
+    .zs-contact__submit:hover {
+      background-color: var(--zc-champagne);
+      color: var(--zc-noir);
+      transform: scale(1.02);
+    }
+  }
+
+  .zs-contact__submit:focus-visible {
+    outline: 2px solid var(--zc-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-contact__success {
+    padding: 60px 0;
+    text-align: center;
+  }
+
+  .zs-contact__success-lead {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--zc-noir);
+  }
+
+  .zs-contact__success-follow {
+    margin: 24px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--zc-deep);
+  }
+
+  .zs-contact__success-link {
+    color: var(--zc-champagne);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    .zs-contact__success-link:hover {
+      color: var(--zc-noir);
+    }
+  }
+
+  /* Zone 5 */
+  .zs-contact__zone--promise {
+    background-color: var(--zc-noir);
+    padding-block: 50px;
+    padding-inline: 20px;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    .zs-contact__zone--promise {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-contact__promise-inner {
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  .zs-contact__promise-title {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.3;
+    color: var(--zc-ivory);
+  }
+
+  .zs-contact__promise-sub {
+    margin: 16px auto 0;
+    max-width: 480px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    color: var(--zc-blush);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-contact__zone.is-visible .zs-contact__reveal {
+      animation: none !important;
+    }
+
+    .zs-contact__card-inner:hover,
+    .zs-contact__submit:hover {
+      transform: none;
+    }
   }
 {% endstylesheet %}
 
@@ -225,7 +904,7 @@
 {
   "name": "Contact",
   "tag": "section",
-  "class": "section-main-contact",
+  "class": "section-zs-contact",
   "settings": [],
   "presets": [{ "name": "Contact" }]
 }
