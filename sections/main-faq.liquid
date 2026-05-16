@@ -59,7 +59,8 @@
   </section>
 
   {% comment %} Zone 3 — FAQ accordion {% endcomment %}
-  <section class="zs-faq__zone zs-faq__zone--list" aria-label="Questions and answers">
+  <section class="zs-faq__zone zs-faq__zone--list" data-zs-faq-list-zone aria-label="Questions and answers">
+    <div class="zs-faq__threshold-sentinel" data-zs-faq-threshold-sentinel aria-hidden="true"></div>
     <div class="zs-faq__list-inner">
       <p class="zs-faq__search-meta" data-zs-faq-search-meta hidden role="status"></p>
       <div class="zs-faq__list" data-zs-faq-list>
@@ -508,6 +509,81 @@
       if (faqList) faqList.hidden = useSearch && visibleCount === 0;
     };
 
+    const faqListZone = root.querySelector('[data-zs-faq-list-zone]');
+    const thresholdSentinel = root.querySelector('[data-zs-faq-threshold-sentinel]');
+    const THRESHOLD_RATIO = 0.6;
+    const RESET_OFFSET = 100;
+    let passedThreshold = false;
+    let thresholdResetRaf = 0;
+
+    const setPassedThreshold = (passed) => {
+      passedThreshold = passed;
+      filterBar?.classList.toggle('is-passed-threshold', passed);
+    };
+
+    const getListZoneMetrics = () => {
+      if (!faqListZone) return { top: 0, height: 0, thresholdY: 0 };
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const rect = faqListZone.getBoundingClientRect();
+      const top = rect.top + scrollY;
+      const height = rect.height;
+      return {
+        top,
+        height,
+        thresholdY: top + height * THRESHOLD_RATIO,
+      };
+    };
+
+    const isPastScrollThreshold = () => {
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const { thresholdY } = getListZoneMetrics();
+      return scrollY > thresholdY;
+    };
+
+    const checkThresholdReset = () => {
+      if (!filterBar || !faqListZone || prefersReducedMotion || !passedThreshold) return;
+
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const { top } = getListZoneMetrics();
+
+      if (scrollY < top - RESET_OFFSET) {
+        setPassedThreshold(false);
+      }
+    };
+
+    const scheduleThresholdResetCheck = () => {
+      if (thresholdResetRaf) {
+        window.cancelAnimationFrame(thresholdResetRaf);
+      }
+      thresholdResetRaf = window.requestAnimationFrame(() => {
+        thresholdResetRaf = 0;
+        checkThresholdReset();
+      });
+    };
+
+    if (!prefersReducedMotion && filterBar && faqListZone && thresholdSentinel) {
+      const thresholdIo = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry || passedThreshold) return;
+
+          if (entry.isIntersecting && isPastScrollThreshold()) {
+            setPassedThreshold(true);
+            return;
+          }
+
+          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+            setPassedThreshold(true);
+          }
+        },
+        { root: null, threshold: 0 }
+      );
+
+      thresholdIo.observe(thresholdSentinel);
+      window.addEventListener('scroll', scheduleThresholdResetCheck, { passive: true });
+      window.addEventListener('resize', scheduleThresholdResetCheck, { passive: true });
+    }
+
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
       chip.addEventListener('click', () => {
         if (getSearchQuery()) return;
@@ -536,7 +612,7 @@
     applyFilters();
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
-    const listZone = root.querySelector('.zs-faq__zone--list');
+    const listZone = faqListZone;
     const REVEAL_IO_DELAY_MS = 100;
     const REVEAL_FALLBACK_MS = 1200;
 
@@ -801,10 +877,12 @@
     }
   }
 
-  /* Zone 2 — sticky filter (collapses only during search) */
+  /* Zone 2 — sticky filter (collapses during search or past 60% of FAQ list) */
   .zs-faq__zone--filter {
     --zf-filter-ease: cubic-bezier(0.4, 0, 0.2, 1);
     --zf-filter-duration: 0.4s;
+    --zf-filter-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --zf-filter-fade-duration: 0.5s;
     --zf-filter-collapse-max: 180px;
 
     position: sticky;
@@ -815,7 +893,27 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    transition: grid-template-rows var(--zf-filter-duration) var(--zf-filter-ease);
+    will-change: opacity, transform;
+    transition: grid-template-rows var(--zf-filter-fade-duration) var(--zf-filter-fade-ease);
+  }
+
+  .zs-faq__zone--filter.is-passed-threshold {
+    grid-template-rows: 0fr;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .zs-faq__zone--filter.is-passed-threshold .zs-faq__filter-collapse {
+    max-height: 0;
+  }
+
+  .zs-faq__zone--filter.is-passed-threshold .zs-faq__filter-panel {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    transition:
+      transform var(--zf-filter-fade-duration) var(--zf-filter-fade-ease),
+      opacity var(--zf-filter-fade-duration) var(--zf-filter-fade-ease);
   }
 
   @media (min-width: 769px) {
@@ -918,8 +1016,22 @@
     outline-offset: 3px;
   }
 
+  .zs-faq__threshold-sentinel {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    top: 60%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
   /* Zone 3 — accordion */
   .zs-faq__zone--list {
+    position: relative;
     background-color: var(--zf-ivory);
     padding-block: 40px;
     padding-inline: 20px;
@@ -1307,6 +1419,14 @@
       visibility: hidden;
     }
 
+    .zs-faq__zone--filter.is-passed-threshold {
+      grid-template-rows: 0fr;
+    }
+
+    .zs-faq__zone--filter.is-passed-threshold .zs-faq__filter-panel {
+      transform: none;
+      opacity: 0;
+    }
   }
 {% endstylesheet %}
 
