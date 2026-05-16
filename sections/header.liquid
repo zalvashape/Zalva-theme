@@ -2405,7 +2405,7 @@
     const panel = root.querySelector('[data-zs-panel]');
     const overlay = root.querySelector('[data-zs-overlay]');
     const openBtn = root.querySelector('[data-zs-menu-open]');
-    const closeEls = [root.querySelector('[data-zs-menu-close]'), overlay].filter(Boolean);
+    const closeEls = [...root.querySelectorAll('[data-zs-menu-close]'), overlay].filter(Boolean);
     const announceEl = root.querySelector('[data-zs-announce-text]');
 
     const searchDropdown = root.querySelector('[data-zs-search-dropdown]');
