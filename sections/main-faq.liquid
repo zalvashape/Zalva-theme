@@ -81,6 +81,7 @@
           <div class="zs-faq__answer-wrap" data-zs-faq-panel>
             <div class="zs-faq__answer-inner">
               <p>Our Size Guide provides detailed measurements for bust, waist, and hips. Compare your measurements with our chart to find your perfect match. If you're between sizes, we recommend sizing up for everyday comfort, or sizing down for stronger compression.</p>
+              <a class="zs-faq__answer-cta" href="{{ routes.root_url }}pages/size-guide">Find your size →</a>
             </div>
           </div>
         </div>
@@ -102,6 +103,7 @@
           <div class="zs-faq__answer-wrap" data-zs-faq-panel>
             <div class="zs-faq__answer-inner">
               <p>When in doubt, size up for a more breathable fit, or size down for more sculpting. If you're still unsure, our team is happy to help — just reach out via our <a href="{{ routes.root_url }}pages/contact">Contact page</a>.</p>
+              <a class="zs-faq__answer-cta" href="{{ routes.root_url }}pages/contact">Contact us →</a>
             </div>
           </div>
         </div>
@@ -165,6 +167,7 @@
           <div class="zs-faq__answer-wrap" data-zs-faq-panel>
             <div class="zs-faq__answer-inner">
               <p>Properly sized shapewear should feel snug but never painful. Our seamless construction and soft elastane fabric minimize marks. If you're experiencing discomfort, you may need a larger size — feel free to contact us for guidance.</p>
+              <a class="zs-faq__answer-cta" href="{{ routes.root_url }}pages/contact">Contact us →</a>
             </div>
           </div>
         </div>
@@ -1475,6 +1478,35 @@
 
   .zs-faq__answer-inner a:hover {
     color: var(--zf-taupe);
+  }
+
+  .zs-faq__answer-inner a.zs-faq__answer-cta {
+    display: inline-block;
+    margin-top: 20px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--zf-champagne);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  .zs-faq__answer-inner a.zs-faq__answer-cta:hover {
+    color: var(--zf-champagne);
+    opacity: 1;
+    border-bottom-color: var(--zf-champagne);
+    transform: translateX(4px);
+  }
+
+  .zs-faq__answer-inner a.zs-faq__answer-cta:focus-visible {
+    outline: 2px solid var(--zf-champagne);
+    outline-offset: 3px;
   }
 
   /* Zone 4 — CTA */
