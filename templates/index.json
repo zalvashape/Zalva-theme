@@ -85,7 +85,10 @@
     },
     "size_inclusivity": {
       "type": "size-inclusivity",
-      "settings": {}
+      "settings": {
+        "headline_line_1": "XS to XXL.",
+        "size_list": "XS, S, M, L, XL, XXL"
+      }
     },
     "editorial_cta": {
       "type": "editorial-cta",

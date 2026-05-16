@@ -1,9 +1,9 @@
 {% liquid
   assign eyebrow_text = section.settings.eyebrow_text
-  assign headline_line_1 = section.settings.headline_line_1
+  assign headline_line_1 = section.settings.headline_line_1 | default: 'XS to XXL.'
   assign headline_line_2 = section.settings.headline_line_2
   assign subtitle = section.settings.subtitle
-  assign sizes_raw = section.settings.size_list
+  assign sizes_raw = section.settings.size_list | default: 'XS, S, M, L, XL, XXL'
   assign sizes = sizes_raw | split: ','
 %}
 
@@ -58,9 +58,6 @@
 .size-inclusivity.is-visible .size-inclusivity-sizes .size-inclusivity-pill:nth-child(7) { animation-delay: 1.05s; }
 .size-inclusivity.is-visible .size-inclusivity-sizes .size-inclusivity-pill:nth-child(8) { animation-delay: 1.1s; }
 .size-inclusivity.is-visible .size-inclusivity-sizes .size-inclusivity-pill:nth-child(9) { animation-delay: 1.15s; }
-.size-inclusivity.is-visible .size-inclusivity-sizes .size-inclusivity-pill:nth-child(10) { animation-delay: 1.2s; }
-.size-inclusivity.is-visible .size-inclusivity-sizes .size-inclusivity-pill:nth-child(11) { animation-delay: 1.25s; }
-.size-inclusivity.is-visible .size-inclusivity-sizes .size-inclusivity-pill:nth-child(12) { animation-delay: 1.3s; }
 @keyframes size-inclusivity-accent-grow {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
@@ -224,7 +221,7 @@
       "type": "text",
       "id": "headline_line_1",
       "label": "Headline line 1",
-      "default": "XS to 5XL."
+      "default": "XS to XXL."
     },
     {
       "type": "text",
@@ -242,7 +239,7 @@
       "type": "text",
       "id": "size_list",
       "label": "Sizes (comma-separated)",
-      "default": "XS, S, M, L, XL, XXL, 3XL, 4XL, 5XL"
+      "default": "XS, S, M, L, XL, XXL"
     }
   ],
   "presets": [
