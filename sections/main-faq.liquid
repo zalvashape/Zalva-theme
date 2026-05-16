@@ -697,10 +697,12 @@
         chipButtons.classList.remove('is-overflowing', 'is-scrolled-end');
         return;
       }
+      const scrollEndThreshold = 4;
       const hasOverflow = chipButtons.scrollWidth > chipButtons.clientWidth + 1;
       chipButtons.classList.toggle('is-overflowing', hasOverflow);
       const atEnd =
-        chipButtons.scrollLeft + chipButtons.clientWidth >= chipButtons.scrollWidth - 2;
+        chipButtons.scrollLeft + chipButtons.clientWidth >=
+        chipButtons.scrollWidth - scrollEndThreshold;
       chipButtons.classList.toggle('is-scrolled-end', atEnd);
     };
 
@@ -1131,15 +1133,18 @@
     .zs-faq__chips.is-overflowing:not(.is-scrolled-end)::after {
       content: '';
       position: absolute;
+      z-index: 0;
       right: 0;
       top: 0;
       bottom: 0;
-      width: 32px;
-      background: linear-gradient(to right, transparent, var(--zf-ivory));
+      width: 24px;
+      background: linear-gradient(to right, transparent, rgba(250, 248, 245, 0.7));
       pointer-events: none;
     }
 
     .zs-faq__chip {
+      position: relative;
+      z-index: 1;
       flex-shrink: 0;
       white-space: nowrap;
     }
@@ -1173,6 +1178,7 @@
 
   .zs-faq__chip.is-active {
     background-color: var(--zf-noir);
+    background-image: none;
     color: var(--zf-champagne);
     border-color: var(--zf-noir);
   }
