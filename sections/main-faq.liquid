@@ -1,140 +1,1069 @@
-<div class="main-faq full-width">
-  <div class="main-faq__inner">
-    <h1 class="main-faq__title">Frequently Asked Questions</h1>
+<div class="zs-faq full-width" data-zs-faq {{ section.shopify_attributes }}>
+  {% comment %} Zone 1 — Page header + search {% endcomment %}
+  <section
+    class="zs-faq__zone zs-faq__zone--header"
+    data-zs-page-pull-up
+    data-header-bg="#F0E8DF"
+    data-header-text="#1A1A1A"
+    data-zs-faq-reveal
+    aria-labelledby="zs-faq-page-title"
+  >
+    <div class="zs-faq__header-inner">
+      <span class="zs-faq__ornament zs-faq__reveal" data-faq-delay="0" aria-hidden="true"></span>
+      <p class="zs-faq__eyebrow zs-faq__reveal" data-faq-delay="1">FAQ</p>
+      <h1 id="zs-faq-page-title" class="zs-faq__page-title zs-faq__reveal" data-faq-delay="2">
+        Everything you want to know.
+      </h1>
+      <p class="zs-faq__page-sub zs-faq__reveal" data-faq-delay="3">Real answers for real questions.</p>
 
-    <div class="main-faq__list">
-      <details class="main-faq__item">
-        <summary class="main-faq__question">What is your return policy?</summary>
-        <div class="main-faq__answer">
-          <p>We offer free returns within 30 days of purchase.</p>
-        </div>
-      </details>
-      <details class="main-faq__item">
-        <summary class="main-faq__question">How do I choose my size?</summary>
-        <div class="main-faq__answer">
-          <p>We recommend measuring your waist and hips and referring to our size guide.</p>
-        </div>
-      </details>
-      <details class="main-faq__item">
-        <summary class="main-faq__question">How long does shipping take?</summary>
-        <div class="main-faq__answer">
-          <p>Standard shipping 5–7 business days. Express 2–3 business days.</p>
-        </div>
-      </details>
-      <details class="main-faq__item">
-        <summary class="main-faq__question">Is shapewear comfortable for all-day wear?</summary>
-        <div class="main-faq__answer">
-          <p>Yes, our shapewear is designed with breathable fabrics for all-day comfort.</p>
-        </div>
-      </details>
-      <details class="main-faq__item">
-        <summary class="main-faq__question">Do you ship internationally?</summary>
-        <div class="main-faq__answer">
-          <p>Currently we ship within the United States.</p>
-        </div>
-      </details>
-      <details class="main-faq__item">
-        <summary class="main-faq__question">How do I care for my shapewear?</summary>
-        <div class="main-faq__answer">
-          <p>Hand wash in cold water and lay flat to dry.</p>
-        </div>
-      </details>
+      <div class="zs-faq__search-wrap zs-faq__reveal" data-faq-delay="4">
+        <label class="zs-faq__visually-hidden" for="ZsFaqSearch-{{ section.id }}">Search questions</label>
+        <span class="zs-faq__search-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M16 16l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input
+          id="ZsFaqSearch-{{ section.id }}"
+          class="zs-faq__search-input"
+          type="search"
+          name="faq-search"
+          placeholder="Search a question..."
+          autocomplete="off"
+          data-zs-faq-search
+        >
+      </div>
     </div>
-  </div>
+  </section>
+
+  {% comment %} Zone 2 — Category filter (sticky) {% endcomment %}
+  <section class="zs-faq__zone zs-faq__zone--filter" aria-label="Filter by category">
+    <div class="zs-faq__filter-inner">
+      <div class="zs-faq__chips" role="tablist" data-zs-faq-chips>
+        <button type="button" class="zs-faq__chip is-active" role="tab" aria-selected="true" data-zs-faq-category="all">All Questions</button>
+        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="sizing-fit">Sizing &amp; Fit</button>
+        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="compression">Compression</button>
+        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="shipping-returns">Shipping &amp; Returns</button>
+        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="care-materials">Care &amp; Materials</button>
+        <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="orders-payment">Orders &amp; Payment</button>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} Zone 3 — FAQ accordion {% endcomment %}
+  <section class="zs-faq__zone zs-faq__zone--list" aria-label="Questions and answers">
+    <div class="zs-faq__list-inner">
+      <div class="zs-faq__list" data-zs-faq-list>
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="sizing-fit" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">How do I find my correct size?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Our Size Guide provides detailed measurements for bust, waist, and hips. Compare your measurements with our chart to find your perfect match. If you're between sizes, we recommend sizing up for everyday comfort, or sizing down for stronger compression.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="sizing-fit" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">What if my measurements fall between two sizes?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>When in doubt, size up for a more breathable fit, or size down for more sculpting. If you're still unsure, our team is happy to help — just reach out via our <a href="{{ routes.root_url }}pages/contact">Contact page</a>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="sizing-fit" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Will the bodysuit lose its shape over time?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Our pieces are designed with premium materials and double-stitched seams to maintain their shape and compression even after dozens of washes. Just follow our care instructions for best longevity.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="compression" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">What does compression actually feel like?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Our shapewear is engineered to feel held, not squeezed. Light compression smooths and supports without restriction. Medium compression sculpts and defines your shape. Strong compression provides maximum shaping and structure. Each piece is clearly labeled with its compression level.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="compression" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Will it cause discomfort or marks on my skin?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Properly sized shapewear should feel snug but never painful. Our seamless construction and soft elastane fabric minimize marks. If you're experiencing discomfort, you may need a larger size — feel free to contact us for guidance.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="compression" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Can I wear it all day?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Yes — our pieces are designed for all-day wear. The fabric is breathable and the compression is intentional, not restrictive. Many of our customers tell us they forget they're wearing it.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="compression" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">How tight should it feel when I first put it on?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>It should feel firm but comfortable — like a supportive embrace. The compression will feel slightly less intense after a few minutes as the fabric adapts to your body.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="shipping-returns" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">How long does shipping take?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Standard shipping arrives in 3-5 business days. Express shipping arrives in 1-2 business days. We offer complimentary shipping on all orders over $75.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="shipping-returns" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Where do you ship?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Currently we ship within the United States. International shipping is coming soon.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="shipping-returns" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Can I return an item if it doesn't fit?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Yes — we offer free 30-day returns on all unworn items with tags. Simply contact our team to start a return.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="shipping-returns" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">How do I exchange for a different size?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Reach out to our team and we'll send you a prepaid return label. Once we receive your original item, we'll ship your new size at no additional cost.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="care-materials" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">How should I wash my bodysuit?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Hand-wash in cold water with a mild detergent and lay flat to dry. Avoid bleach, fabric softener, and the dryer to preserve the elastane and seamless construction.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="care-materials" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">What is your shapewear made of?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Our pieces are crafted from a premium blend of nylon and elastane — designed for compression, breathability, and durability. Every material is carefully selected for comfort against the skin.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="care-materials" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Is it safe to wear in warm weather?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Yes — our fabric is breathable and moisture-wicking, making it comfortable to wear year-round, even in warmer climates.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="orders-payment" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">What payment methods do you accept?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>We accept Visa, Mastercard, American Express, Discover, PayPal, and Shop Pay. All transactions are secure and encrypted.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="orders-payment" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Can I modify or cancel my order?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>If your order hasn't shipped yet, please contact us as soon as possible and we'll do our best to accommodate changes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="orders-payment" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">Do you offer discounts for first-time customers?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Subscribe to our newsletter to receive exclusive offers and be the first to know about new arrivals.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="orders-payment" data-zs-faq-item>
+          <h2 class="zs-faq__item-heading">
+            <button type="button" class="zs-faq__question" aria-expanded="false" data-zs-faq-trigger>
+              <span class="zs-faq__question-text">How can I track my order?</span>
+              <span class="zs-faq__toggle" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+          </h2>
+          <div class="zs-faq__answer-wrap" data-zs-faq-panel>
+            <div class="zs-faq__answer-inner">
+              <p>Once your order ships, you'll receive a tracking link via email. You can also view tracking details in your account dashboard.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="zs-faq__empty" data-zs-faq-empty hidden>No questions match your search. Try another term or browse all categories.</p>
+    </div>
+  </section>
+
+  {% comment %} Zone 4 — CTA {% endcomment %}
+  <section
+    class="zs-faq__zone zs-faq__zone--cta"
+    data-header-bg="#1A1A1A"
+    data-header-text="#FAF8F5"
+    data-zs-faq-reveal
+    aria-labelledby="zs-faq-cta-title"
+  >
+    <div class="zs-faq__cta-inner">
+      <span class="zs-faq__ornament zs-faq__ornament--sm zs-faq__reveal" data-faq-delay="0" aria-hidden="true"></span>
+      <p class="zs-faq__eyebrow zs-faq__eyebrow--light zs-faq__reveal" data-faq-delay="1">Still have questions?</p>
+      <h2 id="zs-faq-cta-title" class="zs-faq__cta-title zs-faq__reveal" data-faq-delay="2">We're here for you.</h2>
+      <p class="zs-faq__cta-body zs-faq__reveal" data-faq-delay="3">
+        Reach out to our team — real humans, real answers. We respond within 24 hours.
+      </p>
+      <a class="zs-faq__cta-btn zs-faq__reveal" data-faq-delay="4" href="{{ routes.root_url }}pages/contact">Contact Us</a>
+      <p class="zs-faq__cta-email zs-faq__reveal" data-faq-delay="5">
+        Or write to us at <a href="mailto:hello@zalvashape.com">hello@zalvashape.com</a>
+      </p>
+    </div>
+  </section>
 </div>
 
+<script>
+  (() => {
+    const root = document.querySelector('[data-zs-faq]');
+    if (!root) return;
+
+    const searchInput = root.querySelector('[data-zs-faq-search]');
+    const chipButtons = root.querySelector('[data-zs-faq-chips]');
+    const items = root.querySelectorAll('[data-zs-faq-item]');
+    const emptyEl = root.querySelector('[data-zs-faq-empty]');
+    let activeCategory = 'all';
+    let openItem = null;
+
+    const getSearchQuery = () => (searchInput?.value || '').trim().toLowerCase();
+
+    const itemMatchesSearch = (item, query) => {
+      if (!query) return true;
+      const text = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+      return text.includes(query);
+    };
+
+    const itemMatchesCategory = (item, category) => {
+      if (category === 'all') return true;
+      return item.getAttribute('data-faq-category') === category;
+    };
+
+    const closeItem = (item) => {
+      if (!item) return;
+      const trigger = item.querySelector('[data-zs-faq-trigger]');
+      item.classList.remove('is-open');
+      trigger?.setAttribute('aria-expanded', 'false');
+    };
+
+    const openAccordionItem = (item) => {
+      if (openItem && openItem !== item) closeItem(openItem);
+      const trigger = item.querySelector('[data-zs-faq-trigger]');
+      const isOpen = item.classList.contains('is-open');
+      if (isOpen) {
+        closeItem(item);
+        openItem = null;
+        return;
+      }
+      item.classList.add('is-open');
+      trigger?.setAttribute('aria-expanded', 'true');
+      openItem = item;
+    };
+
+    items.forEach((item) => {
+      const trigger = item.querySelector('[data-zs-faq-trigger]');
+      trigger?.addEventListener('click', () => {
+        if (item.classList.contains('is-filtered-out')) return;
+        openAccordionItem(item);
+      });
+    });
+
+    const applyFilters = () => {
+      const query = getSearchQuery();
+      const useSearch = query.length > 0;
+      let visibleCount = 0;
+
+      if (chipButtons) {
+        chipButtons.classList.toggle('is-searching', useSearch);
+      }
+
+      items.forEach((item) => {
+        const matchSearch = itemMatchesSearch(item, query);
+        const matchCategory = useSearch ? true : itemMatchesCategory(item, activeCategory);
+        const show = matchSearch && matchCategory;
+
+        item.classList.toggle('is-filtered-out', !show);
+        item.classList.toggle('is-filtered-in', show);
+        if (!show && item.classList.contains('is-open')) {
+          closeItem(item);
+          if (openItem === item) openItem = null;
+        }
+        if (show) visibleCount += 1;
+      });
+
+      if (emptyEl) emptyEl.hidden = visibleCount > 0;
+    };
+
+    chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        if (getSearchQuery()) return;
+        activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
+        chipButtons.querySelectorAll('.zs-faq__chip').forEach((c) => {
+          const isActive = c === chip;
+          c.classList.toggle('is-active', isActive);
+          c.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        applyFilters();
+      });
+    });
+
+    searchInput?.addEventListener('input', applyFilters);
+
+    applyFilters();
+
+    const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
+    const listZone = root.querySelector('.zs-faq__zone--list');
+    const REVEAL_IO_DELAY_MS = 100;
+    const REVEAL_FALLBACK_MS = 1200;
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const isInViewport = (el) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      return r.bottom > 0 && r.top < vh;
+    };
+
+    const markZoneSettled = (zone) => {
+      zone.classList.remove('is-visible');
+      zone.classList.add('reveal-settled');
+    };
+
+    const markZoneAnimated = (zone) => {
+      zone.classList.remove('reveal-settled');
+      zone.classList.add('is-visible');
+    };
+
+    const setupZone = (zone) => {
+      if (prefersReducedMotion) {
+        markZoneSettled(zone);
+        return;
+      }
+      if (!('IntersectionObserver' in window)) {
+        markZoneSettled(zone);
+        return;
+      }
+      if (isInViewport(zone)) {
+        markZoneSettled(zone);
+        return;
+      }
+
+      let done = false;
+      let fallbackTimer = 0;
+      let io = null;
+
+      const finish = (animated) => {
+        if (done) return;
+        done = true;
+        if (fallbackTimer) window.clearTimeout(fallbackTimer);
+        if (io) io.disconnect();
+        if (animated) markZoneAnimated(zone);
+        else markZoneSettled(zone);
+      };
+
+      fallbackTimer = window.setTimeout(() => finish(false), REVEAL_FALLBACK_MS);
+
+      let lastScrollY = window.scrollY || window.pageYOffset || 0;
+      const onScroll = () => {
+        lastScrollY = window.scrollY || window.pageYOffset || 0;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.15) return;
+            const y = window.scrollY || window.pageYOffset || 0;
+            const scrollingDown = y >= lastScrollY - 2;
+            window.removeEventListener('scroll', onScroll);
+            finish(scrollingDown);
+          });
+        },
+        { threshold: [0, 0.15, 0.3, 0.45, 0.6] }
+      );
+
+      io.observe(zone);
+    };
+
+    window.setTimeout(() => {
+      revealZones.forEach(setupZone);
+      if (listZone) {
+        listZone.classList.add('is-visible');
+        root.querySelectorAll('.zs-faq__item--reveal').forEach((item, i) => {
+          item.style.setProperty('--faq-item-delay', `${Math.min(i * 0.05, 0.7)}s`);
+        });
+      }
+    }, REVEAL_IO_DELAY_MS);
+  })();
+</script>
+
 {% stylesheet %}
-  .main-faq {
-    --zalva-ivory: #faf8f5;
-    --zalva-champagne: #c8a96e;
-    --zalva-noir: #1a1a1a;
-    --zalva-deep-brown: #3d2b24;
-
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    padding-block: clamp(2.5rem, 6vw, 4rem);
+  .zs-faq__visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .main-faq__inner {
-    max-width: 42rem;
+  .zs-faq {
+    --zf-linen: #f0e8df;
+    --zf-ivory: #faf8f5;
+    --zf-noir: #1a1a1a;
+    --zf-champagne: #c8a96e;
+    --zf-deep: #3d2b24;
+    --zf-taupe: #a07060;
+    --zf-blush: #d4b5a0;
+
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .zs-faq__zone {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .zs-faq__ornament {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin: 0 auto 32px;
+    background-color: var(--zf-champagne);
+  }
+
+  .zs-faq__ornament--sm {
+    width: 24px;
+    margin-bottom: 24px;
+  }
+
+  .zs-faq__eyebrow {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--zf-champagne);
+  }
+
+  .zs-faq__eyebrow--light {
+    color: var(--zf-champagne);
+  }
+
+  .zs-faq__reveal {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .zs-faq__zone.is-visible .zs-faq__reveal {
+    animation: zs-faq-rise 0.75s ease forwards;
+  }
+
+  .zs-faq__zone.is-visible .zs-faq__reveal[data-faq-delay='0'] { animation-delay: 0s; }
+  .zs-faq__zone.is-visible .zs-faq__reveal[data-faq-delay='1'] { animation-delay: 0.1s; }
+  .zs-faq__zone.is-visible .zs-faq__reveal[data-faq-delay='2'] { animation-delay: 0.2s; }
+  .zs-faq__zone.is-visible .zs-faq__reveal[data-faq-delay='3'] { animation-delay: 0.3s; }
+  .zs-faq__zone.is-visible .zs-faq__reveal[data-faq-delay='4'] { animation-delay: 0.4s; }
+  .zs-faq__zone.is-visible .zs-faq__reveal[data-faq-delay='5'] { animation-delay: 0.5s; }
+
+  .zs-faq__zone.reveal-settled .zs-faq__reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  @keyframes zs-faq-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  /* Zone 1 — padding-top via critical.css pull-up */
+  .zs-faq__zone--header {
+    background-color: var(--zf-linen);
+    padding-bottom: 60px;
+    padding-inline: 20px;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq__zone--header {
+      padding-bottom: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-faq__header-inner {
+    max-width: 880px;
     margin-inline: auto;
-    padding-inline: var(--page-margin);
   }
 
-  .main-faq__title {
+  .zs-faq__page-title {
+    margin: 16px 0 0;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
-    font-size: clamp(2rem, 4.5vw, 2.75rem);
-    text-align: center;
-    color: var(--zalva-deep-brown);
-    margin: 0 0 2.5rem;
-    line-height: 1.15;
+    font-style: italic;
+    font-size: clamp(40px, 5.5vw, 64px);
+    line-height: 1.2;
+    color: var(--zf-noir);
   }
 
-  .main-faq__list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .main-faq__item {
-    border: 1px solid rgba(26, 26, 26, 0.12);
-    background-color: var(--zalva-ivory);
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .main-faq__item[open] {
-    border-color: var(--zalva-champagne);
-    box-shadow: 0 0 0 1px var(--zalva-champagne);
-  }
-
-  .main-faq__question {
+  .zs-faq__page-sub {
+    margin: 24px auto 0;
+    max-width: 480px;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    padding: 1rem 1.25rem;
-    cursor: pointer;
-    list-style: none;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+    color: var(--zf-deep);
+  }
+
+  .zs-faq__search-wrap {
     position: relative;
-    padding-right: 2.5rem;
+    max-width: 520px;
+    margin: 48px auto 0;
+    border-bottom: 1px solid var(--zf-champagne);
   }
 
-  .main-faq__question::-webkit-details-marker {
-    display: none;
-  }
-
-  .main-faq__question::after {
-    content: '+';
+  .zs-faq__search-icon {
     position: absolute;
-    right: 1.25rem;
+    left: 0;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1.25rem;
-    font-weight: 400;
-    color: var(--zalva-champagne);
-    line-height: 1;
+    display: flex;
+    color: var(--zf-taupe);
+    pointer-events: none;
   }
 
-  .main-faq__item[open] .main-faq__question::after {
-    content: '−';
-  }
-
-  .main-faq__answer {
+  .zs-faq__search-input {
+    width: 100%;
+    margin: 0;
+    padding: 14px 0 14px 36px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--zf-noir);
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.875rem;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    outline: none;
+    caret-color: var(--zf-champagne);
+    box-sizing: border-box;
+  }
+
+  .zs-faq__search-input::placeholder {
+    color: rgba(61, 43, 36, 0.45);
+  }
+
+  @media (max-width: 768px) {
+    .zs-faq__search-input {
+      font-size: 13px;
+      padding: 12px 0 12px 32px;
+    }
+
+    .zs-faq__search-wrap {
+      margin-top: 40px;
+    }
+  }
+
+  /* Zone 2 — sticky filter */
+  .zs-faq__zone--filter {
+    position: sticky;
+    top: var(--zs-header-stack);
+    z-index: 50;
+    background-color: var(--zf-ivory);
+    padding-block: 24px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq__zone--filter {
+      padding-block: 32px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-faq__filter-inner {
+    max-width: 1080px;
+    margin-inline: auto;
+  }
+
+  .zs-faq__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .zs-faq__chips.is-searching {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .zs-faq__chip {
+    margin: 0;
+    padding: 10px 20px;
+    border: 1px solid rgba(160, 112, 96, 0.3);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--zf-noir);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .zs-faq__chip.is-active {
+    background-color: var(--zf-noir);
+    color: var(--zf-champagne);
+    border-color: var(--zf-noir);
+  }
+
+  .zs-faq__chip:not(.is-active):hover {
+    border-color: var(--zf-champagne);
+    color: var(--zf-taupe);
+  }
+
+  .zs-faq__chip:focus-visible {
+    outline: 2px solid var(--zf-champagne);
+    outline-offset: 3px;
+  }
+
+  /* Zone 3 — accordion */
+  .zs-faq__zone--list {
+    background-color: var(--zf-ivory);
+    padding-block: 40px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq__zone--list {
+      padding-block: 60px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-faq__list-inner {
+    max-width: 880px;
+    margin-inline: auto;
+  }
+
+  .zs-faq__item {
+    border-bottom: 1px solid rgba(200, 169, 110, 0.25);
+    padding-block: 24px;
+    opacity: 1;
+    max-height: 500px;
+    overflow: hidden;
+    transition:
+      opacity 0.35s ease,
+      max-height 0.4s ease,
+      padding 0.35s ease,
+      border-color 0.35s ease;
+  }
+
+  .zs-faq__item:first-child {
+    border-top: 1px solid rgba(200, 169, 110, 0.25);
+  }
+
+  .zs-faq__item.is-filtered-out {
+    opacity: 0;
+    max-height: 0;
+    padding-block: 0;
+    border-bottom-color: transparent;
+    pointer-events: none;
+  }
+
+  .zs-faq__item.is-filtered-out:first-child {
+    border-top-color: transparent;
+  }
+
+  .zs-faq__item--reveal {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .zs-faq__zone--list.is-visible .zs-faq__item--reveal {
+    animation: zs-faq-rise 0.65s ease forwards;
+    animation-delay: var(--faq-item-delay, 0s);
+  }
+
+  .zs-faq__item-heading {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .zs-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin: 0;
+    padding: 4px 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .zs-faq__question:focus-visible {
+    outline: 2px solid var(--zf-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-faq__question-text {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1.4;
+    color: var(--zf-noir);
+  }
+
+  .zs-faq__toggle {
+    display: flex;
+    flex-shrink: 0;
+    color: var(--zf-champagne);
+    transition: transform 0.3s ease;
+  }
+
+  .zs-faq__item.is-open .zs-faq__toggle {
+    transform: rotate(45deg);
+  }
+
+  .zs-faq__answer-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease;
+  }
+
+  .zs-faq__item.is-open .zs-faq__answer-wrap {
+    grid-template-rows: 1fr;
+  }
+
+  .zs-faq__answer-inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .zs-faq__answer-inner p {
+    margin: 0;
+    padding-top: 16px;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 16px;
     line-height: 1.7;
-    color: rgba(26, 26, 26, 0.85);
-    padding: 0 1.25rem 1.25rem;
-    border-top: 1px solid rgba(26, 26, 26, 0.08);
+    letter-spacing: 0.01em;
+    color: var(--zf-deep);
   }
 
-  .main-faq__answer p {
-    margin: 1rem 0 0;
+  .zs-faq__answer-inner a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s ease;
   }
 
-  .main-faq__question:focus-visible {
-    outline: 2px solid var(--zalva-champagne);
-    outline-offset: 2px;
+  .zs-faq__answer-inner a:hover {
+    color: var(--zf-taupe);
+  }
+
+  .zs-faq__empty {
+    margin: 32px 0 0;
+    text-align: center;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--zf-taupe);
+  }
+
+  .zs-faq__empty[hidden] {
+    display: none !important;
+  }
+
+  /* Zone 4 — CTA */
+  .zs-faq__zone--cta {
+    background-color: var(--zf-noir);
+    color: var(--zf-ivory);
+    padding-block: 70px;
+    padding-inline: 20px;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq__zone--cta {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-faq__cta-inner {
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  .zs-faq__cta-title {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.2;
+    color: var(--zf-ivory);
+  }
+
+  .zs-faq__cta-body {
+    margin: 24px auto 0;
+    max-width: 480px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+    color: var(--zf-blush);
+  }
+
+  .zs-faq__cta-btn {
+    display: inline-block;
+    margin-top: 40px;
+    padding: 18px 48px;
+    background-color: var(--zf-champagne);
+    color: var(--zf-noir);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease,
+      transform 0.4s ease;
+  }
+
+  .zs-faq__cta-btn:hover {
+    background-color: var(--zf-ivory);
+    color: var(--zf-noir);
+    transform: scale(1.02);
+  }
+
+  .zs-faq__cta-btn:focus-visible {
+    outline: 2px solid var(--zf-champagne);
+    outline-offset: 4px;
+  }
+
+  .zs-faq__cta-email {
+    margin: 24px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: rgba(212, 181, 160, 0.7);
+  }
+
+  .zs-faq__cta-email a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s ease;
+  }
+
+  .zs-faq__cta-email a:hover {
+    color: var(--zf-blush);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-faq__reveal,
+    .zs-faq__item--reveal,
+    .zs-faq__item,
+    .zs-faq__toggle,
+    .zs-faq__answer-wrap,
+    .zs-faq__cta-btn {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .zs-faq__item.is-filtered-out {
+      display: none;
+    }
   }
 {% endstylesheet %}
 
@@ -142,7 +1071,7 @@
 {
   "name": "FAQ",
   "tag": "section",
-  "class": "section-main-faq",
+  "class": "section-zs-faq",
   "settings": [],
   "presets": [{ "name": "FAQ" }]
 }
