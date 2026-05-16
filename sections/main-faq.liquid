@@ -584,6 +584,28 @@
       window.addEventListener('resize', scheduleThresholdResetCheck, { passive: true });
     }
 
+    const updateChipsScrollState = () => {
+      if (!chipButtons) return;
+      if (window.matchMedia('(min-width: 769px)').matches) {
+        chipButtons.classList.remove('is-overflowing', 'is-scrolled-end');
+        return;
+      }
+      const hasOverflow = chipButtons.scrollWidth > chipButtons.clientWidth + 1;
+      chipButtons.classList.toggle('is-overflowing', hasOverflow);
+      const atEnd =
+        chipButtons.scrollLeft + chipButtons.clientWidth >= chipButtons.scrollWidth - 2;
+      chipButtons.classList.toggle('is-scrolled-end', atEnd);
+    };
+
+    if (chipButtons) {
+      chipButtons.addEventListener('scroll', updateChipsScrollState, { passive: true });
+      window.addEventListener('resize', updateChipsScrollState, { passive: true });
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(updateChipsScrollState).observe(chipButtons);
+      }
+      updateChipsScrollState();
+    }
+
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
       chip.addEventListener('click', () => {
         if (getSearchQuery()) return;
@@ -979,6 +1001,48 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .zs-faq__chips {
+      position: relative;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-inline: -20px;
+      padding-inline: 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .zs-faq__chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .zs-faq__chips.is-overflowing:not(.is-scrolled-end)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 32px;
+      background: linear-gradient(to right, transparent, var(--zf-ivory));
+      pointer-events: none;
+    }
+
+    .zs-faq__chip {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq__chips {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 
   .zs-faq__chip {
