@@ -41,7 +41,7 @@
   </section>
 
   {% comment %} Zone 2 — Category filter (sticky) {% endcomment %}
-  <section class="zs-faq__zone zs-faq__zone--filter" aria-label="Filter by category">
+  <section class="zs-faq__zone zs-faq__zone--filter" data-zs-faq-filter aria-label="Filter by category">
     <div class="zs-faq__filter-inner">
       <div class="zs-faq__chips" role="tablist" data-zs-faq-chips>
         <button type="button" class="zs-faq__chip is-active" role="tab" aria-selected="true" data-zs-faq-category="all">All Questions</button>
@@ -57,6 +57,7 @@
   {% comment %} Zone 3 — FAQ accordion {% endcomment %}
   <section class="zs-faq__zone zs-faq__zone--list" aria-label="Questions and answers">
     <div class="zs-faq__list-inner">
+      <p class="zs-faq__search-meta" data-zs-faq-search-meta hidden role="status"></p>
       <div class="zs-faq__list" data-zs-faq-list>
         <div class="zs-faq__item zs-faq__item--reveal" data-faq-category="sizing-fit" data-zs-faq-item>
           <h2 class="zs-faq__item-heading">
@@ -347,7 +348,25 @@
         </div>
       </div>
 
-      <p class="zs-faq__empty" data-zs-faq-empty hidden>No questions match your search. Try another term or browse all categories.</p>
+      <div class="zs-faq__search-empty" data-zs-faq-search-empty hidden>
+        <p class="zs-faq__search-empty-lead">We couldn't find an answer matching this search.</p>
+        <p class="zs-faq__search-empty-sub">Try one of these:</p>
+        <ul class="zs-faq__search-empty-links" role="list">
+          <li>
+            <button type="button" class="zs-faq__search-empty-link" data-zs-faq-jump-category="sizing-fit">Sizing &amp; Fit</button>
+          </li>
+          <li>
+            <button type="button" class="zs-faq__search-empty-link" data-zs-faq-jump-category="shipping-returns">Shipping &amp; Returns</button>
+          </li>
+          <li>
+            <button type="button" class="zs-faq__search-empty-link" data-zs-faq-jump-category="compression">Compression</button>
+          </li>
+        </ul>
+        <p class="zs-faq__search-empty-contact">
+          Still can't find what you need? Reach out at
+          <a href="mailto:hello@zalvashape.com">hello@zalvashape.com</a>
+        </p>
+      </div>
     </div>
   </section>
 
@@ -381,10 +400,21 @@
 
     const searchInput = root.querySelector('[data-zs-faq-search]');
     const chipButtons = root.querySelector('[data-zs-faq-chips]');
+    const faqList = root.querySelector('[data-zs-faq-list]');
+    const searchMeta = root.querySelector('[data-zs-faq-search-meta]');
+    const searchEmpty = root.querySelector('[data-zs-faq-search-empty]');
     const items = root.querySelectorAll('[data-zs-faq-item]');
-    const emptyEl = root.querySelector('[data-zs-faq-empty]');
     let activeCategory = 'all';
     let openItem = null;
+
+    const setActiveChip = (category) => {
+      if (!chipButtons) return;
+      chipButtons.querySelectorAll('.zs-faq__chip').forEach((chip) => {
+        const isActive = chip.getAttribute('data-zs-faq-category') === category;
+        chip.classList.toggle('is-active', isActive);
+        chip.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    };
 
     const getSearchQuery = () => (searchInput?.value || '').trim().toLowerCase();
 
@@ -431,11 +461,10 @@
     const applyFilters = () => {
       const query = getSearchQuery();
       const useSearch = query.length > 0;
+      const rawQuery = (searchInput?.value || '').trim();
       let visibleCount = 0;
 
-      if (chipButtons) {
-        chipButtons.classList.toggle('is-searching', useSearch);
-      }
+      root.classList.toggle('is-searching', useSearch);
 
       items.forEach((item) => {
         const matchSearch = itemMatchesSearch(item, query);
@@ -451,19 +480,44 @@
         if (show) visibleCount += 1;
       });
 
-      if (emptyEl) emptyEl.hidden = visibleCount > 0;
+      if (searchMeta) {
+        if (useSearch) {
+          if (visibleCount > 0) {
+            const label = visibleCount === 1 ? 'result' : 'results';
+            searchMeta.textContent = `Showing ${visibleCount} ${label} for \u2018${rawQuery}\u2019`;
+          } else {
+            searchMeta.textContent =
+              'No matches found. Try a different keyword or browse our categories.';
+          }
+          searchMeta.hidden = false;
+        } else {
+          searchMeta.hidden = true;
+        }
+      }
+
+      if (searchEmpty) searchEmpty.hidden = !(useSearch && visibleCount === 0);
+      if (faqList) faqList.hidden = useSearch && visibleCount === 0;
     };
 
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
       chip.addEventListener('click', () => {
         if (getSearchQuery()) return;
         activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
-        chipButtons.querySelectorAll('.zs-faq__chip').forEach((c) => {
-          const isActive = c === chip;
-          c.classList.toggle('is-active', isActive);
-          c.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        });
+        setActiveChip(activeCategory);
         applyFilters();
+      });
+    });
+
+    root.querySelectorAll('[data-zs-faq-jump-category]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const category = btn.getAttribute('data-zs-faq-jump-category');
+        if (!category || !searchInput) return;
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        activeCategory = category;
+        setActiveChip(category);
+        applyFilters();
+        root.querySelector('[data-zs-faq-filter]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
 
@@ -744,9 +798,16 @@
     position: sticky;
     top: var(--zs-header-stack);
     z-index: 50;
+    display: grid;
+    grid-template-rows: 1fr;
     background-color: var(--zf-ivory);
     padding-block: 24px;
     padding-inline: 20px;
+    margin: 0;
+    opacity: 1;
+    overflow: hidden;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   @media (min-width: 769px) {
@@ -756,9 +817,28 @@
     }
   }
 
+  .zs-faq.is-searching .zs-faq__zone--filter {
+    grid-template-rows: 0fr;
+    padding-block: 0;
+    padding-inline: 20px;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  @media (min-width: 769px) {
+    .zs-faq.is-searching .zs-faq__zone--filter {
+      padding-inline: 40px;
+    }
+  }
+
   .zs-faq__filter-inner {
     max-width: 1080px;
     margin-inline: auto;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .zs-faq__chips {
@@ -766,11 +846,6 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
-  }
-
-  .zs-faq__chips.is-searching {
-    opacity: 0.45;
-    pointer-events: none;
   }
 
   .zs-faq__chip {
@@ -825,6 +900,136 @@
   .zs-faq__list-inner {
     max-width: 880px;
     margin-inline: auto;
+  }
+
+  .zs-faq__search-meta {
+    margin: 0;
+    padding-block: 16px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+    margin-bottom: 16px;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--zf-taupe);
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .zs-faq__search-meta:not([hidden]) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .zs-faq__search-meta[hidden] {
+    display: none !important;
+  }
+
+  .zs-faq__search-empty {
+    padding: 60px 20px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .zs-faq__search-empty:not([hidden]) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .zs-faq__search-empty[hidden] {
+    display: none !important;
+  }
+
+  .zs-faq__list[hidden] {
+    display: none !important;
+  }
+
+  .zs-faq__search-empty-lead {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(18px, 2.5vw, 22px);
+    line-height: 1.4;
+    color: var(--zf-deep);
+  }
+
+  .zs-faq__search-empty-sub {
+    margin: 24px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--zf-taupe);
+  }
+
+  .zs-faq__search-empty-links {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .zs-faq__search-empty-link {
+    margin: 0;
+    padding: 10px 20px;
+    border: 1px solid rgba(160, 112, 96, 0.3);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--zf-noir);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .zs-faq__search-empty-link:hover {
+    border-color: var(--zf-champagne);
+    color: var(--zf-taupe);
+  }
+
+  .zs-faq__search-empty-link:focus-visible {
+    outline: 2px solid var(--zf-champagne);
+    outline-offset: 3px;
+  }
+
+  .zs-faq__search-empty-contact {
+    margin: 32px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--zf-taupe);
+  }
+
+  .zs-faq__search-empty-contact a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s ease;
+  }
+
+  .zs-faq__search-empty-contact a:hover {
+    color: var(--zf-champagne);
   }
 
   .zs-faq__item {
@@ -948,19 +1153,6 @@
     color: var(--zf-taupe);
   }
 
-  .zs-faq__empty {
-    margin: 32px 0 0;
-    text-align: center;
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-weight: 300;
-    font-size: 14px;
-    color: var(--zf-taupe);
-  }
-
-  .zs-faq__empty[hidden] {
-    display: none !important;
-  }
-
   /* Zone 4 — CTA */
   .zs-faq__zone--cta {
     background-color: var(--zf-noir);
@@ -1066,6 +1258,18 @@
 
     .zs-faq__item.is-filtered-out {
       display: none;
+    }
+
+    .zs-faq__zone--filter,
+    .zs-faq.is-searching .zs-faq__zone--filter,
+    .zs-faq__search-meta,
+    .zs-faq__search-empty {
+      transition: none !important;
+      transform: none !important;
+    }
+
+    .zs-faq.is-searching .zs-faq__zone--filter {
+      visibility: hidden;
     }
   }
 {% endstylesheet %}
