@@ -1,148 +1,822 @@
-<div class="main-size-guide full-width">
-  <div class="main-size-guide__inner">
-    <h1 class="main-size-guide__title">Size Guide</h1>
-    <p class="main-size-guide__subtitle">Measurements are in inches. For the best fit, measure over undergarments.</p>
-
-    <div class="main-size-guide__table-wrap">
-      <table class="main-size-guide__table">
-        <thead>
-          <tr>
-            <th scope="col">Size</th>
-            <th scope="col">Bust</th>
-            <th scope="col">Waist</th>
-            <th scope="col">Hips</th>
-            <th scope="col">US Size</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">XS</th>
-            <td>32–33</td>
-            <td>24–25</td>
-            <td>34–35</td>
-            <td>0–2</td>
-          </tr>
-          <tr>
-            <th scope="row">S</th>
-            <td>34–35</td>
-            <td>26–27</td>
-            <td>36–37</td>
-            <td>4–6</td>
-          </tr>
-          <tr>
-            <th scope="row">M</th>
-            <td>36–37</td>
-            <td>28–29</td>
-            <td>38–39</td>
-            <td>8–10</td>
-          </tr>
-          <tr>
-            <th scope="row">L</th>
-            <td>38–40</td>
-            <td>30–32</td>
-            <td>40–42</td>
-            <td>12–14</td>
-          </tr>
-          <tr>
-            <th scope="row">XL</th>
-            <td>41–43</td>
-            <td>33–35</td>
-            <td>43–45</td>
-            <td>16–18</td>
-          </tr>
-          <tr>
-            <th scope="row">XXL</th>
-            <td>44–46</td>
-            <td>36–38</td>
-            <td>46–48</td>
-            <td>20–22</td>
-          </tr>
-        </tbody>
-      </table>
+<div
+  class="zs-size-guide full-width"
+  data-zs-size-guide
+  data-header-bg="#F0E8DF"
+  data-header-text="#1A1A1A"
+  {{ section.shopify_attributes }}
+>
+  {% comment %} Zone 1 — Page header {% endcomment %}
+  <section class="zs-size-guide__zone zs-size-guide__zone--header" data-zs-sg-reveal aria-labelledby="zs-sg-page-title">
+    <div class="zs-size-guide__header-inner">
+      <span class="zs-size-guide__ornament zs-size-guide__reveal" data-sg-delay="0" aria-hidden="true"></span>
+      <p class="zs-size-guide__eyebrow zs-size-guide__reveal" data-sg-delay="1">Fit guide</p>
+      <h1 id="zs-sg-page-title" class="zs-size-guide__page-title zs-size-guide__reveal" data-sg-delay="2">Find your perfect fit.</h1>
+      <p class="zs-size-guide__page-sub zs-size-guide__reveal" data-sg-delay="3">
+        A guide designed to help you discover your true size — and feel held, supported, and seen.
+      </p>
     </div>
-  </div>
+  </section>
+
+  {% comment %} Zone 2 — How to measure {% endcomment %}
+  <section class="zs-size-guide__zone zs-size-guide__zone--measure" data-zs-sg-reveal aria-labelledby="zs-sg-measure-title">
+    <div class="zs-size-guide__measure-inner">
+      <header class="zs-size-guide__section-head zs-size-guide__reveal" data-sg-delay="0">
+        <p class="zs-size-guide__eyebrow">Step 1</p>
+        <h2 id="zs-sg-measure-title" class="zs-size-guide__section-title">How to measure.</h2>
+      </header>
+
+      <ul class="zs-size-guide__cards" role="list">
+        <li class="zs-size-guide__card zs-size-guide__reveal" data-sg-delay="1">
+          <span class="zs-size-guide__step-pill" aria-hidden="true">01</span>
+          <h3 class="zs-size-guide__card-title">Bust</h3>
+          <p class="zs-size-guide__card-text">
+            Measure around the fullest part of your bust, keeping the tape parallel to the floor.
+          </p>
+        </li>
+        <li class="zs-size-guide__card zs-size-guide__reveal" data-sg-delay="2">
+          <span class="zs-size-guide__step-pill" aria-hidden="true">02</span>
+          <h3 class="zs-size-guide__card-title">Waist</h3>
+          <p class="zs-size-guide__card-text">
+            Find your natural waist — the narrowest part of your torso, usually right above your belly button.
+          </p>
+        </li>
+        <li class="zs-size-guide__card zs-size-guide__reveal" data-sg-delay="3">
+          <span class="zs-size-guide__step-pill" aria-hidden="true">03</span>
+          <h3 class="zs-size-guide__card-title">Hips</h3>
+          <p class="zs-size-guide__card-text">
+            Stand with feet together and measure around the fullest part of your hips and rear.
+          </p>
+        </li>
+      </ul>
+
+      <div class="zs-size-guide__pro-tip zs-size-guide__reveal" data-sg-delay="4">
+        <span class="zs-size-guide__ornament zs-size-guide__ornament--sm" aria-hidden="true"></span>
+        <p>For best results, measure with light underwear, standing in a relaxed posture.</p>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} Zone 3 — Size chart {% endcomment %}
+  <section class="zs-size-guide__zone zs-size-guide__zone--chart" data-zs-sg-reveal aria-labelledby="zs-sg-chart-title">
+    <div class="zs-size-guide__chart-inner">
+      <header class="zs-size-guide__section-head zs-size-guide__reveal" data-sg-delay="0">
+        <p class="zs-size-guide__eyebrow">Step 2</p>
+        <h2 id="zs-sg-chart-title" class="zs-size-guide__section-title">The size chart.</h2>
+      </header>
+
+      <div class="zs-size-guide__unit-toggle zs-size-guide__reveal" data-sg-delay="1" role="group" aria-label="Measurement unit">
+        <button type="button" class="zs-size-guide__unit-btn is-active" data-zs-sg-unit="in" aria-pressed="true">Inches</button>
+        <button type="button" class="zs-size-guide__unit-btn" data-zs-sg-unit="cm" aria-pressed="false">Cm</button>
+      </div>
+
+      <div class="zs-size-guide__table-wrap zs-size-guide__reveal" data-sg-delay="2">
+        <table class="zs-size-guide__table" data-zs-sg-table>
+          <thead>
+            <tr>
+              <th scope="col">Size</th>
+              <th scope="col">Bust</th>
+              <th scope="col">Waist</th>
+              <th scope="col">Hips</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">XS</th>
+              <td data-zs-sg-measure data-in="31–33" data-cm="79–84">31–33</td>
+              <td data-zs-sg-measure data-in="23–25" data-cm="58–64">23–25</td>
+              <td data-zs-sg-measure data-in="33–35" data-cm="84–89">33–35</td>
+            </tr>
+            <tr>
+              <th scope="row">S</th>
+              <td data-zs-sg-measure data-in="33–35" data-cm="84–89">33–35</td>
+              <td data-zs-sg-measure data-in="25–27" data-cm="64–69">25–27</td>
+              <td data-zs-sg-measure data-in="35–37" data-cm="89–94">35–37</td>
+            </tr>
+            <tr>
+              <th scope="row">M</th>
+              <td data-zs-sg-measure data-in="35–37" data-cm="89–94">35–37</td>
+              <td data-zs-sg-measure data-in="27–29" data-cm="69–74">27–29</td>
+              <td data-zs-sg-measure data-in="37–39" data-cm="94–99">37–39</td>
+            </tr>
+            <tr>
+              <th scope="row">L</th>
+              <td data-zs-sg-measure data-in="37–39" data-cm="94–99">37–39</td>
+              <td data-zs-sg-measure data-in="29–31" data-cm="74–79">29–31</td>
+              <td data-zs-sg-measure data-in="39–41" data-cm="99–104">39–41</td>
+            </tr>
+            <tr>
+              <th scope="row">XL</th>
+              <td data-zs-sg-measure data-in="39–42" data-cm="99–107">39–42</td>
+              <td data-zs-sg-measure data-in="31–34" data-cm="79–86">31–34</td>
+              <td data-zs-sg-measure data-in="41–44" data-cm="104–112">41–44</td>
+            </tr>
+            <tr>
+              <th scope="row">XXL</th>
+              <td data-zs-sg-measure data-in="42–45" data-cm="107–114">42–45</td>
+              <td data-zs-sg-measure data-in="34–37" data-cm="86–94">34–37</td>
+              <td data-zs-sg-measure data-in="44–47" data-cm="112–119">44–47</td>
+            </tr>
+            <tr>
+              <th scope="row">3XL</th>
+              <td data-zs-sg-measure data-in="45–48" data-cm="114–122">45–48</td>
+              <td data-zs-sg-measure data-in="37–40" data-cm="94–102">37–40</td>
+              <td data-zs-sg-measure data-in="47–50" data-cm="119–127">47–50</td>
+            </tr>
+            <tr>
+              <th scope="row">4XL</th>
+              <td data-zs-sg-measure data-in="48–51" data-cm="122–130">48–51</td>
+              <td data-zs-sg-measure data-in="40–43" data-cm="102–109">40–43</td>
+              <td data-zs-sg-measure data-in="50–53" data-cm="127–135">50–53</td>
+            </tr>
+            <tr>
+              <th scope="row">5XL</th>
+              <td data-zs-sg-measure data-in="51–54" data-cm="130–137">51–54</td>
+              <td data-zs-sg-measure data-in="43–46" data-cm="109–117">43–46</td>
+              <td data-zs-sg-measure data-in="53–56" data-cm="135–142">53–56</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} Zone 4 — Between sizes {% endcomment %}
+  <section class="zs-size-guide__zone zs-size-guide__zone--between" data-zs-sg-reveal aria-labelledby="zs-sg-between-title">
+    <div class="zs-size-guide__between-inner">
+      <header class="zs-size-guide__section-head zs-size-guide__section-head--center zs-size-guide__reveal" data-sg-delay="0">
+        <p class="zs-size-guide__eyebrow">Step 3</p>
+        <h2 id="zs-sg-between-title" class="zs-size-guide__section-title zs-size-guide__section-title--italic">Between sizes?</h2>
+      </header>
+
+      <ul class="zs-size-guide__guidance" role="list">
+        <li class="zs-size-guide__guidance-card zs-size-guide__reveal" data-sg-delay="1">
+          <p class="zs-size-guide__guidance-label">For comfort</p>
+          <p class="zs-size-guide__guidance-body">Size up if you prefer a softer, more breathable fit.</p>
+        </li>
+        <li class="zs-size-guide__guidance-card zs-size-guide__reveal" data-sg-delay="2">
+          <p class="zs-size-guide__guidance-label">For compression</p>
+          <p class="zs-size-guide__guidance-body">Size down for stronger sculpting and definition.</p>
+        </li>
+        <li class="zs-size-guide__guidance-card zs-size-guide__reveal" data-sg-delay="3">
+          <p class="zs-size-guide__guidance-label">Still unsure?</p>
+          <p class="zs-size-guide__guidance-body">
+            <a href="{{ routes.root_url }}pages/contact">Reach out to us</a> — we'll help you find your perfect match.
+          </p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  {% comment %} Zone 5 — Trust promise {% endcomment %}
+  <section class="zs-size-guide__zone zs-size-guide__zone--promise" data-zs-sg-reveal aria-labelledby="zs-sg-promise-title">
+    <div class="zs-size-guide__promise-inner">
+      <span class="zs-size-guide__ornament zs-size-guide__ornament--sm zs-size-guide__reveal" data-sg-delay="0" aria-hidden="true"></span>
+      <p class="zs-size-guide__eyebrow zs-size-guide__reveal" data-sg-delay="1">Our promise</p>
+      <h2 id="zs-sg-promise-title" class="zs-size-guide__promise-title zs-size-guide__reveal" data-sg-delay="2">
+        Try it, love it, or send it back.
+      </h2>
+
+      <ul class="zs-size-guide__badges" role="list">
+        <li class="zs-size-guide__badge zs-size-guide__reveal" data-sg-delay="3">
+          <span class="zs-size-guide__badge-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M6 8h12v10H6V8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M9 12H4l2-2M4 12l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <p class="zs-size-guide__badge-title">30-day returns</p>
+          <p class="zs-size-guide__badge-desc">Easy returns within 30 days</p>
+        </li>
+        <li class="zs-size-guide__badge zs-size-guide__reveal" data-sg-delay="4">
+          <span class="zs-size-guide__badge-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M3 8h11v8H3V8zM14 10h4l3 3v3h-7v-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <circle cx="7" cy="18" r="2" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="17" cy="18" r="2" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </span>
+          <p class="zs-size-guide__badge-title">Free shipping</p>
+          <p class="zs-size-guide__badge-desc">On all orders over $75</p>
+        </li>
+        <li class="zs-size-guide__badge zs-size-guide__reveal" data-sg-delay="5">
+          <span class="zs-size-guide__badge-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16v10H7l-3 3V6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <p class="zs-size-guide__badge-title">Human support</p>
+          <p class="zs-size-guide__badge-desc">Real humans, not bots</p>
+        </li>
+      </ul>
+    </div>
+  </section>
 </div>
 
+<script>
+  (() => {
+    const root = document.querySelector('[data-zs-size-guide]');
+    if (!root) return;
+
+    const unitBtns = root.querySelectorAll('[data-zs-sg-unit]');
+    const measureCells = root.querySelectorAll('[data-zs-sg-measure]');
+    let activeUnit = 'in';
+
+    const applyUnit = (unit) => {
+      activeUnit = unit;
+      measureCells.forEach((cell) => {
+        const val = unit === 'cm' ? cell.getAttribute('data-cm') : cell.getAttribute('data-in');
+        if (val) cell.textContent = val;
+      });
+      unitBtns.forEach((btn) => {
+        const isActive = btn.getAttribute('data-zs-sg-unit') === unit;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    };
+
+    unitBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const unit = btn.getAttribute('data-zs-sg-unit');
+        if (!unit || unit === activeUnit) return;
+        applyUnit(unit);
+      });
+    });
+
+    const zones = root.querySelectorAll('[data-zs-sg-reveal]');
+    const REVEAL_IO_DELAY_MS = 100;
+    const REVEAL_FALLBACK_MS = 1200;
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const isInViewport = (el) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      return r.bottom > 0 && r.top < vh;
+    };
+
+    const markZoneSettled = (zone) => {
+      zone.classList.remove('is-visible');
+      zone.classList.add('reveal-settled');
+    };
+
+    const markZoneAnimated = (zone) => {
+      zone.classList.remove('reveal-settled');
+      zone.classList.add('is-visible');
+    };
+
+    const setupZone = (zone) => {
+      if (prefersReducedMotion) {
+        markZoneSettled(zone);
+        return;
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        markZoneSettled(zone);
+        return;
+      }
+
+      if (isInViewport(zone)) {
+        markZoneSettled(zone);
+        return;
+      }
+
+      let done = false;
+      let fallbackTimer = 0;
+      let io = null;
+
+      const finish = (animated) => {
+        if (done) return;
+        done = true;
+        if (fallbackTimer) window.clearTimeout(fallbackTimer);
+        if (io) io.disconnect();
+        if (animated) markZoneAnimated(zone);
+        else markZoneSettled(zone);
+      };
+
+      fallbackTimer = window.setTimeout(() => finish(false), REVEAL_FALLBACK_MS);
+
+      let lastScrollY = window.scrollY || window.pageYOffset || 0;
+      const onScroll = () => {
+        lastScrollY = window.scrollY || window.pageYOffset || 0;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.15) return;
+            const y = window.scrollY || window.pageYOffset || 0;
+            const scrollingDown = y >= lastScrollY - 2;
+            window.removeEventListener('scroll', onScroll);
+            finish(scrollingDown);
+          });
+        },
+        { threshold: [0, 0.15, 0.3, 0.45, 0.6] }
+      );
+
+      io.observe(zone);
+    };
+
+    window.setTimeout(() => {
+      zones.forEach(setupZone);
+    }, REVEAL_IO_DELAY_MS);
+  })();
+</script>
+
 {% stylesheet %}
-  .main-size-guide {
-    --zalva-ivory: #faf8f5;
-    --zalva-champagne: #c8a96e;
-    --zalva-noir: #1a1a1a;
-    --zalva-deep-brown: #3d2b24;
+  .zs-size-guide {
+    --sg-linen: #f0e8df;
+    --sg-ivory: #faf8f5;
+    --sg-noir: #1a1a1a;
+    --sg-champagne: #c8a96e;
+    --sg-deep: #3d2b24;
+    --sg-taupe: #a07060;
+    --sg-blush: #d4b5a0;
 
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    padding-block: clamp(2.5rem, 6vw, 4rem);
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
   }
 
-  .main-size-guide__inner {
-    max-width: var(--page-width);
-    margin-inline: auto;
-    padding-inline: var(--page-margin);
+  .zs-size-guide__zone {
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .main-size-guide__title {
+  .zs-size-guide__ornament {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin: 0 auto 32px;
+    background-color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__ornament--sm {
+    width: 24px;
+    margin-bottom: 16px;
+  }
+
+  .zs-size-guide__eyebrow {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__section-head {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__section-head {
+      margin-bottom: 60px;
+    }
+  }
+
+  .zs-size-guide__section-head--center {
+    text-align: center;
+  }
+
+  .zs-size-guide__section-title {
+    margin: 12px 0 0;
     font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     font-weight: 300;
-    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.2;
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__section-title--italic {
+    font-style: italic;
+  }
+
+  /* Reveal — visible by default */
+  .zs-size-guide__reveal {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal {
+    animation: zs-sg-rise 0.75s ease forwards;
+  }
+
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal[data-sg-delay='0'] { animation-delay: 0s; }
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal[data-sg-delay='1'] { animation-delay: 0.1s; }
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal[data-sg-delay='2'] { animation-delay: 0.2s; }
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal[data-sg-delay='3'] { animation-delay: 0.3s; }
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal[data-sg-delay='4'] { animation-delay: 0.4s; }
+  .zs-size-guide__zone.is-visible .zs-size-guide__reveal[data-sg-delay='5'] { animation-delay: 0.5s; }
+
+  .zs-size-guide__zone.reveal-settled .zs-size-guide__reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  @keyframes zs-sg-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-size-guide__reveal {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  /* Zone 1 */
+  .zs-size-guide__zone--header {
+    background-color: var(--sg-linen);
+    padding-block: 60px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__zone--header {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-size-guide__header-inner {
+    max-width: 880px;
+    margin-inline: auto;
     text-align: center;
-    color: var(--zalva-deep-brown);
-    margin: 0 0 0.75rem;
   }
 
-  .main-size-guide__subtitle {
+  .zs-size-guide__page-title {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(40px, 5.5vw, 64px);
+    line-height: 1.2;
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__page-sub {
+    margin: 24px auto 0;
+    max-width: 520px;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.9375rem;
-    line-height: 1.6;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+    color: var(--sg-deep);
+  }
+
+  /* Zone 2 */
+  .zs-size-guide__zone--measure {
+    background-color: var(--sg-ivory);
+    padding-block: 70px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__zone--measure {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-size-guide__measure-inner {
+    max-width: 1280px;
+    margin-inline: auto;
+  }
+
+  .zs-size-guide__cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .zs-size-guide__card {
+    padding: 32px 24px;
     text-align: center;
-    color: rgba(26, 26, 26, 0.75);
-    max-width: 40rem;
-    margin: 0 auto 2.5rem;
   }
 
-  .main-size-guide__table-wrap {
-    overflow-x: auto;
-    border: 1px solid rgba(26, 26, 26, 0.12);
+  .zs-size-guide__step-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background-color: rgba(200, 169, 110, 0.15);
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--sg-deep);
   }
 
-  .main-size-guide__table {
-    width: 100%;
-    border-collapse: collapse;
+  .zs-size-guide__card-title {
+    margin: 0 0 12px;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__card-text {
+    margin: 0 auto;
+    max-width: 280px;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.875rem;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--sg-deep);
   }
 
-  .main-size-guide__table thead th {
-    background-color: var(--zalva-champagne);
-    color: var(--zalva-noir);
-    font-weight: 600;
-    letter-spacing: 0.06em;
+  .zs-size-guide__pro-tip {
+    margin-top: 60px;
+    text-align: center;
+  }
+
+  .zs-size-guide__pro-tip p {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--sg-taupe);
+  }
+
+  /* Zone 3 */
+  .zs-size-guide__zone--chart {
+    background-color: var(--sg-linen);
+    padding-block: 70px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__zone--chart {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-size-guide__chart-inner {
+    max-width: 1080px;
+    margin-inline: auto;
+  }
+
+  .zs-size-guide__unit-toggle {
+    display: flex;
+    gap: 0;
+    width: fit-content;
+    margin: 0 0 24px auto;
+    padding: 2px;
+    border: 1px solid var(--sg-taupe);
+    border-radius: 2px;
+  }
+
+  .zs-size-guide__unit-btn {
+    margin: 0;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: var(--sg-taupe);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    font-size: 0.6875rem;
-    padding: 0.875rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(26, 26, 26, 0.15);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  .main-size-guide__table tbody th,
-  .main-size-guide__table tbody td {
-    padding: 0.875rem 1rem;
-    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
-    text-align: left;
+  .zs-size-guide__unit-btn.is-active {
+    background-color: var(--sg-champagne);
+    color: var(--sg-noir);
   }
 
-  .main-size-guide__table tbody th {
-    font-weight: 600;
-    color: var(--zalva-deep-brown);
+  .zs-size-guide__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .main-size-guide__table tbody tr:last-child th,
-  .main-size-guide__table tbody tr:last-child td {
+  .zs-size-guide__table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+    background-color: var(--sg-ivory);
+    transition: opacity 0.3s ease;
+  }
+
+  .zs-size-guide__table thead {
+    background-color: var(--sg-noir);
+  }
+
+  .zs-size-guide__table thead th {
+    padding: 16px;
+    text-align: center;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__table tbody th,
+  .zs-size-guide__table tbody td {
+    padding: 18px;
+    text-align: center;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+    transition: opacity 0.3s ease;
+  }
+
+  .zs-size-guide__table tbody th {
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__table tbody td {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    color: var(--sg-deep);
+  }
+
+  .zs-size-guide__table tbody tr:last-child th,
+  .zs-size-guide__table tbody tr:last-child td {
     border-bottom: none;
   }
 
-  .main-size-guide__table tbody tr:hover {
-    background-color: rgba(200, 169, 110, 0.08);
+  /* Zone 4 */
+  .zs-size-guide__zone--between {
+    background-color: var(--sg-ivory);
+    padding-block: 70px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__zone--between {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-size-guide__between-inner {
+    max-width: 880px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .zs-size-guide__guidance {
+    list-style: none;
+    margin: 60px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__guidance {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .zs-size-guide__guidance-card {
+    background-color: var(--sg-linen);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .zs-size-guide__guidance-label {
+    margin: 0 0 12px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__guidance-body {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__guidance-body a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s ease;
+  }
+
+  .zs-size-guide__guidance-body a:hover {
+    color: var(--sg-taupe);
+  }
+
+  /* Zone 5 */
+  .zs-size-guide__zone--promise {
+    background-color: var(--sg-noir);
+    color: var(--sg-ivory);
+    padding-block: 50px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__zone--promise {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-size-guide__promise-inner {
+    max-width: 1080px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .zs-size-guide__promise-title {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.3;
+    color: var(--sg-ivory);
+  }
+
+  .zs-size-guide__badges {
+    list-style: none;
+    margin: 56px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__badges {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .zs-size-guide__badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .zs-size-guide__badge-icon {
+    display: flex;
+    color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__badge-title {
+    margin: 12px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sg-blush);
+  }
+
+  .zs-size-guide__badge-desc {
+    margin: 8px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(212, 181, 160, 0.7);
   }
 {% endstylesheet %}
 
@@ -150,7 +824,7 @@
 {
   "name": "Size guide",
   "tag": "section",
-  "class": "section-main-size-guide",
+  "class": "section-zs-size-guide",
   "settings": [],
   "presets": [{ "name": "Size guide" }]
 }
