@@ -1050,8 +1050,8 @@
     color: inherit;
     cursor: pointer;
     transition:
-      color 0.25s ease,
-      transform 0.25s ease;
+      color 0.3s ease,
+      transform 0.3s ease;
   }
 
   @media (min-width: 769px) {
@@ -1059,11 +1059,6 @@
       top: 24px;
       right: 28px;
     }
-  }
-
-  .zs-search-dropdown__close:hover {
-    color: var(--zs-sd-champagne);
-    transform: scale(1.08);
   }
 
   .zs-search-dropdown__close:focus-visible {
@@ -1570,12 +1565,7 @@
     cursor: pointer;
     transition:
       color 0.3s ease,
-      transform 0.35s ease;
-  }
-
-  .zs-cabinet-menu__close:hover {
-    color: var(--cabinet-champagne);
-    transform: rotate(90deg);
+      transform 0.3s ease;
   }
 
   .zs-cabinet-menu__close:focus-visible {
@@ -1678,16 +1668,40 @@
     background: transparent;
     color: var(--cabinet-noir);
     cursor: pointer;
-    transition: color 0.3s ease;
-  }
-
-  .zs-cabinet-menu__m-close:hover {
-    color: var(--cabinet-champagne);
+    transition:
+      color 0.3s ease,
+      transform 0.3s ease;
   }
 
   .zs-cabinet-menu__m-close:focus-visible {
     outline: 2px solid var(--cabinet-champagne);
     outline-offset: 2px;
+  }
+
+  /* Overlay close buttons — shared rotate + Champagne (hover / touch active) */
+  @media (hover: hover) and (pointer: fine) {
+    .zs-cabinet-menu__close:hover,
+    .zs-cabinet-menu__m-close:hover {
+      color: var(--cabinet-champagne);
+      transform: rotate(90deg);
+    }
+
+    .zs-search-dropdown__close:hover {
+      color: var(--zs-sd-champagne);
+      transform: rotate(90deg);
+    }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .zs-cabinet-menu__m-close:active {
+      color: var(--cabinet-champagne);
+      transform: rotate(90deg);
+    }
+
+    .zs-search-dropdown__close:active {
+      color: var(--zs-sd-champagne);
+      transform: rotate(90deg);
+    }
   }
 
   .zs-cabinet-menu__m-scroll {
