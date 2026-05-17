@@ -24,7 +24,12 @@
   let isOpen = false;
   let lastFocus = null;
   let cartState = null;
-  let pendingLineKey = null;
+  let toastDismissTimer = 0;
+
+  const addedToast =
+    document.querySelector('[data-zs-cart-added-toast]') ||
+    document.getElementById('zs-cart-added-toast');
+  const toastViewBtn = addedToast?.querySelector('[data-zs-cart-toast-view]');
 
   const FOCUSABLE =
     'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -44,6 +49,38 @@
     window.setTimeout(() => {
       liveRegion.textContent = message;
     }, 50);
+  };
+
+  const pulseCartIcon = () => {
+    const wrap = document.querySelector('.zs-header__cart-wrap');
+    if (!wrap || prefersReducedMotion) return;
+    wrap.classList.remove('is-pulsing');
+    void wrap.offsetWidth;
+    wrap.classList.add('is-pulsing');
+    wrap.addEventListener(
+      'animationend',
+      () => wrap.classList.remove('is-pulsing'),
+      { once: true }
+    );
+  };
+
+  const dismissAddedToast = () => {
+    if (!addedToast) return;
+    addedToast.classList.remove('is-active');
+    addedToast.setAttribute('aria-hidden', 'true');
+    if (toastDismissTimer) {
+      window.clearTimeout(toastDismissTimer);
+      toastDismissTimer = 0;
+    }
+  };
+
+  const showAddedToast = () => {
+    if (!addedToast) return;
+    dismissAddedToast();
+    pulseCartIcon();
+    addedToast.classList.add('is-active');
+    addedToast.setAttribute('aria-hidden', 'false');
+    toastDismissTimer = window.setTimeout(dismissAddedToast, 3000);
   };
 
   const updateHeaderCount = (count) => {
@@ -302,6 +339,7 @@
 
   const open = async () => {
     if (isOpen) return;
+    dismissAddedToast();
     lastFocus = document.activeElement;
 
     try {
@@ -362,6 +400,12 @@
     window.location.href = checkoutUrl;
   });
 
+  toastViewBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    dismissAddedToast();
+    open();
+  });
+
   document.querySelectorAll('[data-zs-cart-open]').forEach((trigger) => {
     trigger.addEventListener('click', (e) => {
       e.preventDefault();
@@ -392,7 +436,7 @@
         newLineKey: newKey,
         announce: 'Item added to bag',
       });
-      open();
+      showAddedToast();
       document.dispatchEvent(new CustomEvent('zs:cart:added', { detail: { cart, added } }));
     } catch (err) {
       announce(err.message || 'Could not add to bag');
@@ -420,5 +464,7 @@
     refresh: fetchCart,
     render: renderCart,
     refreshAndOpen,
+    showAddedToast,
+    dismissAddedToast,
   };
 })();
