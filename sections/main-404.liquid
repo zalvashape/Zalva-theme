@@ -1,0 +1,364 @@
+<div class="zs-404 full-width reveal-settled" data-zs-404 {{ section.shopify_attributes }}>
+  <section
+    class="zs-404__section"
+    data-header-bg="#F0E8DF"
+    data-header-text="#1A1A1A"
+    aria-labelledby="zs-404-heading"
+  >
+    <div class="zs-404__inner">
+      <p class="zs-404__code" aria-hidden="true">404</p>
+      <span class="zs-404__line" aria-hidden="true"></span>
+      <p class="zs-404__eyebrow">Page not found</p>
+      <h1 id="zs-404-heading" class="zs-404__headline">
+        <span class="zs-404__visually-hidden">Page not found. </span>Lost in transition.
+      </h1>
+      <p class="zs-404__subtitle">
+        The page you're looking for has moved or no longer exists. Let's get you back where you belong.
+      </p>
+      <div class="zs-404__actions">
+        <a class="zs-404__btn zs-404__btn--primary" href="{{ routes.root_url }}">Return home</a>
+        <a class="zs-404__btn zs-404__btn--secondary" href="{{ routes.all_products_collection_url }}">Shop the collection</a>
+      </div>
+      <a class="zs-404__contact" href="{{ routes.root_url }}pages/contact">Need help finding something? Contact us →</a>
+    </div>
+  </section>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-zs-404]');
+    if (!root) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) return;
+
+    window.requestAnimationFrame(() => {
+      root.classList.remove('reveal-settled');
+      void root.offsetWidth;
+      root.classList.add('is-animated');
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .zs-404__visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .zs-404__section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100svh - var(--zs-header-stack));
+    padding-block: 60px;
+    padding-inline: 20px;
+    background-color: #f0e8df;
+  }
+
+  @media (min-width: 769px) {
+    .zs-404__section {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-404__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 720px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .zs-404__code {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 200;
+    font-size: clamp(120px, 18vw, 220px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: #a07060;
+    opacity: 0.8;
+  }
+
+  .zs-404__line {
+    display: block;
+    width: 40px;
+    height: 1px;
+    margin-top: 32px;
+    background-color: #c8a96e;
+    transform-origin: center;
+  }
+
+  .zs-404__eyebrow {
+    margin: 32px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #c8a96e;
+  }
+
+  .zs-404__headline {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    color: #1a1a1a;
+  }
+
+  .zs-404__subtitle {
+    margin: 16px 0 0;
+    max-width: 480px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+    color: #3d2b24;
+  }
+
+  @media (min-width: 769px) {
+    .zs-404__subtitle {
+      font-size: 14px;
+    }
+  }
+
+  .zs-404__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 48px;
+  }
+
+  .zs-404__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 18px 36px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+
+  .zs-404__btn:focus-visible {
+    outline: 2px solid #c8a96e;
+    outline-offset: 3px;
+  }
+
+  .zs-404__btn--primary {
+    background-color: #1a1a1a;
+    color: #c8a96e;
+    border: 1px solid #1a1a1a;
+  }
+
+  @media (hover: hover) {
+    .zs-404__btn--primary:hover {
+      background-color: #c8a96e;
+      color: #1a1a1a;
+      border-color: #c8a96e;
+      transform: scale(1.02);
+    }
+  }
+
+  .zs-404__btn--secondary {
+    background-color: transparent;
+    color: #1a1a1a;
+    border: 1px solid #1a1a1a;
+  }
+
+  @media (hover: hover) {
+    .zs-404__btn--secondary:hover {
+      background-color: #1a1a1a;
+      color: #c8a96e;
+      transform: scale(1.02);
+    }
+  }
+
+  .zs-404__contact {
+    margin-top: 56px;
+    padding-bottom: 2px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: #a07060;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .zs-404__contact:hover {
+      color: #c8a96e;
+      border-bottom-color: #c8a96e;
+    }
+  }
+
+  .zs-404__contact:focus-visible {
+    outline: 2px solid #c8a96e;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .zs-404__actions {
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .zs-404__btn {
+      width: 100%;
+    }
+  }
+
+  @keyframes zs-404-code-in {
+    from {
+      opacity: 0;
+      transform: scale(1.05);
+    }
+
+    to {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes zs-404-line-in {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes zs-404-fade-up-sm {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes zs-404-fade-up-md {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes zs-404-fade-up-btn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes zs-404-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .zs-404.is-animated .zs-404__code {
+    animation: zs-404-code-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0s both;
+  }
+
+  .zs-404.is-animated .zs-404__line {
+    animation: zs-404-line-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  }
+
+  .zs-404.is-animated .zs-404__eyebrow {
+    animation: zs-404-fade-up-sm 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+  }
+
+  .zs-404.is-animated .zs-404__headline {
+    animation: zs-404-fade-up-md 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+  }
+
+  .zs-404.is-animated .zs-404__subtitle {
+    animation: zs-404-fade-up-sm 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+  }
+
+  .zs-404.is-animated .zs-404__actions {
+    animation: zs-404-fade-up-btn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
+  }
+
+  .zs-404.is-animated .zs-404__contact {
+    animation: zs-404-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+  }
+
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__code,
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__line,
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__eyebrow,
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__headline,
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__subtitle,
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__actions,
+  .zs-404:not(.reveal-settled):not(.is-animated) .zs-404__contact {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-404.is-animated .zs-404__code,
+    .zs-404.is-animated .zs-404__line,
+    .zs-404.is-animated .zs-404__eyebrow,
+    .zs-404.is-animated .zs-404__headline,
+    .zs-404.is-animated .zs-404__subtitle,
+    .zs-404.is-animated .zs-404__actions,
+    .zs-404.is-animated .zs-404__contact {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "404 page",
+  "settings": []
+}
+{% endschema %}
