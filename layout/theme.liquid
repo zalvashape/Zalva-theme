@@ -39,6 +39,8 @@
     {% comment %} Premium header: announcement bar + main bar + side panel live in sections/header.liquid (header-group). {% endcomment %}
     {% sections 'header-group' %}
 
+    {% section 'cart-drawer' %}
+
     {{ content_for_layout }}
 
     {% section 'footer' %}
@@ -47,6 +49,7 @@
 
     {{ 'zs-email-copy.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'zs-email-copy.js' | asset_url }}" defer></script>
+    <script src="{{ 'zs-cart-drawer.js' | asset_url }}" defer></script>
     <script src="{{ 'zs-search-clear.js' | asset_url }}" defer></script>
 
     <script>

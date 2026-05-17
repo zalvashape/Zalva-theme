@@ -57,7 +57,13 @@
             </svg>
           </a>
         {% endif %}
-        <a class="zs-header__icon-link zs-header__icon-link--cart" href="{{ routes.cart_url }}" aria-label="Cart">
+        <a
+          class="zs-header__icon-link zs-header__icon-link--cart"
+          href="{{ routes.cart_url }}"
+          data-zs-cart-open
+          aria-label="Cart"
+          aria-haspopup="dialog"
+        >
           <span class="zs-header__cart-wrap">
             <svg
               class="zs-header__icon-svg zs-header__icon-svg--cart"

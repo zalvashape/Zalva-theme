@@ -75,7 +75,7 @@
                   {% endif %}
                 </a>
                 <div class="main-collection__card-overlay" aria-hidden="true">
-                  {% form 'product', product, class: 'main-collection__quick-form' %}
+                  {% form 'product', product, class: 'main-collection__quick-form', data_zs_ajax_cart_form: true %}
                     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                     <input type="hidden" name="quantity" value="1">
                     <button
