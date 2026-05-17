@@ -7,6 +7,8 @@
   const closeBtn = drawer.querySelector('[data-zs-cart-drawer-close]');
   const liveRegion = drawer.querySelector('[data-zs-cart-drawer-live]');
   const bodyTarget = drawer.querySelector('[data-zs-cart-drawer-body]');
+  const scrollProgress = drawer.querySelector('[data-zs-cart-drawer-progress]');
+  const scrollProgressFill = drawer.querySelector('[data-zs-cart-drawer-progress-fill]');
   const countEl = drawer.querySelector('[data-zs-cart-drawer-count]');
   const shippingTextEl = drawer.querySelector('[data-zs-cart-drawer-shipping-text]');
   const shippingFillEl = drawer.querySelector('[data-zs-cart-drawer-shipping-fill]');
@@ -25,6 +27,8 @@
   let lastFocus = null;
   let cartState = null;
   let toastDismissTimer = 0;
+  let scrollProgressRaf = 0;
+  let scrollWasAtEnd = false;
 
   const addedToast =
     document.querySelector('[data-zs-cart-added-toast]') ||
@@ -49,6 +53,44 @@
     window.setTimeout(() => {
       liveRegion.textContent = message;
     }, 50);
+  };
+
+  const updateScrollProgress = () => {
+    if (!bodyTarget || !scrollProgressFill) return;
+    const { scrollTop, scrollHeight, clientHeight } = bodyTarget;
+    const maxScroll = scrollHeight - clientHeight;
+
+    if (maxScroll <= 1) {
+      scrollProgress?.setAttribute('hidden', '');
+      scrollProgress?.setAttribute('aria-hidden', 'true');
+      scrollProgressFill.style.height = '0';
+      scrollWasAtEnd = false;
+      return;
+    }
+
+    scrollProgress?.removeAttribute('hidden');
+    scrollProgress?.setAttribute('aria-hidden', 'false');
+    const pct = Math.min(100, Math.max(0, (scrollTop / maxScroll) * 100));
+    scrollProgressFill.style.height = `${pct}%`;
+
+    const atEnd = scrollTop >= maxScroll - 2;
+    if (atEnd && !scrollWasAtEnd) {
+      scrollProgress?.classList.add('is-complete');
+      const onAnimEnd = () => {
+        scrollProgress?.classList.remove('is-complete');
+        scrollProgressFill.removeEventListener('animationend', onAnimEnd);
+      };
+      scrollProgressFill.addEventListener('animationend', onAnimEnd);
+    }
+    scrollWasAtEnd = atEnd;
+  };
+
+  const scheduleScrollProgress = () => {
+    if (scrollProgressRaf) return;
+    scrollProgressRaf = window.requestAnimationFrame(() => {
+      scrollProgressRaf = 0;
+      updateScrollProgress();
+    });
   };
 
   const pulseCartIcon = () => {
@@ -206,6 +248,7 @@
     if (bodyTarget) {
       bodyTarget.innerHTML = renderItems(cart, options.newLineKey);
       bindItemEvents();
+      scheduleScrollProgress();
     }
 
     if (options.announce) announce(options.announce);
@@ -357,6 +400,7 @@
 
     window.setTimeout(() => {
       (closeBtn || panel)?.focus();
+      scheduleScrollProgress();
     }, prefersReducedMotion ? 0 : 100);
 
     document.addEventListener('keydown', onKeydown);
@@ -456,7 +500,13 @@
     }
   };
 
+  if (bodyTarget) {
+    bodyTarget.addEventListener('scroll', scheduleScrollProgress, { passive: true });
+    window.addEventListener('resize', scheduleScrollProgress, { passive: true });
+  }
+
   initFromDom();
+  scheduleScrollProgress();
 
   window.ZsCartDrawer = {
     open,

@@ -75,7 +75,8 @@
       </div>
     </div>
 
-    <div class="zs-cart-drawer__body" data-zs-cart-drawer-body>
+    <div class="zs-cart-drawer__scroll-area">
+      <div class="zs-cart-drawer__body" data-zs-cart-drawer-body>
       {% if cart.item_count == 0 %}
         <div class="zs-cart-drawer__empty">
           <span class="zs-cart-drawer__empty-icon" aria-hidden="true">
@@ -145,6 +146,11 @@
           {% endfor %}
         </ul>
       {% endif %}
+      </div>
+      <div class="zs-cart-drawer__progress" data-zs-cart-drawer-progress hidden aria-hidden="true">
+        <span class="zs-cart-drawer__progress-track" aria-hidden="true"></span>
+        <span class="zs-cart-drawer__progress-fill" data-zs-cart-drawer-progress-fill></span>
+      </div>
     </div>
 
     <footer class="zs-cart-drawer__footer">
@@ -340,12 +346,85 @@
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  .zs-cart-drawer__scroll-area {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow: visible;
+  }
+
   .zs-cart-drawer__body {
     flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
+    overscroll-behavior-y: contain;
     padding: 24px 32px;
+    padding-right: 10px;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .zs-cart-drawer__body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .zs-cart-drawer__progress {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 2px;
+    pointer-events: none;
+  }
+
+  .zs-cart-drawer__progress[hidden] {
+    display: none !important;
+  }
+
+  .zs-cart-drawer__progress-track {
+    position: absolute;
+    inset: 0;
+    width: 2px;
+    background: rgba(200, 169, 110, 0.15);
+    border-radius: 0;
+  }
+
+  .zs-cart-drawer__progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background: #c8a96e;
+    border-radius: 0;
+    opacity: 0.85;
+    transition: height 0.1s ease-out, opacity 0.1s ease-out;
+  }
+
+  .zs-cart-drawer__progress.is-complete .zs-cart-drawer__progress-fill {
+    animation: zs-cart-drawer-progress-complete 0.5s ease-out forwards;
+  }
+
+  @keyframes zs-cart-drawer-progress-complete {
+    0% {
+      opacity: 0.85;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0.85;
+    }
   }
 
   .zs-cart-drawer__empty {
@@ -702,6 +781,7 @@
 
     .zs-cart-drawer__body {
       padding: 16px 20px;
+      padding-right: 10px;
     }
 
     .zs-cart-drawer__footer {
@@ -858,8 +938,10 @@
     }
 
     .zs-cart-drawer__item--new,
-    .zs-header__cart-wrap.is-pulsing {
+    .zs-header__cart-wrap.is-pulsing,
+    .zs-cart-drawer__progress-fill {
       animation: none;
+      transition: none;
     }
   }
 {% endstylesheet %}
