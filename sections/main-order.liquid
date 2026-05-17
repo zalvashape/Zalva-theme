@@ -1,0 +1,135 @@
+<div class="zs-account zs-account--dashboard full-width" {{ section.shopify_attributes }}>
+  <div
+    class="zs-account__page"
+    data-zs-page-pull-up
+    data-header-bg="#FAF8F5"
+    data-header-text="#1A1A1A"
+  >
+    <header class="zs-account__page-header">
+      <p class="zs-account__eyebrow">Order</p>
+      <h1 class="zs-account__headline">Order {{ order.name }}</h1>
+      <p class="zs-account__subtitle">
+        Placed on {{ order.created_at | date: '%B %d, %Y' }}
+        ·
+        {% liquid
+          assign status_class = 'pending'
+          if order.fulfillment_status == 'fulfilled'
+            assign status_class = 'fulfilled'
+          endif
+        %}
+        <span class="zs-account__badge zs-account__badge--{{ status_class }}">{{ order.fulfillment_status_label }}</span>
+      </p>
+    </header>
+
+    <div class="zs-account__main">
+      {% render 'zs-account-sidebar', active: 'orders' %}
+
+      <div class="zs-account__content">
+        <div class="zs-account__order-header">
+          <a class="zs-account__link-inline" href="{{ routes.account_url }}">← Back to account</a>
+        </div>
+
+        <section aria-labelledby="OrderItemsHeading">
+          <h2 id="OrderItemsHeading" class="zs-account__section-title">Items</h2>
+          <ul role="list" style="list-style: none; margin: 0; padding: 0;">
+            {% for line_item in order.line_items %}
+              <li class="zs-account__line-item">
+                {% if line_item.image %}
+                  {{
+                    line_item.image
+                    | image_url: width: 160
+                    | image_tag: class: 'zs-account__line-img', loading: 'lazy', alt: ''
+                  }}
+                {% else %}
+                  <div class="zs-account__line-img" style="background: rgba(200,169,110,0.15);" aria-hidden="true"></div>
+                {% endif %}
+                <div class="zs-account__line-body">
+                  <p class="zs-account__card-name" style="font-size: 18px;">{{ line_item.title }}</p>
+                  {% unless line_item.variant_title == 'Default Title' %}
+                    <p class="zs-account__order-date">{{ line_item.variant_title }}</p>
+                  {% endunless %}
+                  <p class="zs-account__order-date">Qty {{ line_item.quantity }}</p>
+                  <p class="zs-account__order-total">{{ line_item.final_line_price | money }}</p>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <div class="zs-account__summary-rows">
+          <div class="zs-account__summary-row">
+            <span>Subtotal</span>
+            <span>{{ order.line_items_subtotal_price | money }}</span>
+          </div>
+          {% for shipping_method in order.shipping_methods %}
+            <div class="zs-account__summary-row">
+              <span>Shipping ({{ shipping_method.title }})</span>
+              <span>{{ shipping_method.price | money }}</span>
+            </div>
+          {% endfor %}
+          {% for tax_line in order.tax_lines %}
+            <div class="zs-account__summary-row">
+              <span>{{ tax_line.title }}</span>
+              <span>{{ tax_line.price | money }}</span>
+            </div>
+          {% endfor %}
+          <div class="zs-account__summary-row zs-account__summary-row--total">
+            <span>Total</span>
+            <span>{{ order.total_price | money }}</span>
+          </div>
+        </div>
+
+        <div class="zs-account__card" style="margin-top: 40px;">
+          <h2 class="zs-account__section-title">Shipping address</h2>
+          {% if order.shipping_address %}
+            <p class="zs-account__address-text">{{ order.shipping_address | format_address }}</p>
+          {% else %}
+            <p class="zs-account__address-text">No shipping address.</p>
+          {% endif %}
+        </div>
+
+        {% if order.transactions.size > 0 %}
+          <div class="zs-account__card" style="margin-top: 24px;">
+            <h2 class="zs-account__section-title">Payment</h2>
+            {% for transaction in order.transactions %}
+              {% if transaction.status == 'success' and transaction.payment_details %}
+                <p class="zs-account__address-text">
+                  {{ transaction.payment_details.credit_card_company }}
+                  {% if transaction.payment_details.credit_card_last_four_digits %}
+                    ending in {{ transaction.payment_details.credit_card_last_four_digits }}
+                  {% endif %}
+                </p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% assign has_tracking = false %}
+        {% for fulfillment in order.fulfillments %}
+          {% if fulfillment.tracking_number %}
+            {% assign has_tracking = true %}
+            <div class="zs-account__card" style="margin-top: 24px;">
+              <h2 class="zs-account__section-title">Tracking</h2>
+              <p class="zs-account__address-text">
+                {{ fulfillment.tracking_company }}
+                {% if fulfillment.tracking_number %}— {{ fulfillment.tracking_number }}{% endif %}
+              </p>
+              {% if fulfillment.tracking_url %}
+                <a class="zs-account__order-link" href="{{ fulfillment.tracking_url }}" rel="noopener noreferrer" target="_blank">Track shipment →</a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <a class="zs-account__help-link" href="{{ routes.root_url }}pages/contact">Need help? Contact us →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Order detail",
+  "settings": []
+}
+{% endschema %}

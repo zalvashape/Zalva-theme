@@ -45,7 +45,8 @@ body.zalva-home [data-main-hero-section].main-hero {
  */
 body.template-page-size-guide .zs-size-guide__zone--header,
 body[class*='template-page'] [data-zs-page-pull-up],
-body.template-404 [data-zs-page-pull-up] {
+body.template-404 [data-zs-page-pull-up],
+body[class*='template-customers'] [data-zs-page-pull-up] {
   margin-top: calc(-1 * var(--zs-header-stack));
   padding-top: calc(var(--zs-header-stack) + 40px);
 }
@@ -53,7 +54,8 @@ body.template-404 [data-zs-page-pull-up] {
 @media (min-width: 769px) {
   body.template-page-size-guide .zs-size-guide__zone--header,
   body[class*='template-page'] [data-zs-page-pull-up],
-  body.template-404 [data-zs-page-pull-up] {
+  body.template-404 [data-zs-page-pull-up],
+  body[class*='template-customers'] [data-zs-page-pull-up] {
     padding-top: calc(var(--zs-header-stack) + 60px);
   }
 }

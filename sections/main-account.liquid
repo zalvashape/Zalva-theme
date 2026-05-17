@@ -1,0 +1,87 @@
+<div class="zs-account zs-account--dashboard full-width" {{ section.shopify_attributes }}>
+  <div
+    class="zs-account__page"
+    data-zs-page-pull-up
+    data-header-bg="#FAF8F5"
+    data-header-text="#1A1A1A"
+  >
+    <header class="zs-account__page-header">
+      <p class="zs-account__eyebrow">Member</p>
+      <h1 class="zs-account__headline">Welcome back, {{ customer.first_name }}.</h1>
+      <p class="zs-account__subtitle">Manage your orders, addresses, and account details.</p>
+    </header>
+
+    <div class="zs-account__main">
+      {% render 'zs-account-sidebar', active: 'overview' %}
+
+      <div class="zs-account__content">
+        <div class="zs-account__card zs-account__card--summary">
+          <div>
+            <p class="zs-account__card-name">{{ customer.name }}</p>
+            <p class="zs-account__card-email">{{ customer.email }}</p>
+          </div>
+          <div class="zs-account__card-meta">
+            <p>Member since {{ customer.created_at | date: '%B %Y' }}</p>
+            <p>{{ customer.orders_count }} {% if customer.orders_count == 1 %}order{% else %}orders{% endif %}</p>
+          </div>
+        </div>
+
+        <section id="orders" class="zs-account__orders">
+          <h2 class="zs-account__section-title">Recent orders</h2>
+
+          {% if customer.orders.size == 0 %}
+            <div class="zs-account__empty">
+              <p class="zs-account__empty-text">You haven't placed any orders yet.</p>
+              <a class="zs-account__empty-cta" href="{{ routes.all_products_collection_url }}">Start your collection →</a>
+            </div>
+          {% else %}
+            <ul class="zs-account__order-list" role="list">
+              {% for order in customer.orders limit: 5 %}
+                <li class="zs-account__order-row">
+                  <a class="zs-account__order-name" href="{{ order.customer_url }}">#{{ order.name }}</a>
+                  <span class="zs-account__order-date">{{ order.created_at | date: '%b %d, %Y' }}</span>
+                  {% liquid
+                    assign status_class = 'pending'
+                    assign status_label = order.fulfillment_status_label | default: order.financial_status_label
+                    if order.fulfillment_status == 'fulfilled'
+                      assign status_class = 'fulfilled'
+                    endif
+                  %}
+                  <span class="zs-account__badge zs-account__badge--{{ status_class }}">{{ status_label }}</span>
+                  <span class="zs-account__order-total">{{ order.total_price | money }}</span>
+                  <a class="zs-account__order-link" href="{{ order.customer_url }}">View order →</a>
+                </li>
+              {% endfor %}
+            </ul>
+            {% if customer.orders_count > 5 %}
+              <a class="zs-account__view-all" href="{{ routes.account_url }}#orders">View all orders →</a>
+            {% endif %}
+          {% endif %}
+        </section>
+
+        <section id="account-details" class="zs-account__details">
+          <h2 class="zs-account__section-title">Account details</h2>
+          <div class="zs-account__card">
+            <p class="zs-account__card-name">{{ customer.name }}</p>
+            <p class="zs-account__card-email">{{ customer.email }}</p>
+            <p class="zs-account__card-email" style="margin-top: 12px;">
+              Default address:
+              {% if customer.default_address %}
+                {{ customer.default_address | format_address }}
+              {% else %}
+                No address on file.
+              {% endif %}
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Account dashboard",
+  "settings": []
+}
+{% endschema %}

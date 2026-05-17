@@ -1,0 +1,120 @@
+<div class="zs-account zs-account--auth full-width" {{ section.shopify_attributes }}>
+  <section
+    class="zs-account__split"
+    data-zs-page-pull-up
+    data-header-bg="#FAF8F5"
+    data-header-text="#1A1A1A"
+  >
+    <div class="zs-account__split-form">
+      <div class="zs-account__split-inner">
+        <span class="zs-account__ornament" aria-hidden="true"></span>
+        <p class="zs-account__eyebrow">Become a member</p>
+        <h1 class="zs-account__headline">Create your account.</h1>
+        <p class="zs-account__subtitle">Join Zalva Shape and unlock more than just shopping.</p>
+
+        <div class="zs-account__benefits">
+          <p class="zs-account__benefits-title">As a member, you'll enjoy:</p>
+          <ul class="zs-account__benefits-list" role="list">
+            <li class="zs-account__benefits-item"><span class="zs-account__benefits-check" aria-hidden="true">✓</span> Early access to new collections</li>
+            <li class="zs-account__benefits-item"><span class="zs-account__benefits-check" aria-hidden="true">✓</span> Track your orders effortlessly</li>
+            <li class="zs-account__benefits-item"><span class="zs-account__benefits-check" aria-hidden="true">✓</span> Save your favorite pieces</li>
+            <li class="zs-account__benefits-item"><span class="zs-account__benefits-check" aria-hidden="true">✓</span> Faster checkout, every time</li>
+            <li class="zs-account__benefits-item"><span class="zs-account__benefits-check" aria-hidden="true">✓</span> Exclusive member-only previews</li>
+          </ul>
+        </div>
+
+        {% form 'create_customer', class: 'zs-account__form', data_zs_account_form: true %}
+          {% if form.errors %}
+            <div class="zs-account__errors" role="alert" tabindex="-1">
+              <ul class="zs-account__errors-list" role="list">
+                {% for field in form.errors %}
+                  <li>
+                    {{ form.errors.translated_fields[field] | capitalize }}
+                    {{ form.errors.messages[field] }}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <div class="zs-account__fields">
+            <div class="zs-account__field-row">
+              <div class="zs-account__field">
+                <label class="zs-account__label" for="RegisterFirstName">First name</label>
+                <input
+                  class="zs-account__input"
+                  type="text"
+                  name="customer[first_name]"
+                  id="RegisterFirstName"
+                  autocomplete="given-name"
+                  value="{{ form.first_name }}"
+                  required
+                  aria-required="true"
+                >
+              </div>
+              <div class="zs-account__field">
+                <label class="zs-account__label" for="RegisterLastName">Last name</label>
+                <input
+                  class="zs-account__input"
+                  type="text"
+                  name="customer[last_name]"
+                  id="RegisterLastName"
+                  autocomplete="family-name"
+                  value="{{ form.last_name }}"
+                  required
+                  aria-required="true"
+                >
+              </div>
+            </div>
+
+            <div class="zs-account__field">
+              <label class="zs-account__label" for="RegisterEmail">Email</label>
+              <div class="zs-account__input-wrap search-input-wrapper">
+                <input
+                  class="zs-account__input"
+                  type="email"
+                  name="customer[email]"
+                  id="RegisterEmail"
+                  autocomplete="email"
+                  value="{{ form.email }}"
+                  required
+                  aria-required="true"
+                >
+                {% render 'search-clear-button' %}
+              </div>
+            </div>
+
+            <div class="zs-account__field">
+              <label class="zs-account__label" for="RegisterPassword">Password</label>
+              <input
+                class="zs-account__input"
+                type="password"
+                name="customer[password]"
+                id="RegisterPassword"
+                autocomplete="new-password"
+                required
+                aria-required="true"
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="zs-account__submit">Create account</button>
+        {% endform %}
+
+        <p class="zs-account__footer-text">
+          Already have an account?
+          <a class="zs-account__footer-link" href="{{ routes.account_login_url }}">Sign in →</a>
+        </p>
+      </div>
+    </div>
+
+    {% render 'zs-account-auth-visual' %}
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Customer register",
+  "settings": []
+}
+{% endschema %}

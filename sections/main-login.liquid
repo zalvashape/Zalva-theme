@@ -1,0 +1,131 @@
+<div class="zs-account zs-account--auth full-width" data-zs-account-auth {{ section.shopify_attributes }}>
+  <section
+    class="zs-account__split"
+    data-zs-page-pull-up
+    data-header-bg="#FAF8F5"
+    data-header-text="#1A1A1A"
+  >
+    <div class="zs-account__split-form">
+      <div class="zs-account__split-inner">
+        <div class="zs-account__panel" data-zs-account-panel="login">
+          <span class="zs-account__ornament" aria-hidden="true"></span>
+          <p class="zs-account__eyebrow">Welcome back</p>
+          <h1 class="zs-account__headline">Sign in.</h1>
+          <p class="zs-account__subtitle">Pick up where you left off.</p>
+
+          {% form 'customer_login', class: 'zs-account__form', data_zs_account_form: true %}
+            {% if form.errors %}
+              <div class="zs-account__errors" role="alert" tabindex="-1">
+                <ul class="zs-account__errors-list" role="list">
+                  {% for field in form.errors %}
+                    <li>{{ form.errors.messages[field] }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="zs-account__fields">
+              <div class="zs-account__field">
+                <label class="zs-account__label" for="CustomerEmail">Email</label>
+                <div class="zs-account__input-wrap search-input-wrapper">
+                  <input
+                    class="zs-account__input"
+                    type="email"
+                    name="customer[email]"
+                    id="CustomerEmail"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                    value="{{ form.email }}"
+                  >
+                  {% render 'search-clear-button' %}
+                </div>
+              </div>
+
+              <div class="zs-account__field">
+                <label class="zs-account__label" for="CustomerPassword">Password</label>
+                <input
+                  class="zs-account__input"
+                  type="password"
+                  name="customer[password]"
+                  id="CustomerPassword"
+                  autocomplete="current-password"
+                  required
+                  aria-required="true"
+                >
+                <div class="zs-account__field-meta">
+                  <a class="zs-account__link-inline" href="#recover" data-zs-account-show-recover>Forgot password?</a>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="zs-account__submit">Sign in</button>
+          {% endform %}
+
+          <p class="zs-account__footer-text">
+            Don't have an account?
+            <a class="zs-account__footer-link" href="{{ routes.account_register_url }}">Create one →</a>
+          </p>
+        </div>
+
+        <div class="zs-account__panel" data-zs-account-panel="recover" hidden>
+          <span class="zs-account__ornament" aria-hidden="true"></span>
+          <p class="zs-account__eyebrow">Forgot password?</p>
+          <h2 class="zs-account__headline">We'll send you a link.</h2>
+          <p class="zs-account__subtitle">Enter your email and we'll send instructions to reset your password.</p>
+
+          {% form 'recover_customer_password', class: 'zs-account__form', data_zs_account_form: true %}
+            {% if form.posted_successfully? %}
+              <p class="zs-account__success" role="status" data-zs-recover-success>
+                We've sent you an email with a link to update your password.
+              </p>
+            {% endif %}
+
+            {% if form.errors %}
+              <div class="zs-account__errors" role="alert">
+                <ul class="zs-account__errors-list" role="list">
+                  {% for field in form.errors %}
+                    <li>{{ form.errors.messages[field] }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="zs-account__fields">
+              <div class="zs-account__field">
+                <label class="zs-account__label" for="RecoverEmail">Email</label>
+                <div class="zs-account__input-wrap search-input-wrapper">
+                  <input
+                    class="zs-account__input"
+                    type="email"
+                    name="email"
+                    id="RecoverEmail"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                  >
+                  {% render 'search-clear-button' %}
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="zs-account__submit">Send reset link</button>
+          {% endform %}
+
+          <p class="zs-account__footer-text">
+            <a class="zs-account__footer-link" href="#" data-zs-account-show-login>Back to sign in →</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {% render 'zs-account-auth-visual' %}
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Customer login",
+  "settings": []
+}
+{% endschema %}

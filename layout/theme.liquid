@@ -47,6 +47,11 @@
 
     {% render 'zs-email-copy-toast' %}
 
+    {% if request.page_type contains 'customers' %}
+      {{ 'zs-account.css' | asset_url | stylesheet_tag }}
+      <script src="{{ 'zs-account.js' | asset_url }}" defer></script>
+    {% endif %}
+
     {{ 'zs-email-copy.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'zs-email-copy.js' | asset_url }}" defer></script>
     <script src="{{ 'zs-cart-drawer.js' | asset_url }}" defer></script>

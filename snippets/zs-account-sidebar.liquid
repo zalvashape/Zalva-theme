@@ -1,0 +1,40 @@
+{% liquid
+  assign active = active | default: 'overview'
+%}
+
+<aside class="zs-account__sidebar" data-zs-account-sidebar>
+  <button
+    type="button"
+    class="zs-account__sidebar-toggle"
+    data-zs-account-sidebar-toggle
+    aria-expanded="false"
+    aria-controls="ZsAccountNav"
+  >
+    Account menu
+    <span aria-hidden="true">+</span>
+  </button>
+  <nav id="ZsAccountNav" class="zs-account__nav" aria-label="Account">
+    <a
+      class="zs-account__nav-link{% if active == 'overview' %} is-active{% endif %}"
+      href="{{ routes.account_url }}"
+      {% if active == 'overview' %}aria-current="page"{% endif %}
+    >Overview</a>
+    <a
+      class="zs-account__nav-link{% if active == 'orders' %} is-active{% endif %}"
+      href="{{ routes.account_url }}#orders"
+      {% if active == 'orders' %}aria-current="page"{% endif %}
+    >Orders</a>
+    <a
+      class="zs-account__nav-link{% if active == 'addresses' %} is-active{% endif %}"
+      href="{{ routes.account_addresses_url }}"
+      {% if active == 'addresses' %}aria-current="page"{% endif %}
+    >Addresses</a>
+    <a
+      class="zs-account__nav-link{% if active == 'details' %} is-active{% endif %}"
+      href="{{ routes.account_url }}#account-details"
+    >Account details</a>
+    <div class="zs-account__nav-footer">
+      <a class="zs-account__logout" href="{{ routes.account_logout_url }}">Sign out</a>
+    </div>
+  </nav>
+</aside>

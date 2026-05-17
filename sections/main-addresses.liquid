@@ -1,0 +1,61 @@
+<div class="zs-account zs-account--dashboard full-width" data-zs-account-addresses {{ section.shopify_attributes }}>
+  <div class="zs-account__page" data-zs-page-pull-up data-header-bg="#FAF8F5" data-header-text="#1A1A1A">
+    <header class="zs-account__page-header">
+      <p class="zs-account__eyebrow">Member</p>
+      <h1 class="zs-account__headline">Your addresses.</h1>
+      <p class="zs-account__subtitle">Manage shipping destinations for faster checkout.</p>
+    </header>
+
+    <div class="zs-account__main">
+      {% render 'zs-account-sidebar', active: 'addresses' %}
+
+      <div class="zs-account__content">
+        <button type="button" class="zs-account__btn-add" data-zs-address-add>Add new address</button>
+
+        <div class="zs-account__address-grid">
+          {% for address in customer.addresses %}
+            <div class="zs-account__address-card">
+              {% if address == customer.default_address %}
+                <p class="zs-account__address-default">Default</p>
+              {% endif %}
+              <p class="zs-account__address-text">{{ address | format_address }}</p>
+              <div class="zs-account__address-actions">
+                <button type="button" class="zs-account__btn-text" data-zs-address-edit="{{ address.id }}">Edit</button>
+                {% form 'customer_address', address %}
+                  <button type="submit" name="delete" class="zs-account__btn-text">Delete</button>
+                {% endform %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="zs-account__address-form" data-zs-address-form="new" hidden>
+          <h2 class="zs-account__section-title">Add new address</h2>
+          {% form 'customer_address', customer.new_address, data_zs_account_form: true %}
+            {% render 'zs-account-address-fields', form: form %}
+            <button type="submit" class="zs-account__submit">Add address</button>
+            <button type="button" class="zs-account__btn-text" data-zs-address-cancel="new" style="margin-left: 16px;">Cancel</button>
+          {% endform %}
+        </div>
+
+        {% for address in customer.addresses %}
+          <div class="zs-account__address-form" data-zs-address-form="{{ address.id }}" hidden>
+            <h2 class="zs-account__section-title">Edit address</h2>
+            {% form 'customer_address', address, data_zs_account_form: true %}
+              {% render 'zs-account-address-fields', form: form, address: address %}
+              <button type="submit" class="zs-account__submit">Update address</button>
+              <button type="button" class="zs-account__btn-text" data-zs-address-cancel="{{ address.id }}" style="margin-left: 16px;">Cancel</button>
+            {% endform %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer addresses",
+  "settings": []
+}
+{% endschema %}

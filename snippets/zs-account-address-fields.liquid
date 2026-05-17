@@ -1,0 +1,76 @@
+{% liquid
+  assign addr = address | default: form
+  assign form_id = form.id | default: 'new'
+%}
+
+<div class="zs-account__fields">
+  <div class="zs-account__field-row">
+    <div class="zs-account__field">
+      <label class="zs-account__label" for="AddressFirstName-{{ form_id }}">First name</label>
+      <input class="zs-account__input" type="text" id="AddressFirstName-{{ form_id }}" name="address[first_name]" value="{{ addr.first_name }}" autocomplete="given-name" required>
+    </div>
+    <div class="zs-account__field">
+      <label class="zs-account__label" for="AddressLastName-{{ form_id }}">Last name</label>
+      <input class="zs-account__input" type="text" id="AddressLastName-{{ form_id }}" name="address[last_name]" value="{{ addr.last_name }}" autocomplete="family-name" required>
+    </div>
+  </div>
+
+  <div class="zs-account__field">
+    <label class="zs-account__label" for="AddressCompany-{{ form_id }}">Company (optional)</label>
+    <input class="zs-account__input" type="text" id="AddressCompany-{{ form_id }}" name="address[company]" value="{{ addr.company }}" autocomplete="organization">
+  </div>
+
+  <div class="zs-account__field">
+    <label class="zs-account__label" for="Address1-{{ form_id }}">Address</label>
+    <input class="zs-account__input" type="text" id="Address1-{{ form_id }}" name="address[address1]" value="{{ addr.address1 }}" autocomplete="address-line1" required>
+  </div>
+
+  <div class="zs-account__field">
+    <label class="zs-account__label" for="Address2-{{ form_id }}">Apartment, suite, etc. (optional)</label>
+    <input class="zs-account__input" type="text" id="Address2-{{ form_id }}" name="address[address2]" value="{{ addr.address2 }}" autocomplete="address-line2">
+  </div>
+
+  <div class="zs-account__field-row">
+    <div class="zs-account__field">
+      <label class="zs-account__label" for="AddressCity-{{ form_id }}">City</label>
+      <input class="zs-account__input" type="text" id="AddressCity-{{ form_id }}" name="address[city]" value="{{ addr.city }}" autocomplete="address-level2" required>
+    </div>
+    <div class="zs-account__field">
+      <label class="zs-account__label" for="AddressZip-{{ form_id }}">ZIP / Postal code</label>
+      <input class="zs-account__input" type="text" id="AddressZip-{{ form_id }}" name="address[zip]" value="{{ addr.zip }}" autocomplete="postal-code" required>
+    </div>
+  </div>
+
+  <div class="zs-account__field">
+    <label class="zs-account__label" for="AddressCountry-{{ form_id }}">Country</label>
+    <select class="zs-account__input" id="AddressCountry-{{ form_id }}" name="address[country]" autocomplete="country" required>
+      {{ all_country_option_tags }}
+    </select>
+  </div>
+
+  <div class="zs-account__field">
+    <label class="zs-account__label" for="AddressProvince-{{ form_id }}">State / Province</label>
+    <input class="zs-account__input" type="text" id="AddressProvince-{{ form_id }}" name="address[province]" value="{{ addr.province }}" autocomplete="address-level1">
+  </div>
+
+  <div class="zs-account__field">
+    <label class="zs-account__label" for="AddressPhone-{{ form_id }}">Phone (optional)</label>
+    <input class="zs-account__input" type="tel" id="AddressPhone-{{ form_id }}" name="address[phone]" value="{{ addr.phone }}" autocomplete="tel">
+  </div>
+
+  {% if address %}
+    <div class="zs-account__field">
+      <label class="zs-account__label">
+        <input type="checkbox" name="address[default]" value="1"{% if address == customer.default_address %} checked{% endif %}>
+        Set as default address
+      </label>
+    </div>
+  {% else %}
+    <div class="zs-account__field">
+      <label class="zs-account__label">
+        <input type="checkbox" name="address[default]" value="1">
+        Set as default address
+      </label>
+    </div>
+  {% endif %}
+</div>
