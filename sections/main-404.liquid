@@ -1,6 +1,7 @@
 <div class="zs-404 full-width reveal-settled" data-zs-404 {{ section.shopify_attributes }}>
   <section
     class="zs-404__section"
+    data-zs-page-pull-up
     data-header-bg="#F0E8DF"
     data-header-text="#1A1A1A"
     aria-labelledby="zs-404-heading"
@@ -55,19 +56,23 @@
     border: 0;
   }
 
-  .zs-404__section {
+  body.template-404 .zs-404__section[data-zs-page-pull-up] {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: calc(100svh - var(--zs-header-stack));
-    padding-block: 60px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin-top: calc(-1 * var(--zs-header-stack));
+    padding-top: calc(var(--zs-header-stack) + 60px);
+    padding-bottom: 60px;
     padding-inline: 20px;
     background-color: #f0e8df;
   }
 
   @media (min-width: 769px) {
-    .zs-404__section {
-      padding-block: 80px;
+    body.template-404 .zs-404__section[data-zs-page-pull-up] {
+      padding-top: calc(var(--zs-header-stack) + 80px);
+      padding-bottom: 80px;
       padding-inline: 40px;
     }
   }
