@@ -2,8 +2,8 @@
   assign eyebrow = section.settings.eyebrow | default: 'The transformation'
   assign headline = section.settings.headline | default: 'Same outfit. Sculpted underneath.'
   assign subtitle = section.settings.subtitle | default: 'Drag the handle to see the difference.'
-  assign label_left = section.settings.label_left | default: 'Without shapewear'
-  assign label_right = section.settings.label_right | default: 'With shapewear'
+  assign label_left = section.settings.label_left | default: 'WITHOUT'
+  assign label_right = section.settings.label_right | default: 'WITH'
 
   assign before_fallback = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/Prueba_Before_1.png?v=1779046754'
   assign after_fallback = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/Prueba_After_1.png?v=1779074765'
@@ -640,13 +640,13 @@
       "type": "text",
       "id": "label_left",
       "label": "Left label",
-      "default": "WITHOUT SHAPEWEAR"
+      "default": "WITHOUT"
     },
     {
       "type": "text",
       "id": "label_right",
       "label": "Right label",
-      "default": "WITH SHAPEWEAR"
+      "default": "WITH"
     }
   ],
   "presets": [
