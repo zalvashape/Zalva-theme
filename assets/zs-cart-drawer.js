@@ -458,7 +458,7 @@
   });
 
   document.addEventListener('submit', async (e) => {
-    const form = e.target.closest('[data-zs-ajax-cart-form], .main-product__form, .main-collection__quick-form');
+    const form = e.target.closest('[data-zs-ajax-cart-form], .zs-product__form, .main-product__form, .main-collection__quick-form');
     if (!form) return;
 
     e.preventDefault();

@@ -1,0 +1,57 @@
+{% comment %}
+  Rendered via Product Recommendations API for Zone 6 cross-sell.
+{% endcomment %}
+{% if recommendations.performed and recommendations.products_count > 1 %}
+  <ul class="zs-product__rec-grid" role="list">
+    {% for rec in recommendations.products limit: 4 %}
+      <li class="zs-product__rec-item">
+        <article class="zs-product__rec-card">
+          <a href="{{ rec.url }}" class="zs-product__rec-media" tabindex="-1" aria-hidden="true">
+            {% if rec.featured_image %}
+              {{
+                rec.featured_image
+                | image_url: width: 600
+                | image_tag:
+                  loading: 'lazy',
+                  sizes: '(min-width: 990px) 25vw, (min-width: 600px) 50vw, 100vw',
+                  widths: '300, 450, 600',
+                  alt: rec.featured_image.alt | default: rec.title
+              }}
+            {% else %}
+              <span class="zs-product__rec-placeholder" aria-hidden="true"></span>
+            {% endif %}
+          </a>
+          <div class="zs-product__rec-body">
+            <a href="{{ rec.url }}" class="zs-product__rec-title">{{ rec.title }}</a>
+            <p class="zs-product__rec-price">{{ rec.price | money }}</p>
+            {% liquid
+              assign rec_compression = rec.metafields.custom.compression_level | default: 'Medium'
+              assign rec_bars = 2
+              assign rec_level = rec_compression | downcase
+              if rec_level contains 'light'
+                assign rec_bars = 1
+              elsif rec_level contains 'strong'
+                assign rec_bars = 3
+              endif
+            %}
+            <div class="zs-product__rec-compression" aria-label="Compression {{ rec_compression }}">
+              <span class="zs-product__rec-compression-label">Compression</span>
+              <span class="zs-product__rec-bars" aria-hidden="true">
+                <span class="zs-product__rec-bar{% if rec_bars >= 1 %} is-active{% endif %}"></span>
+                <span class="zs-product__rec-bar{% if rec_bars >= 2 %} is-active{% endif %}"></span>
+                <span class="zs-product__rec-bar{% if rec_bars >= 3 %} is-active{% endif %}"></span>
+              </span>
+            </div>
+          </div>
+        </article>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product recommendations (internal)",
+  "settings": []
+}
+{% endschema %}

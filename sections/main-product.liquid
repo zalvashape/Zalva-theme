@@ -1,155 +1,274 @@
-{% liquid
+﻿{% liquid
   assign current_variant = product.selected_or_first_available_variant
   assign featured_media = current_variant.featured_media | default: product.featured_media
   assign product_form_id = 'ProductForm-' | append: section.id
+
+  assign compression_label = product.metafields.custom.compression_level | default: 'Medium'
+  assign compression_bars = 2
+  assign compression_level = compression_label | downcase
+  if compression_level contains 'light'
+    assign compression_bars = 1
+  elsif compression_level contains 'strong' or compression_level contains 'firm' or compression_level contains 'high'
+    assign compression_bars = 3
+  endif
+
+  assign short_description = product.metafields.custom.short_description
+  if short_description == blank and product.description != blank
+    assign short_description = product.description | strip_html | truncate: 120
+  endif
+
+  assign compression_tip = section.settings.compression_tooltip_medium | default: 'Definition without restriction â€” held, not squeezed.'
+  if compression_level contains 'light'
+    assign compression_tip = section.settings.compression_tooltip_light | default: 'Sculpting without restriction. Perfect for everyday wear.'
+  elsif compression_level contains 'strong'
+    assign compression_tip = section.settings.compression_tooltip_strong | default: 'Maximum sculpting for fitted silhouettes and special occasions.'
+  endif
+
+  assign crafted_image = product.images[1] | default: product.featured_image
+
+  assign details_metafield = product.metafields.custom.details
+  assign fabric_metafield = product.metafields.custom.fabric_care
+  assign shipping_metafield = product.metafields.custom.shipping_info
+
+  assign spec_1_label = section.settings.spec_1_label | default: 'COVERAGE'
+  assign spec_1_value = product.metafields.custom.coverage | default: section.settings.spec_1_fallback | default: 'Mid'
+  assign spec_2_label = section.settings.spec_2_label | default: 'COMPRESSION'
+  assign spec_2_value = compression_label
+  assign spec_3_label = section.settings.spec_3_label | default: 'FABRIC'
+  assign spec_3_value = product.metafields.custom.fabric | default: section.settings.spec_3_fallback | default: 'Premium Nylon-Elastane'
+  assign spec_4_label = section.settings.spec_4_label | default: 'ORIGIN'
+  assign spec_4_value = product.metafields.custom.origin | default: section.settings.spec_4_fallback | default: 'Designed for everyday wear'
+
+  assign size_guide_url = section.settings.size_guide_url | default: '/pages/size-guide'
 %}
 
-<div class="main-product full-width" data-section-id="{{ section.id }}">
-  <div class="main-product__inner">
-    <div class="main-product__gallery">
-      {% if product.media.size > 0 %}
-        <div class="main-product__main" id="MainMedia-{{ section.id }}">
-          {% for media in product.media %}
-            {% liquid
-              assign slide_active = false
-              if featured_media and media.id == featured_media.id
-                assign slide_active = true
-              elsif featured_media == nil and forloop.first
-                assign slide_active = true
-              endif
-            %}
-            <div
-              class="main-product__main-slide{% if slide_active %} is-active{% endif %}"
-              data-media-id="{{ media.id }}"
-              data-media-type="{{ media.media_type }}"
-            >
-              {% case media.media_type %}
-                {% when 'image' %}
-                  {% assign img_alt = media.alt | default: product.title %}
-                  {{
-                    media
-                    | image_url: width: 1400
-                    | image_tag:
-                      loading: 'eager',
-                      sizes: '(min-width: 990px) 50vw, 100vw',
-                      widths: '375, 550, 750, 1100, 1400',
-                      alt: img_alt
-                  }}
-                {% when 'video' %}
-                  {{ media | video_tag: image_size: '1400x', controls: true, class: 'main-product__video' }}
-                {% when 'external_video' %}
-                  {{ media | external_video_tag: image_size: '1400x', class: 'main-product__video' }}
-                {% when 'model' %}
-                  <div class="main-product__model">
-                    {{ media | model_viewer_tag: image_size: '1400x', reveal: 'interaction', toggleable: true }}
-                  </div>
-                {% else %}
-                  <div class="main-product__media-fallback"></div>
-              {% endcase %}
-            </div>
-          {% endfor %}
-        </div>
+<article
+  class="zs-product full-width"
+  data-zs-product
+  data-section-id="{{ section.id }}"
+  {{ section.shopify_attributes }}
+>
+  {% comment %} Zone 1 â€” Hero (gallery + buy box) {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--hero"
+    data-zs-page-pull-up
+    data-header-bg="#FAF8F5"
+    data-header-text="#1A1A1A"
+    data-zs-product-reveal
+    aria-label="{{ product.title | escape }}"
+  >
+    <div class="zs-product__hero-inner">
+      <div class="zs-product__gallery" id="Gallery-{{ section.id }}">
+        {% if product.media.size > 0 %}
+          <div class="zs-product__gallery-desktop">
+            {% if product.media.size > 1 %}
+              <div class="zs-product__thumbs-col" role="tablist" aria-label="Product images">
+                {% for media in product.media %}
+                  {% liquid
+                    assign thumb_active = false
+                    if featured_media and media.id == featured_media.id
+                      assign thumb_active = true
+                    elsif featured_media == nil and forloop.first
+                      assign thumb_active = true
+                    endif
+                  %}
+                  <button
+                    type="button"
+                    class="zs-product__thumb{% if thumb_active %} is-active{% endif %}"
+                    data-zs-gallery-thumb
+                    data-media-id="{{ media.id }}"
+                    aria-label="View image {{ forloop.index }}"
+                    aria-current="{% if thumb_active %}true{% else %}false{% endif %}"
+                  >
+                    {{
+                      media.preview_image
+                      | image_url: width: 200
+                      | image_tag: loading: 'lazy', sizes: '80px', widths: '80, 160', alt: ''
+                    }}
+                  </button>
+                {% endfor %}
+              </div>
+            {% endif %}
 
-        {% if product.media.size > 1 %}
-          <div class="main-product__thumbs" role="tablist" aria-label="Product images">
-            {% for media in product.media %}
-              {% liquid
-                assign thumb_active = false
-                if featured_media and media.id == featured_media.id
-                  assign thumb_active = true
-                elsif featured_media == nil and forloop.first
-                  assign thumb_active = true
-                endif
-              %}
-              <button
-                type="button"
-                class="main-product__thumb{% if thumb_active %} is-active{% endif %}"
-                data-media-id="{{ media.id }}"
-                data-target-main
-                aria-label="View image {{ forloop.index }}"
-              >
-                {{
-                  media.preview_image
-                  | image_url: width: 160
-                  | image_tag: loading: 'lazy', sizes: '80px', widths: '80, 160', alt: ''
-                }}
-              </button>
-            {% endfor %}
+            <div class="zs-product__main-wrap">
+              <div class="zs-product__main" id="MainMedia-{{ section.id }}">
+                {% for media in product.media %}
+                  {% liquid
+                    assign slide_active = false
+                    if featured_media and media.id == featured_media.id
+                      assign slide_active = true
+                    elsif featured_media == nil and forloop.first
+                      assign slide_active = true
+                    endif
+                  %}
+                  <div
+                    class="zs-product__main-slide{% if slide_active %} is-active{% endif %}"
+                    data-zs-gallery-slide
+                    data-media-id="{{ media.id }}"
+                    data-media-type="{{ media.media_type }}"
+                  >
+                    {% case media.media_type %}
+                      {% when 'image' %}
+                        {% assign img_alt = media.alt | default: product.title %}
+                        {% if forloop.first %}
+                          {{
+                            media
+                            | image_url: width: 1400
+                            | image_tag:
+                              loading: 'eager',
+                              sizes: '(min-width: 990px) 36vw, 100vw',
+                              widths: '375, 550, 750, 1100, 1400',
+                              alt: img_alt,
+                              class: 'zs-product__main-img'
+                          }}
+                        {% else %}
+                          {{
+                            media
+                            | image_url: width: 1400
+                            | image_tag:
+                              loading: 'lazy',
+                              sizes: '(min-width: 990px) 36vw, 100vw',
+                              widths: '375, 550, 750, 1100, 1400',
+                              alt: img_alt,
+                              class: 'zs-product__main-img'
+                          }}
+                        {% endif %}
+                      {% when 'video' %}
+                        {{ media | video_tag: image_size: '1400x', controls: true, class: 'zs-product__main-video' }}
+                      {% when 'external_video' %}
+                        {{ media | external_video_tag: image_size: '1400x', class: 'zs-product__main-video' }}
+                      {% when 'model' %}
+                        <div class="zs-product__main-model">
+                          {{ media | model_viewer_tag: image_size: '1400x', reveal: 'interaction', toggleable: true }}
+                        </div>
+                      {% else %}
+                        <div class="zs-product__main-fallback" aria-hidden="true"></div>
+                    {% endcase %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="zs-product__gallery-mobile">
+            <div class="zs-product__carousel" data-zs-gallery-carousel tabindex="0" aria-label="Product images">
+              {% for media in product.media %}
+                <div
+                  class="zs-product__carousel-slide"
+                  data-zs-gallery-slide
+                  data-media-id="{{ media.id }}"
+                >
+                  {% if media.media_type == 'image' %}
+                    {% if forloop.first %}
+                      {{
+                        media
+                        | image_url: width: 900
+                        | image_tag:
+                          loading: 'eager',
+                          sizes: '100vw',
+                          widths: '375, 550, 750, 900',
+                          alt: media.alt | default: product.title
+                      }}
+                    {% else %}
+                      {{
+                        media
+                        | image_url: width: 900
+                        | image_tag:
+                          loading: 'lazy',
+                          sizes: '100vw',
+                          widths: '375, 550, 750, 900',
+                          alt: media.alt | default: product.title
+                      }}
+                    {% endif %}
+                  {% else %}
+                    {{ media.preview_image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '100vw', alt: product.title }}
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            {% if product.media.size > 1 %}
+              <div class="zs-product__dots" role="tablist" aria-label="Image navigation">
+                {% for media in product.media %}
+                  <button
+                    type="button"
+                    class="zs-product__dot{% if forloop.first %} is-active{% endif %}"
+                    data-zs-gallery-dot
+                    aria-label="Go to image {{ forloop.index }}"
+                    aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                  ></button>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="zs-product__gallery-empty" role="img" aria-label="No product images">
+            <span class="zs-product__gallery-empty-text">No images</span>
           </div>
         {% endif %}
-      {% else %}
-        <div class="main-product__placeholder">No images</div>
-      {% endif %}
-    </div>
+      </div>
 
-    <div class="main-product__panel">
-      <div class="main-product__panel-inner">
-        <h1 class="main-product__title">{{ product.title }}</h1>
+      <div class="zs-product__info">
+        {% if product.type != blank %}
+          <p class="zs-product__eyebrow">{{ product.type | upcase }}</p>
+        {% endif %}
+
+        <h1 class="zs-product__title">{{ product.title }}</h1>
 
         <div
-          class="main-product__price"
+          class="zs-product__price"
           id="Price-{{ section.id }}"
           data-money-format="{{ shop.money_format | escape }}"
         >
           {% if current_variant.compare_at_price > current_variant.price %}
-            <span class="main-product__price-current">{{ current_variant.price | money }}</span>
-            <span class="main-product__price-compare">{{ current_variant.compare_at_price | money }}</span>
+            <span class="zs-product__sale-badge">SALE</span>
+            <span class="zs-product__price-sale">{{ current_variant.price | money }}</span>
+            <span class="zs-product__price-compare">{{ current_variant.compare_at_price | money }}</span>
           {% else %}
-            <span class="main-product__price-current">{{ current_variant.price | money }}</span>
+            <span class="zs-product__price-current">{{ current_variant.price | money }}</span>
           {% endif %}
         </div>
 
-        <hr class="main-product__rule">
-
-        {% if product.description != blank %}
-          <div class="main-product__description rte">{{ product.description }}</div>
+        {% if short_description != blank %}
+          <p class="zs-product__short-desc">{{ short_description }}</p>
         {% endif %}
 
-        {% form 'product', product, id: product_form_id, class: 'main-product__form', data_zs_ajax_cart_form: true %}
+        <div
+          class="zs-product__compression"
+          data-zs-compression
+          aria-label="Compression level {{ compression_label }}"
+        >
+          <div class="zs-product__compression-head">
+            <span class="zs-product__compression-label">COMPRESSION</span>
+            <span class="zs-product__compression-value">{{ compression_label | upcase }}</span>
+          </div>
+          <span class="zs-product__compression-bars" aria-hidden="true">
+            <span class="zs-product__compression-bar{% if compression_bars >= 1 %} is-active{% endif %}"></span>
+            <span class="zs-product__compression-bar{% if compression_bars >= 2 %} is-active{% endif %}"></span>
+            <span class="zs-product__compression-bar{% if compression_bars >= 3 %} is-active{% endif %}"></span>
+          </span>
+          <p class="zs-product__compression-tip" data-zs-compression-tip>
+            {{ compression_tip }}
+          </p>
+        </div>
+
+        {% form 'product', product, id: product_form_id, class: 'zs-product__form', data_zs_ajax_cart_form: true %}
           <input type="hidden" name="id" value="{{ current_variant.id }}" id="VariantId-{{ section.id }}">
+          <input type="hidden" name="quantity" value="1">
 
           {% unless product.has_only_default_variant %}
-            {% comment %} Pills for Size and other options (not Color) {% endcomment %}
-            {% for option in product.options_with_values %}
-              {% assign option_name_down = option.name | strip | downcase %}
-              {% if option_name_down == 'color' or option_name_down == 'colour' %}
-                {% continue %}
-              {% endif %}
-              <fieldset class="main-product__option">
-                <legend class="main-product__option-label">{{ option.name }}</legend>
-                <div class="main-product__pills" role="radiogroup" aria-label="{{ option.name }}">
-                  {% for value in option.values %}
-                    {% liquid
-                      assign option_index = forloop.parentloop.index0
-                      assign current_opt = current_variant.options[option_index]
-                      assign checked = false
-                      if current_opt == value
-                        assign checked = true
-                      endif
-                    %}
-                    <button
-                      type="button"
-                      class="main-product__pill{% if checked %} is-selected{% endif %}"
-                      data-option-index="{{ option_index }}"
-                      data-value="{{ value | escape }}"
-                      aria-pressed="{% if checked %}true{% else %}false{% endif %}"
-                    >
-                      {{ value }}
-                    </button>
-                  {% endfor %}
-                </div>
-              </fieldset>
-            {% endfor %}
-
-            {% comment %} Color swatches between size (etc.) and Add to cart {% endcomment %}
             {% for option in product.options_with_values %}
               {% assign option_name_down = option.name | strip | downcase %}
               {% unless option_name_down == 'color' or option_name_down == 'colour' %}
                 {% continue %}
               {% endunless %}
-              <fieldset class="main-product__option main-product__option--color">
-                <legend class="main-product__option-label">COLOR</legend>
-                <div class="main-product__swatches" role="radiogroup" aria-label="Color">
+              <fieldset class="zs-product__option zs-product__option--color" data-zs-variant-group>
+                <legend class="zs-product__option-legend">
+                  <span class="zs-product__option-prefix">COLOR:</span>
+                  <span class="zs-product__option-selected" data-zs-selected-label="color">
+                    {{ current_variant.options[forloop.index0] }}
+                  </span>
+                </legend>
+                <div class="zs-product__swatches" role="radiogroup" aria-label="Color">
                   {% for value in option.values %}
                     {% liquid
                       assign option_index = forloop.parentloop.index0
@@ -163,13 +282,53 @@
                     {% assign swatch_hex = swatch_hex | strip %}
                     <button
                       type="button"
-                      class="main-product__swatch{% if checked %} is-selected{% endif %}"
+                      class="zs-product__swatch{% if checked %} is-selected{% endif %}"
+                      data-zs-variant-btn
                       data-option-index="{{ option_index }}"
                       data-value="{{ value | escape }}"
                       aria-label="{{ value }}"
                       aria-pressed="{% if checked %}true{% else %}false{% endif %}"
                     >
-                      <span class="main-product__swatch-fill" style="background-color: {{ swatch_hex }};"></span>
+                      <span class="zs-product__swatch-fill" style="background-color: {{ swatch_hex }};"></span>
+                    </button>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            {% endfor %}
+
+            {% for option in product.options_with_values %}
+              {% assign option_name_down = option.name | strip | downcase %}
+              {% if option_name_down == 'color' or option_name_down == 'colour' %}
+                {% continue %}
+              {% endif %}
+              <fieldset class="zs-product__option zs-product__option--size" data-zs-variant-group>
+                <legend class="zs-product__option-legend zs-product__option-legend--size">
+                  <span class="zs-product__option-prefix">SIZE:</span>
+                  <span class="zs-product__option-selected" data-zs-selected-label="size">
+                    {{ current_variant.options[forloop.index0] }}
+                  </span>
+                  <a class="zs-product__size-guide" href="{{ size_guide_url }}">SIZE GUIDE →</a>
+                </legend>
+                <div class="zs-product__sizes" role="radiogroup" aria-label="{{ option.name }}">
+                  {% for value in option.values %}
+                    {% liquid
+                      assign option_index = forloop.parentloop.index0
+                      assign current_opt = current_variant.options[option_index]
+                      assign checked = false
+                      if current_opt == value
+                        assign checked = true
+                      endif
+                    %}
+                    <button
+                      type="button"
+                      class="zs-product__size-btn{% if checked %} is-selected{% endif %}"
+                      data-zs-variant-btn
+                      data-zs-size-btn
+                      data-option-index="{{ option_index }}"
+                      data-value="{{ value | escape }}"
+                      aria-pressed="{% if checked %}true{% else %}false{% endif %}"
+                    >
+                      {{ value }}
                     </button>
                   {% endfor %}
                 </div>
@@ -177,604 +336,1787 @@
             {% endfor %}
           {% endunless %}
 
-          <input type="hidden" name="quantity" value="1">
-
-          <button type="submit" name="add" class="main-product__submit" {% unless current_variant.available %}disabled{% endunless %}>
+          <button
+            type="submit"
+            name="add"
+            class="zs-product__submit"
+            data-zs-product-submit
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
             {% if current_variant.available %}
-              ADD TO CART
+              ADD TO BAG
             {% else %}
-              Sold out
+              SOLD OUT
             {% endif %}
           </button>
 
           {{ form | payment_button }}
         {% endform %}
 
-        {% if section.settings.size_guide_url != blank %}
-          <a class="main-product__size-guide" href="{{ section.settings.size_guide_url }}">Size Guide</a>
-        {% else %}
-          <a class="main-product__size-guide" href="/pages/size-guide">Size Guide</a>
-        {% endif %}
-
-        <ul class="main-product__trust" role="list">
-          <li class="main-product__trust-item">
-            <span class="main-product__trust-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" aria-hidden="true" focusable="false">
+        <ul class="zs-product__trust" role="list">
+          <li class="zs-product__trust-item">
+            <span class="zs-product__trust-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" focusable="false">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125v-1.5c0-1.036.84-1.875 1.875-1.875h3.75a1.125 1.125 0 0 1 1.125 1.125v3.75m8.25-3.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h3.375c.621 0 1.125.504 1.125 1.125v4.125c0 .621-.504 1.125-1.125 1.125H15.75a1.125 1.125 0 0 1-1.125-1.125v-4.125a1.125 1.125 0 0 1 1.125-1.125Z" />
               </svg>
             </span>
-            <span>Free Shipping over $75</span>
+            <span>{{ section.settings.trust_shipping | default: 'Free shipping over $75' }}</span>
           </li>
-          <li class="main-product__trust-sep" aria-hidden="true">·</li>
-          <li class="main-product__trust-item">
-            <span class="main-product__trust-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" aria-hidden="true" focusable="false">
+          <li class="zs-product__trust-sep" aria-hidden="true">Â·</li>
+          <li class="zs-product__trust-item">
+            <span class="zs-product__trust-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" focusable="false">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 6 6v9" />
               </svg>
             </span>
-            <span>Free Returns</span>
+            <span>{{ section.settings.trust_returns | default: '30-day returns' }}</span>
           </li>
-          <li class="main-product__trust-sep" aria-hidden="true">·</li>
-          <li class="main-product__trust-item">
-            <span class="main-product__trust-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" aria-hidden="true" focusable="false">
+          <li class="zs-product__trust-sep" aria-hidden="true">Â·</li>
+          <li class="zs-product__trust-item">
+            <span class="zs-product__trust-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" focusable="false">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
               </svg>
             </span>
-            <span>Secure Checkout</span>
+            <span>{{ section.settings.trust_checkout | default: 'Secure checkout' }}</span>
           </li>
         </ul>
+
+        <div class="zs-product__accordions" data-zs-product-accordion>
+          <div class="zs-product__accordion-item" data-zs-product-accordion-item>
+            <h2 class="zs-product__accordion-heading">
+              <button
+                type="button"
+                class="zs-product__accordion-trigger"
+                data-zs-product-accordion-trigger
+                aria-expanded="false"
+              >
+                <span>DETAILS</span>
+                <span class="zs-product__accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="zs-product__accordion-panel" data-zs-product-accordion-panel hidden>
+              <div class="zs-product__accordion-body rte">
+                {% if details_metafield != blank %}
+                  {{ details_metafield | metafield_tag }}
+                {% elsif section.settings.details_fallback != blank %}
+                  {{ section.settings.details_fallback }}
+                {% else %}
+                  <p>{{ section.settings.details_empty | default: 'Premium sculpting construction designed for all-day comfort.' }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="zs-product__accordion-item" data-zs-product-accordion-item>
+            <h2 class="zs-product__accordion-heading">
+              <button
+                type="button"
+                class="zs-product__accordion-trigger"
+                data-zs-product-accordion-trigger
+                aria-expanded="false"
+              >
+                <span>FABRIC &amp; CARE</span>
+                <span class="zs-product__accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="zs-product__accordion-panel" data-zs-product-accordion-panel hidden>
+              <div class="zs-product__accordion-body rte">
+                {% if fabric_metafield != blank %}
+                  {{ fabric_metafield | metafield_tag }}
+                {% elsif section.settings.fabric_fallback != blank %}
+                  {{ section.settings.fabric_fallback }}
+                {% else %}
+                  <p>{{ section.settings.fabric_empty | default: 'Hand wash cold. Lay flat to dry. Do not bleach or iron.' }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="zs-product__accordion-item" data-zs-product-accordion-item>
+            <h2 class="zs-product__accordion-heading">
+              <button
+                type="button"
+                class="zs-product__accordion-trigger"
+                data-zs-product-accordion-trigger
+                aria-expanded="false"
+              >
+                <span>SHIPPING &amp; RETURNS</span>
+                <span class="zs-product__accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="zs-product__accordion-panel" data-zs-product-accordion-panel hidden>
+              <div class="zs-product__accordion-body rte">
+                {% if shipping_metafield != blank %}
+                  {{ shipping_metafield | metafield_tag }}
+                {% elsif section.settings.shipping_fallback != blank %}
+                  {{ section.settings.shipping_fallback }}
+                {% else %}
+                  <p>{{ section.settings.shipping_empty | default: 'Orders ship within 1â€“2 business days. Free shipping on orders over $75.' }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
+
+  {% comment %} Zone 2 â€” Details grid {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--details"
+    data-zs-product-reveal
+    data-header-bg="#F0E8DF"
+    data-header-text="#1A1A1A"
+    aria-labelledby="zs-product-details-heading-{{ section.id }}"
+  >
+    <div class="zs-product__zone-inner">
+      {% if section.settings.details_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow">{{ section.settings.details_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-details-heading-{{ section.id }}" class="zs-product__zone-title">
+        {{ section.settings.details_title | default: 'Crafted in every detail.' }}
+      </h2>
+      <div class="zs-product__spec-grid">
+        <article class="zs-product__spec-card">
+          <h3 class="zs-product__spec-label">{{ spec_1_label }}</h3>
+          <p class="zs-product__spec-value">{{ spec_1_value }}</p>
+        </article>
+        <article class="zs-product__spec-card">
+          <h3 class="zs-product__spec-label">{{ spec_2_label }}</h3>
+          <p class="zs-product__spec-value">{{ spec_2_value }}</p>
+        </article>
+        <article class="zs-product__spec-card">
+          <h3 class="zs-product__spec-label">{{ spec_3_label }}</h3>
+          <p class="zs-product__spec-value">{{ spec_3_value }}</p>
+        </article>
+        <article class="zs-product__spec-card">
+          <h3 class="zs-product__spec-label">{{ spec_4_label }}</h3>
+          <p class="zs-product__spec-value">{{ spec_4_value }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} Zone 3 â€” Crafted for {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--crafted"
+    data-zs-product-reveal
+    aria-labelledby="zs-product-crafted-heading-{{ section.id }}"
+  >
+    <div class="zs-product__crafted-grid">
+      <div class="zs-product__crafted-media">
+        {% if crafted_image %}
+          {{
+            crafted_image
+            | image_url: width: 1200
+            | image_tag:
+              loading: 'lazy',
+              sizes: '(min-width: 990px) 50vw, 100vw',
+              widths: '550, 750, 1100, 1200',
+              alt: crafted_image.alt | default: product.title,
+              class: 'zs-product__crafted-img'
+          }}
+        {% else %}
+          <div class="zs-product__crafted-placeholder" aria-hidden="true"></div>
+        {% endif %}
+      </div>
+      <div class="zs-product__crafted-copy">
+        {% if section.settings.crafted_eyebrow != blank %}
+          <p class="zs-product__zone-eyebrow">{{ section.settings.crafted_eyebrow }}</p>
+        {% endif %}
+        <h2 id="zs-product-crafted-heading-{{ section.id }}" class="zs-product__zone-title zs-product__zone-title--serif">
+          {{ section.settings.crafted_title | default: 'Worn for every chapter.' }}
+        </h2>
+        <div class="zs-product__crafted-body rte">
+          {{ section.settings.crafted_body | default: '<p>Every seam is placed with intention. Every fabric chosen for breathability and hold. This is shapewear that moves with you â€” not against you.</p>' }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} Zone 4 â€” Reviews {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--reviews"
+    data-zs-product-reveal
+    data-header-bg="#F0E8DF"
+    data-header-text="#1A1A1A"
+    aria-labelledby="zs-product-reviews-heading-{{ section.id }}"
+  >
+    <div class="zs-product__zone-inner zs-product__zone-inner--narrow">
+      {% if section.settings.reviews_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow">{{ section.settings.reviews_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-reviews-heading-{{ section.id }}" class="zs-product__zone-title">
+        {{ section.settings.reviews_title | default: 'Worn and loved.' }}
+      </h2>
+      {% comment %}
+        Optional Judge.me widget (enable when snippet exists):
+        {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+      {% endcomment %}
+      <div id="judgeme_product_reviews" class="zs-product__judgeme-placeholder">
+        <p class="zs-product__judgeme-note">{{ section.settings.reviews_placeholder | default: 'Reviews powered by Judge.me will appear here.' }}</p>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} Zone 5 â€” Find your fit {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--fit"
+    data-zs-product-reveal
+    aria-labelledby="zs-product-fit-heading-{{ section.id }}"
+  >
+    <div class="zs-product__fit-inner">
+      {% if section.settings.fit_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow">{{ section.settings.fit_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-fit-heading-{{ section.id }}" class="zs-product__zone-title zs-product__zone-title--center">
+        {{ section.settings.fit_title | default: 'Sized for you.' }}
+      </h2>
+      <p class="zs-product__fit-copy">{{ section.settings.fit_copy | default: 'Use our size guide to match your measurements with the perfect size.' }}</p>
+      <a class="zs-product__fit-cta" href="{{ size_guide_url }}">{{ section.settings.fit_cta | default: 'VIEW FULL SIZE GUIDE →' }}</a>
+    </div>
+  </section>
+
+  {% comment %} Zone 6 â€” Pairs well with {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--rec is-hidden"
+    data-zs-product-zone-rec
+    data-zs-product-reveal
+    data-header-bg="#F0E8DF"
+    data-header-text="#1A1A1A"
+    aria-labelledby="zs-product-rec-heading-{{ section.id }}"
+  >
+    <div class="zs-product__zone-inner">
+      {% if section.settings.rec_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow">{{ section.settings.rec_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-rec-heading-{{ section.id }}" class="zs-product__zone-title">
+        {{ section.settings.rec_title | default: 'Complete the look.' }}
+      </h2>
+      <product-recommendations
+        class="zs-product__rec-host"
+        data-zs-product-recommendations
+        data-url="{{ routes.product_recommendations_url }}?section_id=zs-product-recommendations&product_id={{ product.id }}&limit=4"
+      >
+        <p class="zs-product__rec-loading" aria-live="polite">{{ section.settings.rec_loading | default: 'Loading recommendationsâ€¦' }}</p>
+      </product-recommendations>
+    </div>
+  </section>
+
+  {% comment %} Zone 7 â€” Multi-outfit {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--outfit{% unless section.settings.show_multi_outfit %} is-hidden{% endunless %}"
+    data-zs-product-reveal
+    aria-labelledby="zs-product-outfit-heading-{{ section.id }}"
+    {% unless section.settings.show_multi_outfit %}hidden{% endunless %}
+  >
+    <div class="zs-product__zone-inner zs-product__zone-inner--narrow">
+      {% if section.settings.outfit_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow zs-product__zone-eyebrow--light">{{ section.settings.outfit_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-outfit-heading-{{ section.id }}" class="zs-product__zone-title zs-product__zone-title--light">
+        {{ section.settings.outfit_title | default: 'Style it your way' }}
+      </h2>
+      <p class="zs-product__outfit-placeholder">{{ section.settings.outfit_placeholder | default: 'Multi-outfit looks coming soon.' }}</p>
+    </div>
+  </section>
+
+  {% comment %} Zone 8 â€” FAQ {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--faq"
+    data-zs-product-reveal
+    aria-labelledby="zs-product-faq-heading-{{ section.id }}"
+  >
+    <div class="zs-product__zone-inner zs-product__zone-inner--narrow">
+      {% if section.settings.faq_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow">{{ section.settings.faq_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-faq-heading-{{ section.id }}" class="zs-product__zone-title">
+        {{ section.settings.faq_title | default: 'Want to know more?' }}
+      </h2>
+      <div class="zs-product__faq-list" data-zs-product-accordion>
+        {% for block in section.blocks %}
+          {% if block.type == 'faq' %}
+            <div class="zs-product__accordion-item" data-zs-product-accordion-item {{ block.shopify_attributes }}>
+              <h3 class="zs-product__accordion-heading">
+                <button
+                  type="button"
+                  class="zs-product__accordion-trigger"
+                  data-zs-product-accordion-trigger
+                  aria-expanded="false"
+                >
+                  <span>{{ block.settings.question }}</span>
+                  <span class="zs-product__accordion-icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="zs-product__accordion-panel" data-zs-product-accordion-panel hidden>
+                <div class="zs-product__accordion-body rte">{{ block.settings.answer }}</div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="zs-product__faq-cta">
+        <p class="zs-product__faq-cta-text">{{ section.settings.faq_cta_text | default: 'Have more questions?' }}</p>
+        <a class="zs-product__faq-cta-link" href="{{ section.settings.faq_cta_url | default: '/pages/faq' }}">
+          {{ section.settings.faq_cta_label | default: 'VIEW ALL FAQs →' }}
+        </a>
+      </div>
+    </div>
+  </section>
+</article>
 
 <script type="application/json" id="ProductJson-{{ section.id }}">{{ product | json }}</script>
 <script type="application/json" id="ProductSelectedOptions-{{ section.id }}">{{ current_variant.options | json }}</script>
-
-<script>
-  (function () {
-    var sectionId = {{ section.id | json }};
-    var root = document.querySelector('.main-product[data-section-id="' + sectionId + '"]');
-    if (!root) return;
-
-    var productJsonEl = document.getElementById('ProductJson-' + sectionId);
-    var selectedEl = document.getElementById('ProductSelectedOptions-' + sectionId);
-    if (!productJsonEl) return;
-
-    var product;
-    try {
-      product = JSON.parse(productJsonEl.textContent);
-    } catch (e) {
-      return;
-    }
-
-    var selectedOptions = [];
-    if (selectedEl) {
-      try {
-        selectedOptions = JSON.parse(selectedEl.textContent);
-      } catch (e) {
-        selectedOptions = [];
-      }
-    }
-
-    var variantInput = document.getElementById('VariantId-' + sectionId);
-    var priceEl = document.getElementById('Price-' + sectionId);
-    var moneyFormat = priceEl ? priceEl.getAttribute('data-money-format') || '${{amount}}' : '${{amount}}';
-
-    function formatMoney(cents) {
-      if (typeof cents !== 'number') return '';
-      if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
-        return Shopify.formatMoney(cents, moneyFormat);
-      }
-      var amount = (cents / 100).toFixed(2);
-      return moneyFormat.replace(/\{\{\s*amount\s*\}\}/, amount);
-    }
-
-    var thumbButtons = root.querySelectorAll('[data-target-main][data-media-id]');
-    thumbButtons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('data-media-id');
-        setActiveMedia(root, id);
-        thumbButtons.forEach(function (b) {
-          b.classList.toggle('is-active', b === btn);
-        });
-      });
-    });
-
-    function setActiveMedia(rootEl, mediaId) {
-      rootEl.querySelectorAll('.main-product__main-slide').forEach(function (slide) {
-        var match = slide.getAttribute('data-media-id') === String(mediaId);
-        slide.classList.toggle('is-active', match);
-      });
-    }
-
-    var pills = root.querySelectorAll('.main-product__pill[data-option-index], .main-product__swatch[data-option-index]');
-
-    function findVariant() {
-      return product.variants.find(function (v) {
-        return selectedOptions.every(function (opt, i) {
-          return v['option' + (i + 1)] === opt;
-        });
-      });
-    }
-
-    pills.forEach(function (pill) {
-      pill.addEventListener('click', function () {
-        var idx = parseInt(pill.getAttribute('data-option-index'), 10);
-        var val = pill.getAttribute('data-value');
-        if (val === null) return;
-        selectedOptions[idx] = val;
-
-        var group = pill.closest('.main-product__pills, .main-product__swatches');
-        if (group) {
-          group.querySelectorAll('.main-product__pill, .main-product__swatch').forEach(function (p) {
-            var sameRow = parseInt(p.getAttribute('data-option-index'), 10) === idx;
-            var isSel = sameRow && p.getAttribute('data-value') === val;
-            p.classList.toggle('is-selected', isSel);
-            if (sameRow) {
-              p.setAttribute('aria-pressed', isSel ? 'true' : 'false');
-            }
-          });
-        }
-
-        var variant = findVariant();
-        if (!variant || !variantInput) return;
-
-        variantInput.value = variant.id;
-
-        if (priceEl) {
-          var html = '';
-          if (variant.compare_at_price && variant.compare_at_price > variant.price) {
-            html =
-              '<span class="main-product__price-current">' +
-              formatMoney(variant.price) +
-              '</span>' +
-              '<span class="main-product__price-compare">' +
-              formatMoney(variant.compare_at_price) +
-              '</span>';
-          } else {
-            html = '<span class="main-product__price-current">' + formatMoney(variant.price) + '</span>';
-          }
-          priceEl.innerHTML = html;
-        }
-
-        var submit = root.querySelector('.main-product__submit');
-        if (submit) {
-          submit.disabled = !variant.available;
-          submit.textContent = variant.available ? 'ADD TO CART' : 'Sold out';
-        }
-
-        var fm = variant.featured_media && variant.featured_media.id ? variant.featured_media.id : null;
-        if (fm) {
-          setActiveMedia(root, String(fm));
-          thumbButtons.forEach(function (b) {
-            b.classList.toggle('is-active', b.getAttribute('data-media-id') === String(fm));
-          });
-        }
-      });
-    });
-  })();
-</script>
+<script src="{{ 'zs-product.js' | asset_url }}" defer></script>
 
 {% stylesheet %}
-  .main-product {
-    --zalva-ivory: #faf8f5;
-    --zalva-noir: #1a1a1a;
-    --zalva-champagne: #c8a96e;
-    --zalva-warm-taupe: #a07060;
-    --zalva-deep-brown: #3d2b24;
+  .zs-product {
+    --zs-ivory: #faf8f5;
+    --zs-linen: #f0e8df;
+    --zs-noir: #1a1a1a;
+    --zs-champagne: #c8a96e;
+    --zs-warm-taupe: #a07060;
+    --zs-deep-brown: #3d2b24;
+    --zs-font-serif: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    --zs-font-sans: Jost, var(--font-primary--family), system-ui, sans-serif;
 
-    background-color: var(--zalva-ivory);
-    color: var(--zalva-noir);
-    padding-block: clamp(1.5rem, 4vw, 3rem);
+    width: 100%;
+    margin: 0;
+    color: var(--zs-noir);
+    background-color: var(--zs-ivory);
   }
 
-  .main-product__inner {
-    display: grid;
-    gap: clamp(2rem, 5vw, 4rem);
-    width: 100%;
-    max-width: var(--page-width);
-    margin-inline: auto;
-    padding-inline: var(--page-margin);
-    grid-template-columns: 1fr;
+  body.template-product .zs-product__zone--hero[data-zs-page-pull-up] {
+    margin-top: calc(-1 * var(--zs-header-stack));
+    padding-top: calc(var(--zs-header-stack) + 16px);
+  }
+
+  @media (min-width: 769px) {
+    body.template-product .zs-product__zone--hero[data-zs-page-pull-up] {
+      padding-top: calc(var(--zs-header-stack) + 24px);
+    }
+  }
+
+  .zs-product__zone--hero {
+    padding-bottom: 60px;
+    padding-inline: 16px;
+    background-color: var(--zs-ivory);
   }
 
   @media (min-width: 990px) {
-    .main-product__inner {
-      grid-template-columns: 1fr 1fr;
+    .zs-product__zone--hero {
+      padding-bottom: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-product__hero-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__hero-inner {
+      display: grid;
+      grid-template-columns: 60fr 40fr;
+      gap: 48px;
       align-items: start;
     }
   }
 
-  .main-product__gallery {
+  /* Gallery â€” desktop */
+  .zs-product__gallery-desktop {
+    display: none;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__gallery-desktop {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .zs-product__gallery-mobile {
+      display: none;
+    }
+  }
+
+  .zs-product__thumbs-col {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    position: relative;
+    gap: 8px;
+    max-height: min(80vh, 640px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--zs-champagne) transparent;
   }
 
-  .main-product__main {
-    position: relative;
-    width: 100%;
+  .zs-product__thumbs-col::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .zs-product__thumbs-col::-webkit-scrollbar-thumb {
+    background-color: var(--zs-champagne);
+    border-radius: 4px;
+  }
+
+  .zs-product__thumb {
+    width: 80px;
+    height: 100px;
     aspect-ratio: 4 / 5;
-    background-color: #f0ebe4;
-    overflow: hidden;
-  }
-
-  .main-product__main-slide {
-    position: absolute;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .main-product__main-slide.is-active {
-    display: flex;
-  }
-
-  .main-product__main-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  .main-product__video,
-  .main-product__main-slide video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .main-product__model {
-    width: 100%;
-    height: 100%;
-  }
-
-  .main-product__thumbs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .main-product__thumb {
-    width: 4.5rem;
-    height: 4.5rem;
     padding: 0;
-    border: 1px solid rgba(26, 26, 26, 0.15);
-    background: var(--zalva-ivory);
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    background: var(--zs-ivory);
     cursor: pointer;
     overflow: hidden;
     flex-shrink: 0;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .main-product__thumb.is-active {
-    border-color: var(--zalva-noir);
-    box-shadow: 0 0 0 1px var(--zalva-noir);
+  .zs-product__thumb.is-active {
+    border-color: var(--zs-noir);
+    box-shadow: 0 0 0 1px var(--zs-noir);
   }
 
-  .main-product__thumb img {
+  .zs-product__thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .main-product__placeholder {
+  .zs-product__main-wrap {
+    position: sticky;
+    top: calc(var(--zs-header-stack) + 24px);
+  }
+
+  .zs-product__main {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background-color: var(--zs-linen);
+    overflow: hidden;
+  }
+
+  .zs-product__main-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .zs-product__main-slide.is-active {
+    opacity: 1;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+  .zs-product__main-img,
+  .zs-product__main-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+  }
+
+  .zs-product__main:hover .zs-product__main-img,
+  .zs-product__main:hover .zs-product__main-slide.is-active img {
+    transform: scale(1.02);
+  }
+
+  .zs-product__main-video,
+  .zs-product__main-model {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Gallery â€” mobile */
+  .zs-product__gallery-mobile {
+    display: block;
+    width: 100%;
+  }
+
+  .zs-product__carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+    aspect-ratio: 4 / 5;
+    background: var(--zs-linen);
+  }
+
+  .zs-product__carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zs-product__carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    width: 100%;
+    height: 100%;
+  }
+
+  .zs-product__carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .zs-product__dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .zs-product__dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: #d4b5a0;
+    cursor: pointer;
+    transition: width 0.25s ease, background-color 0.25s ease;
+  }
+
+  .zs-product__dot.is-active {
+    width: 24px;
+    background: var(--zs-noir);
+  }
+
+  .zs-product__gallery-empty {
     aspect-ratio: 4 / 5;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f0ebe4;
-    color: var(--zalva-warm-taupe);
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    background: var(--zs-linen);
+    font-family: var(--zs-font-sans);
+    color: var(--zs-warm-taupe);
   }
 
-  .main-product__panel {
-    position: sticky;
-    top: 1rem;
-    align-self: start;
-  }
-
-  .main-product__panel-inner {
+  /* Info panel */
+  .zs-product__info {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    max-width: 32rem;
+    gap: 20px;
+    max-width: 28rem;
   }
 
-  .main-product__title {
-    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
-    font-weight: 300;
-    font-size: 36px;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--zalva-noir);
+  @media (min-width: 990px) {
+    .zs-product__info {
+      position: sticky;
+      top: calc(var(--zs-header-stack) + 24px);
+      max-width: none;
+      padding-left: 24px;
+      padding-top: 8px;
+    }
+  }
+
+  .zs-product__eyebrow {
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--zs-champagne);
     margin: 0;
   }
 
-  .main-product__price {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+  .zs-product__title {
+    font-family: var(--zs-font-serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    margin: 8px 0 0;
+  }
+
+  .zs-product__price {
+    font-family: var(--zs-font-sans);
     font-size: 1.125rem;
     font-weight: 500;
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.75rem;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
   }
 
-  .main-product__price-current {
-    color: var(--zalva-noir);
+  .zs-product__sale-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    margin-right: 8px;
+    font-family: var(--zs-font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--zs-noir);
+    background: var(--zs-champagne);
+    border-radius: 999px;
   }
 
-  .main-product__price-compare {
+  .zs-product__price-sale {
+    color: #a04040;
+  }
+
+  .zs-product__price-compare {
     text-decoration: line-through;
-    color: var(--zalva-warm-taupe);
-    font-weight: 400;
-    font-size: 1rem;
+    color: var(--zs-warm-taupe);
+    margin-left: 8px;
+    font-weight: 300;
+    font-size: 18px;
   }
 
-  .main-product__rule {
-    border: none;
-    height: 1px;
+  .zs-product__price-current {
+    color: var(--zs-noir);
+    font-weight: 300;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .zs-product__short-desc {
+    font-family: var(--zs-font-serif);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.75;
+    color: rgba(26, 26, 26, 0.85);
     margin: 0;
-    background-color: var(--zalva-champagne);
-    opacity: 0.85;
   }
 
-  .main-product__description {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.8;
-    color: var(--zalva-noir);
+  .zs-product__compression {
+    margin-top: 4px;
+    padding: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.25);
+    border-radius: 2px;
   }
 
-  .main-product__description p {
-    margin: 0 0 1em;
+  .zs-product__compression-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
 
-  .main-product__description p:last-child {
-    margin-bottom: 0;
+  .zs-product__compression-label {
+    font-family: var(--zs-font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--zs-champagne);
   }
 
-  .main-product__form {
+  .zs-product__compression-value {
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--zs-noir);
+  }
+
+  .zs-product__compression-bars {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .zs-product__compression-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(160, 112, 96, 0.2);
+    border-radius: 0;
+  }
+
+  .zs-product__compression-bar.is-active {
+    background: var(--zs-champagne);
+  }
+
+  .zs-product__compression-tip {
+    margin: 8px 0 0;
+    font-family: var(--zs-font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--zs-warm-taupe);
+  }
+
+  @media (min-width: 769px) {
+    .zs-product__compression-tip {
+      opacity: 0;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      transition: opacity 0.25s ease, max-height 0.25s ease, margin 0.25s ease;
+    }
+
+    .zs-product__compression:hover .zs-product__compression-tip {
+      opacity: 1;
+      max-height: 4rem;
+      margin-top: 8px;
+    }
+  }
+
+  .zs-product__form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 16px;
   }
 
-  .main-product__option {
+  .zs-product__option {
     border: none;
     margin: 0;
     padding: 0;
   }
 
-  .main-product__option-label {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.75rem;
+  .zs-product__option-prefix {
+    color: var(--zs-warm-taupe);
+  }
+
+  .zs-product__option-selected {
+    color: var(--zs-noir);
+  }
+
+  .zs-product__option-legend--size {
+    justify-content: space-between;
+  }
+
+  .zs-product__size-guide {
+    margin-left: auto;
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    margin-bottom: 0.625rem;
-    color: var(--zalva-noir);
+    color: var(--zs-champagne);
+    text-decoration: none;
+    border-bottom: 1px solid var(--zs-champagne);
+    padding-bottom: 2px;
   }
 
-  .main-product__pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .main-product__pill {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    padding: 0.625rem 1.125rem;
-    min-height: 2.75rem;
-    border: 1px solid var(--zalva-noir);
-    background-color: transparent;
-    color: var(--zalva-noir);
-    cursor: pointer;
-    border-radius: 999px;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .main-product__pill.is-selected {
-    background-color: var(--zalva-noir);
-    color: #ffffff;
-    border-color: var(--zalva-noir);
-  }
-
-  .main-product__pill:hover:not(.is-selected) {
-    border-color: var(--zalva-deep-brown);
-    color: var(--zalva-deep-brown);
-  }
-
-  .main-product__pill:focus-visible {
-    outline: 2px solid var(--zalva-champagne);
-    outline-offset: 2px;
-  }
-
-  .main-product__option--color .main-product__option-label {
-    letter-spacing: 0.14em;
-  }
-
-  .main-product__swatches {
+  .zs-product__option-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.625rem;
+    gap: 8px;
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    width: 100%;
   }
 
-  .main-product__swatch {
-    width: 2.25rem;
-    height: 2.25rem;
+  .zs-product__option-selected {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--zs-warm-taupe);
+  }
+
+  .zs-product__size-guide {
+    margin-left: auto;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--zs-noir);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--zs-champagne);
+  }
+
+  .zs-product__swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .zs-product__swatch {
+    width: 32px;
+    height: 32px;
     padding: 0;
     border-radius: 50%;
     border: 1px solid rgba(26, 26, 26, 0.2);
-    background-color: transparent;
+    background: transparent;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: box-shadow 0.2s ease;
   }
 
-  .main-product__swatch-fill {
-    width: 1.5rem;
-    height: 1.5rem;
+  .zs-product__swatch-fill {
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     display: block;
-    box-shadow: inset 0 0 0 1px rgba(26, 26, 26, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(26, 26, 26, 0.1);
   }
 
-  .main-product__swatch.is-selected {
-    border-color: var(--zalva-noir);
-    box-shadow: 0 0 0 1px var(--zalva-noir);
+  .zs-product__swatch.is-selected {
+    box-shadow: 0 0 0 1px var(--zs-noir);
+    border-color: var(--zs-noir);
   }
 
-  .main-product__swatch:hover:not(.is-selected) {
-    border-color: rgba(26, 26, 26, 0.45);
+  .zs-product__sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
-  .main-product__swatch:focus-visible {
-    outline: 2px solid var(--zalva-champagne);
-    outline-offset: 3px;
-  }
-
-  .main-product__submit {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    min-height: 3.25rem;
-    border: none;
+  .zs-product__size-btn {
+    min-width: 56px;
+    height: 44px;
+    padding: 0 12px;
+    font-family: var(--zs-font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--zs-noir);
+    background: transparent;
+    color: var(--zs-noir);
     cursor: pointer;
-    background-color: var(--zalva-champagne);
-    color: var(--zalva-noir);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
   }
 
-  .main-product__submit:hover:not(:disabled) {
-    background-color: var(--zalva-deep-brown);
-    color: #ffffff;
+  .zs-product__size-btn.is-selected {
+    background: var(--zs-noir);
+    color: #fff;
   }
 
-  .main-product__submit:disabled {
-    opacity: 0.45;
+  .zs-product__size-btn.is-sold-out {
+    opacity: 0.35;
+    text-decoration: line-through;
     cursor: not-allowed;
   }
 
-  .main-product__form .shopify-payment-button {
-    margin-top: 0.5rem;
+  .zs-product__submit {
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
     width: 100%;
+    min-height: 52px;
+    padding: 20px 24px;
+    border: none;
+    cursor: pointer;
+    background: var(--zs-noir);
+    color: var(--zs-champagne);
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
-  .main-product__form .shopify-payment-button__button,
-  .main-product__form .shopify-payment-button__button--unbranded {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif !important;
-    font-size: 0.8125rem !important;
+  .zs-product__submit:hover:not(:disabled):not(.is-loading):not(.is-success) {
+    background: var(--zs-champagne);
+    color: var(--zs-noir);
+  }
+
+  .zs-product__submit:disabled,
+  .zs-product__submit.is-loading {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .zs-product__submit.is-success {
+    background: var(--zs-noir);
+    color: #fff;
+    opacity: 1;
+  }
+
+  .zs-product__form .shopify-payment-button {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .zs-product__form .shopify-payment-button__button,
+  .zs-product__form .shopify-payment-button__button--unbranded {
+    font-family: var(--zs-font-sans) !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     letter-spacing: 0.16em !important;
     text-transform: uppercase !important;
-    width: 100% !important;
-    min-height: 3.25rem !important;
-    padding: 1rem 1.5rem !important;
-    line-height: 1.2 !important;
+    min-height: 52px !important;
     border-radius: 0 !important;
-    box-sizing: border-box !important;
-    background-color: #faf8f5 !important;
-    color: #1a1a1a !important;
-    border: 1px solid #1a1a1a !important;
-    box-shadow: none !important;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+    background: var(--zs-ivory) !important;
+    color: var(--zs-noir) !important;
+    border: 1px solid var(--zs-noir) !important;
   }
 
-  .main-product__form .shopify-payment-button__button:hover,
-  .main-product__form .shopify-payment-button__button--unbranded:hover {
-    background-color: #f0ebe4 !important;
-    color: #1a1a1a !important;
-    border-color: #1a1a1a !important;
-  }
-
-  .main-product__form .shopify-payment-button__button:focus,
-  .main-product__form .shopify-payment-button__button--unbranded:focus {
-    outline: 2px solid var(--zalva-champagne) !important;
-    outline-offset: 2px !important;
-  }
-
-  .main-product__size-guide {
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: var(--zalva-noir);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--zalva-champagne);
-    align-self: flex-start;
-  }
-
-  .main-product__size-guide:hover {
-    color: var(--zalva-deep-brown);
-  }
-
-  .main-product__trust {
+  .zs-product__trust {
     list-style: none;
-    margin: 0.5rem 0 0;
     padding: 0;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-start;
-    gap: 0.35rem 0.5rem;
-    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
+    gap: 6px;
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
     color: rgba(26, 26, 26, 0.75);
   }
 
-  .main-product__trust-item {
+  .zs-product__trust-item {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 4px;
   }
 
-  .main-product__trust-sep {
-    color: var(--zalva-champagne);
-    user-select: none;
+  .zs-product__trust-sep {
+    color: var(--zs-champagne);
   }
 
-  .main-product__trust-icon {
+  .zs-product__trust-icon {
+    width: 14px;
+    height: 14px;
     display: inline-flex;
-    width: 1rem;
-    height: 1rem;
-    flex-shrink: 0;
-    color: var(--zalva-noir);
   }
 
-  .main-product__trust-icon svg {
+  .zs-product__trust-icon svg {
     width: 100%;
     height: 100%;
+  }
+
+  .zs-product__accordions {
+    border-top: 1px solid rgba(26, 26, 26, 0.12);
+    margin-top: 8px;
+  }
+
+  .zs-product__accordion-item {
+    border-bottom: 1px solid rgba(26, 26, 26, 0.12);
+  }
+
+  .zs-product__accordion-heading {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .zs-product__accordion-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-align: left;
+    color: var(--zs-noir);
+  }
+
+  .zs-product__accordion-icon {
+    width: 12px;
+    height: 12px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .zs-product__accordion-icon::before,
+  .zs-product__accordion-icon::after {
+    content: '';
+    position: absolute;
+    background: var(--zs-noir);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease;
+  }
+
+  .zs-product__accordion-icon::before {
+    width: 12px;
+    height: 1px;
+  }
+
+  .zs-product__accordion-icon::after {
+    width: 1px;
+    height: 12px;
+  }
+
+  .zs-product__accordion-item.is-open .zs-product__accordion-icon::after {
+    transform: translate(-50%, -50%) scaleY(0);
+  }
+
+  .zs-product__accordion-body {
+    font-family: var(--zs-font-sans);
+    font-size: 14px;
+    line-height: 1.75;
+    padding-bottom: 16px;
+  }
+
+  .zs-product__accordion-body p {
+    margin: 0 0 0.75em;
+  }
+
+  /* Zone 2 â€” Details */
+  .zs-product__zone--details {
+    background: var(--zs-linen);
+    padding-block: 60px;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__zone--details {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-product__zone-inner {
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+
+  .zs-product__zone-inner--narrow {
+    max-width: 800px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .zs-product__zone-eyebrow {
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--zs-warm-taupe);
+    margin: 0 0 12px;
+  }
+
+  .zs-product__zone-eyebrow--light {
+    color: var(--zs-champagne);
+  }
+
+  .zs-product__zone-title {
+    font-family: var(--zs-font-serif);
+    font-weight: 300;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    margin: 0 0 32px;
+  }
+
+  .zs-product__zone-title--serif {
+    margin-bottom: 20px;
+  }
+
+  .zs-product__zone-title--center {
+    text-align: center;
+  }
+
+  .zs-product__zone-title--light {
+    color: var(--zs-ivory);
+  }
+
+  .zs-product__spec-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 600px) {
+    .zs-product__spec-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__spec-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+
+  .zs-product__spec-card {
+    background: var(--zs-ivory);
+    padding: 24px 20px;
+    border: 1px solid rgba(26, 26, 26, 0.06);
+  }
+
+  .zs-product__spec-label {
+    font-family: var(--zs-font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--zs-warm-taupe);
+    margin: 0 0 8px;
+  }
+
+  .zs-product__spec-value {
+    font-family: var(--zs-font-serif);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  /* Zone 3 â€” Crafted */
+  .zs-product__zone--crafted {
+    background: var(--zs-ivory);
+    padding-block: 60px;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__zone--crafted {
+      padding-block: 100px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-product__crafted-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 1200px;
+    margin-inline: auto;
+    align-items: center;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__crafted-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+  }
+
+  .zs-product__crafted-img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+  }
+
+  .zs-product__crafted-placeholder {
+    aspect-ratio: 4 / 5;
+    background: var(--zs-linen);
+  }
+
+  .zs-product__crafted-body {
+    font-family: var(--zs-font-sans);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* Zone 4 â€” Reviews */
+  .zs-product__zone--reviews {
+    background: var(--zs-linen);
+    padding-block: 60px;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__zone--reviews {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-product__judgeme-placeholder {
+    min-height: 120px;
+    padding: 24px;
+    border: 1px dashed rgba(26, 26, 26, 0.15);
+    background: rgba(250, 248, 245, 0.5);
+  }
+
+  .zs-product__judgeme-note {
+    font-family: var(--zs-font-sans);
+    font-size: 14px;
+    color: var(--zs-warm-taupe);
+    margin: 0;
+  }
+
+  /* Zone 5 â€” Fit */
+  .zs-product__zone--fit {
+    background: var(--zs-ivory);
+    padding-block: 60px;
+    padding-inline: 16px;
+    text-align: center;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__zone--fit {
+      padding-block: 80px;
+    }
+  }
+
+  .zs-product__fit-inner {
+    max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .zs-product__fit-copy {
+    font-family: var(--zs-font-sans);
+    font-size: 15px;
+    line-height: 1.75;
+    margin: 0 0 24px;
+    color: rgba(26, 26, 26, 0.85);
+  }
+
+  .zs-product__fit-cta {
+    display: inline-block;
+    font-family: var(--zs-font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border: 1px solid var(--zs-noir);
+    color: var(--zs-noir);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .zs-product__fit-cta:hover {
+    background: var(--zs-noir);
+    color: #fff;
+  }
+
+  /* Zone 6 â€” Recommendations */
+  .zs-product__zone--rec {
+    background: var(--zs-ivory);
+    padding-block: 60px;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__zone--rec {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-product__zone--rec.is-hidden {
+    display: none;
+  }
+
+  .zs-product__rec-host {
+    display: block;
+    min-height: 48px;
+  }
+
+  .zs-product__rec-loading {
+    font-family: var(--zs-font-sans);
+    font-size: 14px;
+    color: var(--zs-warm-taupe);
+    text-align: center;
+    margin: 0;
+  }
+
+  .zs-product :is(.zs-product__rec-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product :is(.zs-product__rec-grid) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+
+  .zs-product :is(.zs-product__rec-card) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .zs-product :is(.zs-product__rec-media) {
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--zs-linen);
+  }
+
+  .zs-product :is(.zs-product__rec-media img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+
+  .zs-product :is(.zs-product__rec-card:hover .zs-product__rec-media img) {
+    transform: scale(1.02);
+  }
+
+  .zs-product :is(.zs-product__rec-title) {
+    font-family: var(--zs-font-serif);
+    font-size: 1.125rem;
+    color: var(--zs-noir);
+    text-decoration: none;
+  }
+
+  .zs-product :is(.zs-product__rec-price) {
+    font-family: var(--zs-font-sans);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  /* Zone 7 â€” Multi-outfit */
+  .zs-product__zone--outfit {
+    background: var(--zs-noir);
+    color: var(--zs-ivory);
+    padding-block: 60px;
+    padding-inline: 16px;
+    text-align: center;
+  }
+
+  .zs-product__zone--outfit.is-hidden,
+  .zs-product__zone--outfit[hidden] {
+    display: none;
+  }
+
+  .zs-product__outfit-placeholder {
+    font-family: var(--zs-font-sans);
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(250, 248, 245, 0.75);
+    margin: 0;
+  }
+
+  /* Zone 8 â€” FAQ */
+  .zs-product__zone--faq {
+    background: var(--zs-ivory);
+    padding-block: 60px;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 990px) {
+    .zs-product__zone--faq {
+      padding-block: 80px;
+      padding-inline: 40px;
+    }
+  }
+
+  .zs-product__faq-list {
+    text-align: left;
+    border-top: 1px solid rgba(26, 26, 26, 0.12);
+  }
+
+  .zs-product__zone--faq .zs-product__zone-inner--narrow {
+    text-align: center;
+  }
+
+  .zs-product__zone--faq .zs-product__zone-title {
+    text-align: center;
+  }
+
+  .zs-product__zone-line {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin: 0 auto 24px;
+    background: var(--zs-champagne);
+  }
+
+  .zs-product__faq-cta {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .zs-product__faq-cta-text {
+    margin: 0 0 12px;
+    font-family: var(--zs-font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--zs-warm-taupe);
+  }
+
+  .zs-product__faq-cta-link {
+    display: inline-block;
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--zs-champagne);
+    text-decoration: none;
+    border-bottom: 1px solid var(--zs-champagne);
+    padding-bottom: 4px;
+  }
+
+  /* Reveal */
+  .zs-product [data-zs-product-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .zs-product [data-zs-product-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-product [data-zs-product-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  .zs-product.is-hidden {
+    display: none !important;
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.product",
+  "name": "Product",
   "tag": "section",
   "class": "section-main-product",
   "settings": [
     {
       "type": "url",
       "id": "size_guide_url",
-      "label": "Size guide link"
+      "label": "Size guide URL"
+    },
+    {
+      "type": "text",
+      "id": "compression_tooltip",
+      "label": "Compression tooltip",
+      "default": "Light for everyday wear. Medium for shaping. Strong for maximum sculpt."
+    },
+    {
+      "type": "text",
+      "id": "trust_shipping",
+      "label": "Trust â€” shipping",
+      "default": "Free Shipping over $75"
+    },
+    {
+      "type": "text",
+      "id": "trust_returns",
+      "label": "Trust â€” returns",
+      "default": "Free Returns"
+    },
+    {
+      "type": "text",
+      "id": "trust_checkout",
+      "label": "Trust â€” checkout",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "richtext",
+      "id": "details_fallback",
+      "label": "Details accordion fallback"
+    },
+    {
+      "type": "richtext",
+      "id": "fabric_fallback",
+      "label": "Fabric & care accordion fallback"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_fallback",
+      "label": "Shipping accordion fallback"
+    },
+    {
+      "type": "text",
+      "id": "details_empty",
+      "label": "Details empty message",
+      "default": "Premium sculpting construction designed for all-day comfort."
+    },
+    {
+      "type": "text",
+      "id": "fabric_empty",
+      "label": "Fabric empty message",
+      "default": "Hand wash cold. Lay flat to dry. Do not bleach or iron."
+    },
+    {
+      "type": "text",
+      "id": "shipping_empty",
+      "label": "Shipping empty message",
+      "default": "Orders ship within 1â€“2 business days. Free shipping on orders over $75."
+    },
+    {
+      "type": "header",
+      "content": "Zone 2 â€” Details"
+    },
+    {
+      "type": "text",
+      "id": "details_eyebrow",
+      "label": "Eyebrow",
+      "default": "Specifications"
+    },
+    {
+      "type": "text",
+      "id": "details_title",
+      "label": "Title",
+      "default": "The details"
+    },
+    {
+      "type": "text",
+      "id": "spec_1_label",
+      "label": "Spec 1 label",
+      "default": "Fit"
+    },
+    {
+      "type": "text",
+      "id": "spec_1_fallback",
+      "label": "Spec 1 fallback",
+      "default": "True to size"
+    },
+    {
+      "type": "text",
+      "id": "spec_2_label",
+      "label": "Spec 2 label",
+      "default": "Compression"
+    },
+    {
+      "type": "text",
+      "id": "spec_2_fallback",
+      "label": "Spec 2 fallback",
+      "default": "Medium"
+    },
+    {
+      "type": "text",
+      "id": "spec_3_label",
+      "label": "Spec 3 label",
+      "default": "Fabric"
+    },
+    {
+      "type": "text",
+      "id": "spec_3_fallback",
+      "label": "Spec 3 fallback",
+      "default": "Seamless nylon blend"
+    },
+    {
+      "type": "text",
+      "id": "spec_4_label",
+      "label": "Spec 4 label",
+      "default": "Coverage"
+    },
+    {
+      "type": "text",
+      "id": "spec_4_fallback",
+      "label": "Spec 4 fallback",
+      "default": "Full torso"
+    },
+    {
+      "type": "header",
+      "content": "Zone 3 â€” Crafted for"
+    },
+    {
+      "type": "text",
+      "id": "crafted_eyebrow",
+      "label": "Eyebrow",
+      "default": "Our philosophy"
+    },
+    {
+      "type": "text",
+      "id": "crafted_title",
+      "label": "Title",
+      "default": "Crafted for real bodies."
+    },
+    {
+      "type": "richtext",
+      "id": "crafted_body",
+      "label": "Body",
+      "default": "<p>Every seam is placed with intention. Every fabric chosen for breathability and hold. This is shapewear that moves with you â€” not against you.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Zone 4 â€” Reviews"
+    },
+    {
+      "type": "text",
+      "id": "reviews_eyebrow",
+      "label": "Eyebrow",
+      "default": "Reviews"
+    },
+    {
+      "type": "text",
+      "id": "reviews_title",
+      "label": "Title",
+      "default": "What women are saying"
+    },
+    {
+      "type": "text",
+      "id": "reviews_placeholder",
+      "label": "Placeholder copy",
+      "default": "Reviews powered by Judge.me will appear here."
+    },
+    {
+      "type": "header",
+      "content": "Zone 5 â€” Find your fit"
+    },
+    {
+      "type": "text",
+      "id": "fit_eyebrow",
+      "label": "Eyebrow",
+      "default": "Sizing"
+    },
+    {
+      "type": "text",
+      "id": "fit_title",
+      "label": "Title",
+      "default": "Find your fit"
+    },
+    {
+      "type": "textarea",
+      "id": "fit_copy",
+      "label": "Copy",
+      "default": "Use our size guide to match your measurements with the perfect size."
+    },
+    {
+      "type": "text",
+      "id": "fit_cta",
+      "label": "CTA label",
+      "default": "View size guide"
+    },
+    {
+      "type": "header",
+      "content": "Zone 6 â€” Recommendations"
+    },
+    {
+      "type": "text",
+      "id": "rec_eyebrow",
+      "label": "Eyebrow",
+      "default": "Complete the look"
+    },
+    {
+      "type": "text",
+      "id": "rec_title",
+      "label": "Title",
+      "default": "Pairs well with"
+    },
+    {
+      "type": "text",
+      "id": "rec_loading",
+      "label": "Loading message",
+      "default": "Loading recommendationsâ€¦"
+    },
+    {
+      "type": "header",
+      "content": "Zone 7 â€” Multi-outfit"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_multi_outfit",
+      "label": "Show multi-outfit zone",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "outfit_eyebrow",
+      "label": "Eyebrow",
+      "default": "EVERY OUTFIT"
+    },
+    {
+      "type": "text",
+      "id": "outfit_title",
+      "label": "Title",
+      "default": "One bodysuit. Endless looks."
+    },
+    {
+      "type": "text",
+      "id": "outfit_placeholder",
+      "label": "Placeholder copy",
+      "default": "Multi-outfit slider coming soon."
+    },
+    {
+      "type": "header",
+      "content": "Zone 8 â€” FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_eyebrow",
+      "label": "Eyebrow",
+      "default": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "Title",
+      "default": "Questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How do I find my size?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Use our size guide to compare your measurements with our chart.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "category": "Product",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How does the compression feel?",
+            "answer": "<p>Our medium compression provides definition without restriction — held, not squeezed. Many customers tell us they forget they're wearing it after just a few minutes.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Will it show under tight clothing?",
+            "answer": "<p>Our seamless construction is designed to disappear under everything from slim dresses to fitted jeans. The smooth edges prevent any visible lines.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Can I wear it all day?",
+            "answer": "<p>Yes — the breathable nylon-elastane blend and intentional compression mean it's comfortable for all-day wear, from work to evening out.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How do I care for it?",
+            "answer": "<p>Hand-wash in cold water with mild detergent. Lay flat to dry. Avoid bleach and the dryer to preserve compression and seamless construction.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What if it doesn't fit?",
+            "answer": "<p>We offer free 30-day returns and exchanges. If it's not perfect, we'll make it right.</p>"
+          }
+        }
+      ]
     }
   ],
   "disabled_on": {
@@ -782,4 +2124,3 @@
   }
 }
 {% endschema %}
-<!-- Zalva Shape Theme - initialized. -->
