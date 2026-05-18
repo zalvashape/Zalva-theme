@@ -1,7 +1,7 @@
 {% liquid
   assign eyebrow = section.settings.eyebrow | default: 'The transformation'
   assign headline = section.settings.headline | default: 'Same outfit. Sculpted underneath.'
-  assign subtitle = section.settings.subtitle | default: 'Drag the line to see the difference.'
+  assign subtitle = section.settings.subtitle | default: 'Drag the handle to see the difference.'
   assign label_left = section.settings.label_left | default: 'Without shapewear'
   assign label_right = section.settings.label_right | default: 'With shapewear'
 
@@ -106,13 +106,13 @@
     --bas-taupe: #a07060;
 
     background-color: var(--bas-ivory);
-    padding-block: 80px;
+    padding-block: 50px;
     padding-inline: 20px;
   }
 
   @media (min-width: 769px) {
     .before-after-slider {
-      padding-block: 120px;
+      padding-block: 80px;
       padding-inline: 40px;
     }
   }
@@ -126,14 +126,14 @@
   }
 
   .before-after-slider__header {
-    margin-bottom: 48px;
+    margin-bottom: 32px;
     max-width: 720px;
     text-align: center;
   }
 
   @media (min-width: 769px) {
     .before-after-slider__header {
-      margin-bottom: 64px;
+      margin-bottom: 48px;
     }
   }
 
@@ -183,9 +183,8 @@
     aspect-ratio: 4 / 5;
     overflow: hidden;
     border-radius: 4px;
-    cursor: ew-resize;
-    user-select: none;
-    touch-action: none;
+    cursor: default;
+    touch-action: pan-y;
     will-change: transform;
     outline: none;
   }
@@ -246,25 +245,26 @@
     border: 2px solid var(--bas-champagne);
     border-radius: 50%;
     background: var(--bas-ivory);
-    box-shadow: 0 4px 16px rgba(26, 26, 26, 0.15);
+    box-shadow: 0 4px 20px rgba(26, 26, 26, 0.2);
     transform: translate(-50%, -50%);
     cursor: ew-resize;
-    transition: transform 0.3s ease;
-    pointer-events: none;
+    touch-action: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    pointer-events: auto;
+  }
+
+  .before-after-slider__handle.is-dragging {
+    transform: translate(-50%, -50%) scale(1);
   }
 
   @media (min-width: 769px) {
     .before-after-slider__handle {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
     }
 
-    .before-after-slider__compare:hover .before-after-slider__handle {
+    .before-after-slider__compare:hover .before-after-slider__handle:not(.is-dragging) {
       transform: translate(-50%, -50%) scale(1.1);
-    }
-
-    .before-after-slider__compare.is-dragging .before-after-slider__handle {
-      transform: translate(-50%, -50%) scale(1);
     }
   }
 
@@ -447,11 +447,12 @@
 
     const onPointerDown = (e) => {
       if (demoRunning || userLocked) return;
-      isDragging = true;
-      compare.classList.add('is-dragging');
-      compare.setPointerCapture(e.pointerId);
-      scheduleApply(getPercentFromEvent(e));
       e.preventDefault();
+      e.stopPropagation();
+      isDragging = true;
+      handle.classList.add('is-dragging');
+      handle.setPointerCapture(e.pointerId);
+      scheduleApply(getPercentFromEvent(e));
     };
 
     const onPointerMove = (e) => {
@@ -462,18 +463,18 @@
     const onPointerUp = (e) => {
       if (!isDragging) return;
       isDragging = false;
-      compare.classList.remove('is-dragging');
+      handle.classList.remove('is-dragging');
       try {
-        compare.releasePointerCapture(e.pointerId);
+        handle.releasePointerCapture(e.pointerId);
       } catch {
         /* ignore */
       }
     };
 
-    compare.addEventListener('pointerdown', onPointerDown);
-    compare.addEventListener('pointermove', onPointerMove);
-    compare.addEventListener('pointerup', onPointerUp);
-    compare.addEventListener('pointercancel', onPointerUp);
+    handle.addEventListener('pointerdown', onPointerDown);
+    handle.addEventListener('pointermove', onPointerMove);
+    handle.addEventListener('pointerup', onPointerUp);
+    handle.addEventListener('pointercancel', onPointerUp);
 
     compare.addEventListener('keydown', (e) => {
       if (demoRunning || userLocked) return;
@@ -621,7 +622,7 @@
       "type": "text",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "Drag the line to see the difference."
+      "default": "Drag the handle to see the difference."
     },
     {
       "type": "image_picker",
