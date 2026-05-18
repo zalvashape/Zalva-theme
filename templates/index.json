@@ -32,6 +32,16 @@
       "type": "texture-detail",
       "settings": {}
     },
+    "before_after_slider": {
+      "type": "before-after-slider",
+      "settings": {
+        "eyebrow": "THE TRANSFORMATION",
+        "headline": "Same outfit. Sculpted underneath.",
+        "subtitle": "Drag the line to see the difference.",
+        "label_left": "WITHOUT SHAPEWEAR",
+        "label_right": "WITH SHAPEWEAR"
+      }
+    },
     "category_grid": {
       "type": "category-grid",
       "settings": {}
@@ -103,8 +113,9 @@
     "main",
     "brand_statement",
     "featured_signature",
-    "category_grid",
     "texture_detail",
+    "before_after_slider",
+    "category_grid",
     "real_women",
     "size_inclusivity",
     "editorial_cta",

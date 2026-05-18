@@ -1,0 +1,656 @@
+{% liquid
+  assign eyebrow = section.settings.eyebrow | default: 'The transformation'
+  assign headline = section.settings.headline | default: 'Same outfit. Sculpted underneath.'
+  assign subtitle = section.settings.subtitle | default: 'Drag the line to see the difference.'
+  assign label_left = section.settings.label_left | default: 'Without shapewear'
+  assign label_right = section.settings.label_right | default: 'With shapewear'
+
+  assign before_fallback = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/Prueba_Before_1.png?v=1779046754'
+  assign after_fallback = 'https://cdn.shopify.com/s/files/1/0998/1086/9562/files/Prueba_After_1.png?v=1779074765'
+%}
+
+<div
+  class="before-after-slider full-width reveal-settled"
+  data-before-after-slider
+  data-header-bg="#FAF8F5"
+  data-header-text="#1A1A1A"
+  {{ section.shopify_attributes }}
+>
+  <div class="before-after-slider__inner">
+    <header class="before-after-slider__header">
+      <span class="before-after-slider__line before-after-slider__reveal" data-ba-reveal="line" aria-hidden="true"></span>
+      <p class="before-after-slider__eyebrow before-after-slider__reveal" data-ba-reveal="eyebrow">{{ eyebrow }}</p>
+      <h2 class="before-after-slider__headline before-after-slider__reveal" data-ba-reveal="headline">{{ headline }}</h2>
+      <p class="before-after-slider__subtitle before-after-slider__reveal" data-ba-reveal="subtitle">{{ subtitle }}</p>
+    </header>
+
+    <div
+      class="before-after-slider__compare"
+      data-ba-compare
+      tabindex="0"
+      role="slider"
+      aria-label="Drag horizontally to compare images with and without shapewear"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="50"
+    >
+      {% if section.settings.after_image != blank %}
+        {{
+          section.settings.after_image
+          | image_url: width: 1200
+          | image_tag:
+            class: 'before-after-slider__img before-after-slider__img--after',
+            widths: '480, 600, 720, 960, 1200',
+            sizes: '(max-width: 768px) 480px, 720px',
+            loading: 'lazy',
+            alt: 'Same outfit with Zalva shapewear underneath'
+        }}
+      {% else %}
+        <img
+          class="before-after-slider__img before-after-slider__img--after"
+          src="{{ after_fallback }}"
+          alt="Same outfit with Zalva shapewear underneath"
+          width="720"
+          height="900"
+          loading="lazy"
+        >
+      {% endif %}
+
+      <div class="before-after-slider__clip" data-ba-clip>
+        {% if section.settings.before_image != blank %}
+          {{
+            section.settings.before_image
+            | image_url: width: 1200
+            | image_tag:
+              class: 'before-after-slider__img before-after-slider__img--before',
+              widths: '480, 600, 720, 960, 1200',
+              sizes: '(max-width: 768px) 480px, 720px',
+              loading: 'lazy',
+              alt: 'Same outfit without shapewear underneath'
+          }}
+        {% else %}
+          <img
+            class="before-after-slider__img before-after-slider__img--before"
+            src="{{ before_fallback }}"
+            alt="Same outfit without shapewear underneath"
+            width="720"
+            height="900"
+            loading="lazy"
+          >
+        {% endif %}
+      </div>
+
+      <span class="before-after-slider__label before-after-slider__label--left before-after-slider__reveal" data-ba-reveal="labels">
+        {{ label_left }}
+      </span>
+      <span class="before-after-slider__label before-after-slider__label--right before-after-slider__reveal" data-ba-reveal="labels">
+        {{ label_right }}
+      </span>
+
+      <span class="before-after-slider__divider" data-ba-divider aria-hidden="true"></span>
+
+      <span class="before-after-slider__handle" data-ba-handle aria-hidden="true">
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+          <path d="M6 7L1 1M1 7L6 13M18 7L23 1M23 7L18 13" stroke="#C8A96E" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .before-after-slider {
+    --bas-ivory: #faf8f5;
+    --bas-noir: #1a1a1a;
+    --bas-champagne: #c8a96e;
+    --bas-taupe: #a07060;
+
+    background-color: var(--bas-ivory);
+    padding-block: 80px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 769px) {
+    .before-after-slider {
+      padding-block: 120px;
+      padding-inline: 40px;
+    }
+  }
+
+  .before-after-slider__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1080px;
+    margin-inline: auto;
+  }
+
+  .before-after-slider__header {
+    margin-bottom: 48px;
+    max-width: 720px;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    .before-after-slider__header {
+      margin-bottom: 64px;
+    }
+  }
+
+  .before-after-slider__line {
+    display: block;
+    width: 32px;
+    height: 1px;
+    margin: 0 auto 32px;
+    background-color: var(--bas-champagne);
+    transform-origin: center;
+  }
+
+  .before-after-slider__eyebrow {
+    margin: 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--bas-champagne);
+  }
+
+  .before-after-slider__headline {
+    margin: 16px 0 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(36px, 4.5vw, 56px);
+    line-height: 1.2;
+    color: var(--bas-noir);
+  }
+
+  .before-after-slider__subtitle {
+    margin: 20px 0 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bas-taupe);
+  }
+
+  .before-after-slider__compare {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: ew-resize;
+    user-select: none;
+    touch-action: none;
+    will-change: transform;
+    outline: none;
+  }
+
+  @media (min-width: 769px) {
+    .before-after-slider__compare {
+      max-width: 720px;
+    }
+  }
+
+  .before-after-slider__compare:focus-visible {
+    outline: 2px solid var(--bas-champagne);
+    outline-offset: 4px;
+  }
+
+  .before-after-slider__img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
+
+  .before-after-slider__clip {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    clip-path: inset(0 50% 0 0);
+    will-change: clip-path;
+  }
+
+  .before-after-slider__divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 5;
+    width: 2px;
+    background: var(--bas-ivory);
+    box-shadow: 0 0 8px rgba(26, 26, 26, 0.3);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .before-after-slider__handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--bas-champagne);
+    border-radius: 50%;
+    background: var(--bas-ivory);
+    box-shadow: 0 4px 16px rgba(26, 26, 26, 0.15);
+    transform: translate(-50%, -50%);
+    cursor: ew-resize;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  @media (min-width: 769px) {
+    .before-after-slider__handle {
+      width: 48px;
+      height: 48px;
+    }
+
+    .before-after-slider__compare:hover .before-after-slider__handle {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .before-after-slider__compare.is-dragging .before-after-slider__handle {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .before-after-slider__label {
+    position: absolute;
+    top: 24px;
+    z-index: 3;
+    padding: 6px 12px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: rgba(26, 26, 26, 0.7);
+    pointer-events: none;
+  }
+
+  @media (min-width: 769px) {
+    .before-after-slider__label {
+      padding: 8px 16px;
+    }
+  }
+
+  .before-after-slider__label--left {
+    left: 24px;
+    color: var(--bas-ivory);
+  }
+
+  .before-after-slider__label--right {
+    right: 24px;
+    color: var(--bas-champagne);
+  }
+
+  .before-after-slider__reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .before-after-slider.is-visible .before-after-slider__reveal[data-ba-reveal='line'] {
+    animation: bas-line-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s both;
+  }
+
+  .before-after-slider.is-visible .before-after-slider__reveal[data-ba-reveal='eyebrow'] {
+    animation: bas-fade-up-sm 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  }
+
+  .before-after-slider.is-visible .before-after-slider__reveal[data-ba-reveal='headline'] {
+    animation: bas-fade-up-md 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  }
+
+  .before-after-slider.is-visible .before-after-slider__reveal[data-ba-reveal='subtitle'] {
+    animation: bas-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+  }
+
+  .before-after-slider.is-visible .before-after-slider__compare {
+    animation: bas-scale-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+  }
+
+  .before-after-slider.is-visible .before-after-slider__reveal[data-ba-reveal='labels'] {
+    animation: bas-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+  }
+
+  @keyframes bas-line-in {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes bas-fade-up-sm {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bas-fade-up-md {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bas-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes bas-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .before-after-slider:not(.is-visible):not(.reveal-settled) .before-after-slider__reveal,
+  .before-after-slider:not(.is-visible):not(.reveal-settled) .before-after-slider__compare {
+    opacity: 0;
+  }
+
+  .before-after-slider.reveal-settled .before-after-slider__reveal,
+  .before-after-slider.reveal-settled .before-after-slider__compare {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .before-after-slider.is-visible .before-after-slider__reveal,
+    .before-after-slider.is-visible .before-after-slider__compare {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-before-after-slider]');
+    const compare = root?.querySelector('[data-ba-compare]');
+    const clip = root?.querySelector('[data-ba-clip]');
+    const divider = root?.querySelector('[data-ba-divider]');
+    const handle = root?.querySelector('[data-ba-handle]');
+    if (!root || !compare || !clip || !divider || !handle) return;
+
+    const DEMO_KEY = 'zsBeforeAfterDemoDone';
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let position = 50;
+    let isDragging = false;
+    let demoRunning = false;
+    let userLocked = false;
+    let rafId = 0;
+
+    const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+    const applyPosition = (pct) => {
+      position = clamp(pct, 0, 100);
+      const rightInset = 100 - position;
+      clip.style.clipPath = `inset(0 ${rightInset}% 0 0)`;
+      divider.style.left = `${position}%`;
+      handle.style.left = `${position}%`;
+      compare.setAttribute('aria-valuenow', String(Math.round(position)));
+    };
+
+    const scheduleApply = (pct) => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        applyPosition(pct);
+      });
+    };
+
+    const getPercentFromEvent = (e) => {
+      const rect = compare.getBoundingClientRect();
+      if (!rect.width) return position;
+      const x = (e.clientX ?? 0) - rect.left;
+      return (x / rect.width) * 100;
+    };
+
+    const onPointerDown = (e) => {
+      if (demoRunning || userLocked) return;
+      isDragging = true;
+      compare.classList.add('is-dragging');
+      compare.setPointerCapture(e.pointerId);
+      scheduleApply(getPercentFromEvent(e));
+      e.preventDefault();
+    };
+
+    const onPointerMove = (e) => {
+      if (!isDragging || demoRunning) return;
+      scheduleApply(getPercentFromEvent(e));
+    };
+
+    const onPointerUp = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      compare.classList.remove('is-dragging');
+      try {
+        compare.releasePointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+    };
+
+    compare.addEventListener('pointerdown', onPointerDown);
+    compare.addEventListener('pointermove', onPointerMove);
+    compare.addEventListener('pointerup', onPointerUp);
+    compare.addEventListener('pointercancel', onPointerUp);
+
+    compare.addEventListener('keydown', (e) => {
+      if (demoRunning || userLocked) return;
+      let next = position;
+      if (e.key === 'ArrowLeft') next -= 2;
+      else if (e.key === 'ArrowRight') next += 2;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = 100;
+      else return;
+      e.preventDefault();
+      applyPosition(next);
+    });
+
+    const animateTo = (target, duration, easing) =>
+      new Promise((resolve) => {
+        const start = position;
+        const startTime = performance.now();
+        const tick = (now) => {
+          const t = Math.min(1, (now - startTime) / duration);
+          const eased = easing(t);
+          applyPosition(start + (target - start) * eased);
+          if (t < 1) requestAnimationFrame(tick);
+          else resolve();
+        };
+        requestAnimationFrame(tick);
+      });
+
+    const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+    const runDemo = async () => {
+      if (prefersReducedMotion || sessionStorage.getItem(DEMO_KEY) === '1') return;
+      demoRunning = true;
+      userLocked = true;
+      await new Promise((r) => window.setTimeout(r, 800));
+      await animateTo(25, 1500, easeInOut);
+      await animateTo(75, 1500, easeInOut);
+      await animateTo(50, 1000, easeOut);
+      sessionStorage.setItem(DEMO_KEY, '1');
+      demoRunning = false;
+      userLocked = false;
+    };
+
+    applyPosition(50);
+
+    const REVEAL_IO_DELAY_MS = 100;
+    const REVEAL_FALLBACK_MS = 1000;
+    let revealDone = false;
+
+    const markSettled = () => {
+      if (revealDone) return;
+      revealDone = true;
+      root.classList.remove('is-visible');
+      root.classList.add('reveal-settled');
+    };
+
+    const markAnimated = () => {
+      if (revealDone) return;
+      revealDone = true;
+      root.classList.remove('reveal-settled');
+      root.classList.add('is-visible');
+    };
+
+    const setupReveal = () => {
+      if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+        markSettled();
+        return;
+      }
+
+      const isInViewport = () => {
+        const r = root.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        return r.bottom > 0 && r.top < vh;
+      };
+
+      if (isInViewport()) {
+        markSettled();
+        return;
+      }
+
+      const fallback = window.setTimeout(() => {
+        if (!revealDone) markSettled();
+      }, REVEAL_FALLBACK_MS);
+
+      const revealIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.15) return;
+            window.clearTimeout(fallback);
+            markAnimated();
+            revealIo.disconnect();
+          });
+        },
+        { threshold: [0, 0.15, 0.3] }
+      );
+
+      window.setTimeout(() => revealIo.observe(root), REVEAL_IO_DELAY_MS);
+    };
+
+    const setupDemo = () => {
+      if (prefersReducedMotion || sessionStorage.getItem(DEMO_KEY) === '1') return;
+      if (!('IntersectionObserver' in window)) return;
+
+      let demoStarted = false;
+      const demoIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.4) return;
+            if (demoStarted) return;
+            demoStarted = true;
+            demoIo.disconnect();
+            runDemo();
+          });
+        },
+        { threshold: [0, 0.4, 0.5, 0.6] }
+      );
+
+      window.setTimeout(() => demoIo.observe(root), REVEAL_IO_DELAY_MS);
+    };
+
+    setupReveal();
+    setupDemo();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Before / After slider",
+  "tag": "section",
+  "class": "section-before-after-slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "THE TRANSFORMATION"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Same outfit. Sculpted underneath."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Drag the line to see the difference."
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image",
+      "label": "Before image (without shapewear)"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image",
+      "label": "After image (with shapewear)"
+    },
+    {
+      "type": "text",
+      "id": "label_left",
+      "label": "Left label",
+      "default": "WITHOUT SHAPEWEAR"
+    },
+    {
+      "type": "text",
+      "id": "label_right",
+      "label": "Right label",
+      "default": "WITH SHAPEWEAR"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before / After slider",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
