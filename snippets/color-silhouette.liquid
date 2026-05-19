@@ -38,23 +38,53 @@
   <span class="zs-color-silhouette__inner" style="--variant-color: {{ silhouette_color }};">
     <svg
       class="zs-color-silhouette__svg"
-      viewBox="0 0 60 80"
+      viewBox="0 0 80 120"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       focusable="false"
     >
       <path
-        d="M22 8 Q22 4 24 4 L36 4 Q38 4 38 8 L38 12 Q42 14 44 18 L48 28 Q50 35 50 42 L50 56 Q50 60 48 62 L42 68 Q38 72 36 74 Q34 76 30 76 Q26 76 24 74 Q22 72 18 68 L12 62 Q10 60 10 56 L10 42 Q10 35 12 28 L16 18 Q18 14 22 12 Z"
+        fill-rule="evenodd"
+        d="M 27 3
+           L 23 14
+           C 15 21, 11 31, 11 41
+           C 9 49, 12 55, 18 59
+           C 11 67, 11 79, 17 89
+           L 27 101
+           C 34 109, 37 113, 40 115
+           C 43 113, 46 109, 53 101
+           L 63 89
+           C 69 79, 69 67, 63 59
+           C 69 55, 72 49, 70 41
+           C 70 31, 66 21, 58 14
+           L 53 3
+           C 49 0, 31 0, 27 3
+           Z
+           M 40 9
+           C 33 9, 29 12.5, 29 17
+           C 29 21.5, 33 25, 40 25
+           C 47 25, 51 21.5, 51 17
+           C 51 12.5, 47 9, 40 9
+           Z"
         fill="var(--variant-color, #D4B5A0)"
         stroke="rgba(160, 112, 96, 0.4)"
         stroke-width="1"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+      />
+      <path
+        d="M 28 2 L 26 14 M 52 2 L 54 14"
+        fill="none"
+        stroke="rgba(160, 112, 96, 0.5)"
+        stroke-width="1.2"
+        stroke-linecap="round"
       />
       {% if silhouette_sold_out %}
         <line
-          x1="10"
-          y1="14"
-          x2="50"
-          y2="66"
+          x1="12"
+          y1="18"
+          x2="68"
+          y2="102"
           stroke="rgba(26, 26, 26, 0.45)"
           stroke-width="1.5"
           stroke-linecap="round"
