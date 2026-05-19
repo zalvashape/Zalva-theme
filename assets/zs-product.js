@@ -58,6 +58,18 @@
       btn.classList.toggle('is-sold-out', soldOut);
       btn.setAttribute('aria-disabled', soldOut ? 'true' : 'false');
     });
+
+    root.querySelectorAll('[data-zs-color-silhouette]').forEach((btn) => {
+      const idx = parseInt(btn.getAttribute('data-option-index'), 10);
+      const val = btn.getAttribute('data-value');
+      const anyAvailable = product.variants.some(
+        (v) => v[`option${idx + 1}`] === val && v.available
+      );
+      const soldOut = !anyAvailable;
+      btn.classList.toggle('is-sold-out', soldOut);
+      btn.toggleAttribute('disabled', soldOut);
+      btn.setAttribute('aria-disabled', soldOut ? 'true' : 'false');
+    });
   };
 
   const setActiveMedia = (mediaId) => {
@@ -150,6 +162,34 @@
     syncDots();
   }
 
+  const colorSilhouetteGroup = root.querySelector('[data-zs-color-silhouettes]');
+  if (colorSilhouetteGroup) {
+    colorSilhouetteGroup.addEventListener('keydown', (e) => {
+      const buttons = [
+        ...colorSilhouetteGroup.querySelectorAll('.zs-color-silhouette:not([disabled])'),
+      ];
+      if (!buttons.length) return;
+      const current = buttons.indexOf(document.activeElement);
+      let next = current;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        next = current < 0 ? 0 : (current + 1) % buttons.length;
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        next = current < 0 ? 0 : (current - 1 + buttons.length) % buttons.length;
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        next = 0;
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        next = buttons.length - 1;
+      } else {
+        return;
+      }
+      buttons[next]?.focus();
+    });
+  }
+
   root.querySelectorAll('[data-zs-variant-btn]').forEach((btn) => {
     btn.addEventListener('click', () => {
       if (btn.classList.contains('is-sold-out') || btn.getAttribute('aria-disabled') === 'true') return;
@@ -164,7 +204,9 @@
         b.classList.toggle('is-selected', sel);
         if (same) {
           b.setAttribute('aria-pressed', sel ? 'true' : 'false');
-          b.setAttribute('aria-current', sel ? 'true' : 'false');
+          if (b.hasAttribute('aria-current')) {
+            b.setAttribute('aria-current', sel ? 'true' : 'false');
+          }
         }
       });
 

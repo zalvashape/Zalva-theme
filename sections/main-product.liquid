@@ -262,35 +262,56 @@
                 {% continue %}
               {% endunless %}
               <fieldset class="zs-product__option zs-product__option--color" data-zs-variant-group>
-                <legend class="zs-product__option-legend">
+                <legend class="zs-product__visually-hidden">Color</legend>
+                <div class="zs-product__color-label-row">
                   <span class="zs-product__option-prefix">COLOR:</span>
                   <span class="zs-product__option-selected" data-zs-selected-label="color">
                     {{ current_variant.options[forloop.index0] }}
                   </span>
-                </legend>
-                <div class="zs-product__swatches" role="radiogroup" aria-label="Color">
+                </div>
+                <div
+                  class="zs-product__color-silhouettes"
+                  role="radiogroup"
+                  aria-label="Color"
+                  data-zs-color-silhouettes
+                >
                   {% for value in option.values %}
                     {% liquid
                       assign option_index = forloop.parentloop.index0
                       assign current_opt = current_variant.options[option_index]
-                      assign checked = false
+                      assign color_active = false
                       if current_opt == value
-                        assign checked = true
+                        assign color_active = true
+                      endif
+
+                      assign color_hex = ''
+                      assign color_sold_out = true
+                      for variant in product.variants
+                        if variant.options[option_index] == value
+                          if variant.metafields.custom.color_hex != blank and color_hex == ''
+                            assign color_hex = variant.metafields.custom.color_hex.value | default: variant.metafields.custom.color_hex
+                          endif
+                          if variant.available
+                            assign color_sold_out = false
+                          endif
+                        endif
+                      endfor
+                      if color_hex == ''
+                        capture color_hex
+                          render 'product-color-hex', color_name: value
+                        endcapture
+                        assign color_hex = color_hex | strip
                       endif
                     %}
-                    {% capture swatch_hex %}{% render 'product-color-hex', color_name: value %}{% endcapture %}
-                    {% assign swatch_hex = swatch_hex | strip %}
-                    <button
-                      type="button"
-                      class="zs-product__swatch{% if checked %} is-selected{% endif %}"
-                      data-zs-variant-btn
-                      data-option-index="{{ option_index }}"
-                      data-value="{{ value | escape }}"
-                      aria-label="{{ value }}"
-                      aria-pressed="{% if checked %}true{% else %}false{% endif %}"
-                    >
-                      <span class="zs-product__swatch-fill" style="background-color: {{ swatch_hex }};"></span>
-                    </button>
+                    {% render 'color-silhouette',
+                      color: color_hex,
+                      name: value,
+                      size: 'medium',
+                      active: color_active,
+                      sold_out: color_sold_out,
+                      option_index: option_index,
+                      value: value
+                    %}
                   {% endfor %}
                 </div>
               </fieldset>
@@ -1142,37 +1163,160 @@
     text-decoration-color: var(--zs-champagne);
   }
 
-  .zs-product__swatches {
+  .zs-product__visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .zs-product__color-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    width: 100%;
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .zs-product__color-silhouettes {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
+    margin-bottom: 8px;
   }
 
-  .zs-product__swatch {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border-radius: 50%;
-    border: 1px solid rgba(26, 26, 26, 0.2);
+  @media (max-width: 768px) {
+    .zs-product__color-silhouettes {
+      gap: 16px;
+    }
+  }
+
+  .zs-color-silhouette {
     background: transparent;
+    border: none;
+    padding: 0;
     cursor: pointer;
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 56px;
+    transition: opacity 0.3s ease;
+  }
+
+  .zs-color-silhouette:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .zs-color-silhouette__inner {
+    width: 56px;
+    height: 72px;
+    padding: 4px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: rgba(250, 248, 245, 0.5);
+    display: flex;
     align-items: center;
     justify-content: center;
-    transition: box-shadow 0.2s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .zs-product__swatch-fill {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
+  .zs-color-silhouette__svg {
+    width: 100%;
+    height: 100%;
     display: block;
-    box-shadow: inset 0 0 0 1px rgba(26, 26, 26, 0.1);
   }
 
-  .zs-product__swatch.is-selected {
-    box-shadow: 0 0 0 1px var(--zs-noir);
-    border-color: var(--zs-noir);
+  .zs-color-silhouette__name {
+    font-family: var(--zs-font-serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: 10px;
+    color: var(--zs-warm-taupe);
+    text-align: center;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .zs-color-silhouette__name {
+      opacity: 1;
+    }
+  }
+
+  @keyframes zs-color-silhouette-breathe {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05) translateY(-2px);
+    }
+    100% {
+      transform: scale(1.05) translateY(-2px);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .zs-color-silhouette:not(.is-sold-out):hover .zs-color-silhouette__inner {
+      animation: zs-color-silhouette-breathe 0.3s ease forwards;
+      border-color: rgba(200, 169, 110, 0.5);
+      background: var(--zs-ivory);
+    }
+
+    .zs-color-silhouette:not(.is-sold-out):hover .zs-color-silhouette__name {
+      opacity: 1;
+    }
+  }
+
+  .zs-color-silhouette.is-selected .zs-color-silhouette__inner,
+  .zs-color-silhouette[aria-pressed='true'] .zs-color-silhouette__inner {
+    border: 2px solid var(--zs-champagne);
+    background: var(--zs-ivory);
+    transform: scale(1.02);
+    box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.15);
+  }
+
+  .zs-color-silhouette.is-selected .zs-color-silhouette__name,
+  .zs-color-silhouette[aria-pressed='true'] .zs-color-silhouette__name {
+    opacity: 1;
+    color: var(--zs-noir);
+    font-weight: 400;
+  }
+
+  .zs-color-silhouette.is-sold-out {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .zs-color-silhouette--small .zs-color-silhouette__inner {
+    width: 40px;
+    height: 52px;
+  }
+
+  .zs-color-silhouette--small {
+    width: 40px;
+  }
+
+  .zs-color-silhouette--large .zs-color-silhouette__inner {
+    width: 64px;
+    height: 84px;
+  }
+
+  .zs-color-silhouette--large {
+    width: 64px;
   }
 
   .zs-product__sizes {
