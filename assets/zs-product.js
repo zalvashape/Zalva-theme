@@ -72,16 +72,23 @@
     });
   };
 
+  const desktopGallery = root.querySelector('.zs-product__gallery-desktop');
+
   const setActiveMedia = (mediaId) => {
     const id = String(mediaId);
-    root.querySelectorAll('[data-zs-gallery-slide]').forEach((slide) => {
-      slide.classList.toggle('is-active', slide.getAttribute('data-media-id') === id);
-    });
-    root.querySelectorAll('[data-zs-gallery-thumb]').forEach((btn) => {
-      const active = btn.getAttribute('data-media-id') === id;
-      btn.classList.toggle('is-active', active);
-      btn.setAttribute('aria-current', active ? 'true' : 'false');
-    });
+
+    if (desktopGallery) {
+      desktopGallery.querySelectorAll('[data-zs-gallery-slide]').forEach((slide) => {
+        const active = slide.getAttribute('data-media-id') === id;
+        slide.classList.toggle('is-active', active);
+      });
+      desktopGallery.querySelectorAll('[data-zs-gallery-thumb]').forEach((btn) => {
+        const active = btn.getAttribute('data-media-id') === id;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-current', active ? 'true' : 'false');
+      });
+    }
+
     const carousel = root.querySelector('[data-zs-gallery-carousel]');
     if (carousel) {
       const slide = carousel.querySelector(`[data-media-id="${id}"]`);
@@ -139,12 +146,66 @@
     updateSoldOutStates();
   };
 
-  root.querySelectorAll('[data-zs-gallery-thumb]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-media-id');
-      if (id) setActiveMedia(id);
+  if (desktopGallery) {
+    desktopGallery.querySelectorAll('[data-zs-gallery-thumb]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-media-id');
+        if (id) setActiveMedia(id);
+      });
     });
-  });
+
+    const galleryMain = desktopGallery.querySelector('[data-zs-gallery-main]');
+    const thumbButtons = () => [...desktopGallery.querySelectorAll('[data-zs-gallery-thumb]')];
+
+    const cycleDesktopGallery = (direction) => {
+      const thumbs = thumbButtons();
+      if (thumbs.length < 2) return;
+      const current = thumbs.findIndex((t) => t.classList.contains('is-active'));
+      const next =
+        direction > 0
+          ? (current + 1) % thumbs.length
+          : (current - 1 + thumbs.length) % thumbs.length;
+      const id = thumbs[next].getAttribute('data-media-id');
+      if (id) {
+        setActiveMedia(id);
+        thumbs[next].focus();
+      }
+    };
+
+    galleryMain?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        cycleDesktopGallery(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        cycleDesktopGallery(-1);
+      }
+    });
+
+    desktopGallery.querySelector('.zs-product__thumbs-col')?.addEventListener('keydown', (e) => {
+      const thumbs = thumbButtons();
+      const focused = document.activeElement;
+      const idx = thumbs.indexOf(focused);
+      if (idx < 0) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const next = thumbs[(idx + 1) % thumbs.length];
+        const id = next.getAttribute('data-media-id');
+        if (id) {
+          setActiveMedia(id);
+          next.focus();
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const next = thumbs[(idx - 1 + thumbs.length) % thumbs.length];
+        const id = next.getAttribute('data-media-id');
+        if (id) {
+          setActiveMedia(id);
+          next.focus();
+        }
+      }
+    });
+  }
 
   const carousel = root.querySelector('[data-zs-gallery-carousel]');
   const dots = root.querySelectorAll('[data-zs-gallery-dot]');
