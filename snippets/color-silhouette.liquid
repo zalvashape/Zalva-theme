@@ -1,5 +1,5 @@
 {% doc %}
-  Editorial fitted mini dress color selector silhouette.
+  Editorial line-art silhouette color selector (CSS mask + variant fill).
   @param {string} color - Hex color for fill (--variant-color)
   @param {string} name - Color label
   @param {string} [size] - small | medium | large (default medium)
@@ -35,59 +35,12 @@
   aria-pressed="{% if silhouette_active %}true{% else %}false{% endif %}"
   {% if silhouette_sold_out %}aria-disabled="true" disabled{% endif %}
 >
-  <span class="zs-color-silhouette__inner" style="--variant-color: {{ silhouette_color }};">
-    <svg
-      class="zs-color-silhouette__svg"
-      viewBox="0 0 60 100"
-      xmlns="http://www.w3.org/2000/svg"
+  <span class="zs-color-silhouette__inner">
+    <span
+      class="zs-color-silhouette__shape"
+      style="--variant-color: {{ silhouette_color }};"
       aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        d="M 16 4
-           Q 16 2 18 2
-           L 42 2
-           Q 44 2 44 4
-           L 46 10
-           Q 48 16 48 24
-           L 48 32
-           Q 46 38 44 44
-           Q 42 48 42 52
-           L 42 58
-           Q 44 64 46 72
-           Q 48 76 50 80
-           L 52 84
-           Q 53 86 51 87
-           L 9 87
-           Q 7 86 8 84
-           L 10 80
-           Q 12 76 14 72
-           Q 16 64 18 58
-           L 18 52
-           Q 18 48 16 44
-           Q 14 38 12 32
-           L 12 24
-           Q 12 16 14 10
-           L 16 4
-           Z"
-        fill="var(--variant-color, #D4B5A0)"
-        stroke="rgba(160, 112, 96, 0.4)"
-        stroke-width="1.2"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-      />
-      {% if silhouette_sold_out %}
-        <line
-          x1="8"
-          y1="10"
-          x2="52"
-          y2="88"
-          stroke="rgba(26, 26, 26, 0.45)"
-          stroke-width="1.5"
-          stroke-linecap="round"
-        />
-      {% endif %}
-    </svg>
+    ></span>
   </span>
   <span class="zs-color-silhouette__name">{{ silhouette_name }}</span>
 </button>

@@ -702,6 +702,7 @@
     --zs-deep-brown: #3d2b24;
     --zs-font-serif: 'Cormorant Garamond', 'Times New Roman', Times, serif;
     --zs-font-sans: Jost, var(--font-primary--family), system-ui, sans-serif;
+    --zs-silhouette-mask: url('https://cdn.shopify.com/s/files/1/0998/1086/9562/files/kive-image-1779405324889.png?v=1779405135');
 
     width: 100%;
     margin: 0;
@@ -1223,7 +1224,7 @@
   .zs-color-silhouette__inner {
     width: 48px;
     height: 80px;
-    padding: 4px 6px;
+    padding: 4px;
     border: 1px solid transparent;
     border-radius: 4px;
     background: rgba(250, 248, 245, 0.5);
@@ -1233,10 +1234,20 @@
     transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .zs-color-silhouette__svg {
+  .zs-color-silhouette__shape {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
+    -webkit-mask-image: var(--zs-silhouette-mask);
+    mask-image: var(--zs-silhouette-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    background-color: var(--variant-color, #d4b5a0);
+    transition: background-color 0.3s ease;
   }
 
   .zs-color-silhouette__name {
@@ -1257,26 +1268,14 @@
     }
   }
 
-  @keyframes zs-color-silhouette-breathe {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05) translateY(-2px);
-    }
-    100% {
-      transform: scale(1.05) translateY(-2px);
-    }
-  }
-
   @media (hover: hover) and (pointer: fine) {
-    .zs-color-silhouette:not(.is-sold-out):hover .zs-color-silhouette__inner {
-      animation: zs-color-silhouette-breathe 0.3s ease forwards;
+    .zs-color-silhouette:not(.is-sold-out):not([aria-disabled='true']):hover .zs-color-silhouette__inner {
+      transform: scale(1.05) translateY(-2px);
       border-color: rgba(200, 169, 110, 0.5);
       background: var(--zs-ivory);
     }
 
-    .zs-color-silhouette:not(.is-sold-out):hover .zs-color-silhouette__name {
+    .zs-color-silhouette:not(.is-sold-out):not([aria-disabled='true']):hover .zs-color-silhouette__name {
       opacity: 1;
     }
   }
@@ -1296,9 +1295,29 @@
     font-weight: 400;
   }
 
-  .zs-color-silhouette.is-sold-out {
+  .zs-color-silhouette.is-sold-out,
+  .zs-color-silhouette[aria-disabled='true'] {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+
+  .zs-color-silhouette.is-sold-out .zs-color-silhouette__shape,
+  .zs-color-silhouette[aria-disabled='true'] .zs-color-silhouette__shape {
+    position: relative;
+  }
+
+  .zs-color-silhouette.is-sold-out .zs-color-silhouette__shape::after,
+  .zs-color-silhouette[aria-disabled='true'] .zs-color-silhouette__shape::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    width: 120%;
+    height: 1px;
+    background: rgba(160, 64, 64, 0.7);
+    transform: rotate(-25deg);
+    transform-origin: center;
+    pointer-events: none;
   }
 
   .zs-color-silhouette--small .zs-color-silhouette__inner {
