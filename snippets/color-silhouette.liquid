@@ -35,12 +35,8 @@
   aria-pressed="{% if silhouette_active %}true{% else %}false{% endif %}"
   {% if silhouette_sold_out %}aria-disabled="true" disabled{% endif %}
 >
-  <span class="zs-color-silhouette__inner">
-    <span
-      class="zs-color-silhouette__shape"
-      style="--variant-color: {{ silhouette_color }};"
-      aria-hidden="true"
-    ></span>
+  <span class="zs-color-silhouette__inner" style="--variant-color: {{ silhouette_color }};">
+    <span class="zs-color-silhouette__shape" aria-hidden="true"></span>
   </span>
   <span class="zs-color-silhouette__name">{{ silhouette_name }}</span>
 </button>
