@@ -36,12 +36,13 @@ Rules:
 
 ## 3. Project overview
 
-- **Brand:** Zalva Shape LLC (Texas). Premium shapewear, US market, Skims-inspired aesthetic.
+- **Brand:** Zalva Shape LLC (Texas). Premium shapewear, US market, premium editorial aesthetic — differentiated from Skims (not a Skims look-alike).
 - **Domain:** zalvashape.com (Cloudflare, SSL active).
 - **Stack:** Shopify Basic + GitHub auto-deploy + Skeleton Theme as base.
 - **Local path:** `C:\Users\Scraftk\Documents\Zalva Project\Zalva-theme`
 - **Apps:** Judge.me (reviews, free), Klaviyo (free plan, not yet wired to forms).
 - **Shipping:** Express $15 (1–2 days), Standard $8 (3–5 days), free over $75, US only. Taxes via Shopify Tax.
+- **Returns (decided Oct 2026):** free size exchanges; returns with shipping paid by the customer; only unworn items with tags and hygienic liner intact. Sitewide wording: "Free size exchanges · 30-day returns" (replaces "Free 30-day returns").
 - **Catalog:** Bodysuits only for now (5–10 models planned). Sizes **XS–XXL only** (never promise 3XL–5XL).
 
 ---
@@ -68,6 +69,10 @@ Rules:
 - "She wears herself." (hero) · "Sculpted for you." · "Sculpted to feel held." · "For every body."
 - Direction: sensual femininity + self-love. Editorial, calm, confident. Premium brands insinuate; they don't over-explain.
 - **Honesty rules:** no "Made in Italy", "Sourced in Italy", "Designed in the US", or "mass-produced" claims. No promises we can't keep. No placeholder/"coming soon" links in navigation. No "Wholesale" anywhere (dilutes premium feel).
+  - No invented testimonials or reviews, not even as placeholders (also illegal under the FTC rule since 2024). Use a neutral brand message instead.
+  - No "was" prices that were never charged; no permanent SALE badges.
+  - No promises beyond the written policies (returns, shipping).
+  - AI imagery is fine for mood/editorial. Any "result" or "transformation" must be real or clearly marked as illustrative.
 
 ### Recurring design elements
 - Decorative line: 1px × 24–40px Champagne, centered.
@@ -102,9 +107,9 @@ Rules:
 2. `brand-statement` — "This isn't about hiding. It's about feeling held."
 3. `featured-signature` — Contour Bodysuit editorial spread (Linen)
 4. `texture-detail` — 4-image craftsmanship grid ⚠️ copy corrections pending (see §9)
-5. `before-after-slider` — "THE TRANSFORMATION", drag-handle only, auto-demo once, labels "without"/"with" (Cormorant italic, Ivory)
-6. `category-grid` — triptych
-7. `real-women` — rotating testimonials, no faces
+5. `before-after-slider` — "THE TRANSFORMATION", drag-handle only, auto-demo once, labels "without"/"with" (Cormorant italic, Ivory). Uses AI test images. Denny keeps it for now; pending: small "Illustrative image" note (see playbook §6).
+6. `category-grid` — triptych ⚠️ Waist Trainers / Fajas cards link to collections that don't exist (audit priority #1)
+7. `real-women` — rotating testimonials, no faces ⚠️ testimonials are invented → decided: hide the section (don't delete) until real reviews exist
 8. `size-inclusivity` — Noir, "XS to XXL. No exceptions."
 9. `editorial-cta` — "It starts with how you feel underneath."
 10. `brand-marquee` — "SCULPTED · SUPPORTED · SEEN"
@@ -113,7 +118,7 @@ Rules:
 - **Header** (`sections/header.liquid`): fixed, 3 columns (MENU / logo / search-account-bag), handbag cart icon, rotating announcement bar, adaptive colors.
 - **Cabinet menu:** desktop 40% nav + 60% hover image preview; primary links larger, secondary smaller (Deep Brown). Mobile: card layout (Bodysuits, Waist Trainers, Fajas, Shop All) + secondary links (The Story, Size Guide, FAQ, Contact) + Editor's Pick + tagline + socials. Sticky top bar with close.
 - **Search dropdown:** expands from header, popular searches + quick links, live results via `/search/suggest.json` (300ms debounce), compact horizontal cards, sticky input, auto-scroll to top when typing, Champagne progress scrollbar.
-- **Footer** (`sections/footer.liquid`): Zone 1 newsletter (Noir, placeholder — wire to Klaviyo later), Zone 2 link map (Linen, 4 columns), Zone 3 signature (Noir, rotating tagline, payment icons). Back-to-top button. Email click copies to clipboard.
+- **Footer** (`sections/footer.liquid`): Zone 1 newsletter (Noir; ⚠️ not wired — emails are lost, audit priority #3), Zone 2 link map (Linen, 4 columns), Zone 3 signature (Noir, rotating tagline, payment icons). Back-to-top button. Email click copies to clipboard.
 - **Cart drawer** (`sections/cart-drawer.liquid`): slide from right, 480px desktop / 88vw mobile, free-shipping progress bar ($75), AJAX cart, compact sticky bottom on mobile. **Adding to cart never auto-opens the drawer** → toast "Added to bag · VIEW BAG →" + cart icon pulse.
 
 ### Pages
@@ -170,10 +175,20 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 
 ## 9. Backlog (update as items are done)
 
-### Content corrections (honesty — do soon)
-- [ ] Remove "Sourced in Italy" caption (texture-detail image #1)
-- [ ] Remove "Made in Italy" from featured-signature description
-- [ ] Replace "Nothing about this is mass-produced." in texture-detail
+### Current priorities (Oct 2026 audit — do in order; no big new features until 1–5 are done)
+1. [ ] Fix broken links: create Bodysuits collection, remove Waist Trainers/Fajas from menu and homepage, fix "Shipping & Returns" (`/pages/shipping` is 404), fix social links pointing to `#` (footer + Cabinet menu)
+2. [ ] Hide invented testimonials (`real-women`)
+3. [ ] Connect the footer newsletter to Klaviyo (today the form shows "Thanks!" but discards the email)
+4. [ ] Publish the 3 legal policies (returns, shipping, terms) and align every promise with them (replace "Free 30-day returns" sitewide)
+5. [ ] Clean the product page: broken encoding + BOM in `main-product.liquid`/`header.liquid`, Judge.me placeholder text, hide test product "Bodysuit model 02 (rose)", "2XL" → "XXL"
+6. [ ] Replace stock (Unsplash) photos; remove "Sourced in Italy" (texture-detail #1), "Made in Italy" (featured-signature), "Nothing about this is mass-produced." (texture-detail)
+7. [ ] Sticky "Add to bag" on mobile + shopping CTA visible in the hero
+8. [ ] Collection page redesign in Zalva style (with compression indicator on cards)
+9. [ ] Before/after "Illustrative image" note; price/SALE badge (pending Denny's pricing table)
+10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
+
+### To review later
+- [ ] `snippets/color-silhouette.liquid` already exists — check whether it is actually used (product page, collection cards, search, cart drawer) or half-done
 
 ### Waiting on Denny
 - [ ] First real product (photos, specs, variants) → create metafields, test product page, refine
@@ -185,10 +200,9 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 - [ ] IRS Letter 147C → update Shopify Payments registered name (currently "DUOMO USA LLC")
 
 ### Future sessions
-- [ ] Collection page redesign (with compression indicator on cards)
 - [ ] Adaptive header audit across every page (data attributes, pull-up, no color bands)
 - [ ] Mobile optimization pass (80%+ traffic)
-- [ ] Klaviyo Pro: welcome series, abandoned cart, post-purchase, browse abandonment, wire footer newsletter, member discount + loyalty tiers
+- [ ] Klaviyo Pro: welcome series, abandoned cart, post-purchase, browse abandonment, member discount + loyalty tiers (footer newsletter wiring is priority #3 above)
 - [ ] Google Analytics + Meta Pixel (before paid traffic)
 - [ ] hello@zalvashape.com forwarding (Cloudflare Email Routing)
 - [ ] Multi-outfit transformation slider on product page
