@@ -126,7 +126,7 @@ Rules:
 
 ### Pages
 - **Search results** (`main-search`): persistent search bar, product grid, sort, empty state.
-- **Size Guide** (`main-size-guide`): how to measure, chart XS–XXL with inches/cm toggle, between sizes, promise. Chart redesigned Oct 2026: fits the screen on mobile (no sideways scroll, `table-layout: fixed`), max 760px on desktop; tap/click a row to highlight it (Linen + Champagne inset line). **"Find my size"** finder above the chart: bust/waist/hips → recommended size + highlighted row; reads ranges from the table's `data-in`/`data-cm` (single source of truth — to change measurements, edit only the table cells). Rules: fullest point wins (largest size needed); within 0.5in/1cm of a shared edge = "between" (smaller = more sculpting, larger = more comfort); above XXL = honest "above our current range" (never promise more sizes); inputs convert when switching units.
+- **Size Guide** (`main-size-guide`): how to measure, chart XS–XXL with inches/cm toggle, between sizes, promise. Chart redesigned Oct 2026: fits the screen on mobile (no sideways scroll, `table-layout: fixed`), max 760px on desktop; tap/click a row to highlight it (Linen + Champagne inset line). **"Find my size"** finder above the chart: bust/waist/hips → recommended size + highlighted row; reads ranges from the table's `data-in`/`data-cm` (single source of truth — to change measurements, edit only the table cells). Rules: fullest point wins (largest size needed); within 0.5in/1cm of a shared edge = "between" (smaller = more sculpting, larger = more comfort); above XXL = honest "above our current range" (never promise more sizes); inputs convert when switching units. ✅ Approved by Denny (Oct 2026).
 - **FAQ** (`main-faq`): 18 questions, 6 category chips. Mobile chip row scrolls sideways with a 128×3px Champagne progress line under it. Once per page view (mobile, not on deep links, not with reduced motion) the chips glide in from the right one after another (1000ms each, 80ms stagger, cubic-bezier(0.22,1,0.36,1)) and the progress line rides along — the hint that the row continues to the right. The `is-entering` class is added by an inline script right after the chips (before first paint) to avoid a load "blink"; the main script only removes it when the line's animation ends. ✅ Approved by Denny on his phone (Oct 2026). Chip centering and deep-link page scroll use a custom eased tween (easeInOutCubic, 650ms chips / 1100ms page) — softer than native smooth scroll; user touch/wheel cancels it. The "slide left and back" nudge was tried and rejected by Denny (felt abrupt). (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
 - **Contact** (`main-contact`): 3 cards (email copy-to-clipboard, Instagram, form), FAQ strip, Shopify contact form (subjects: Order Issues, Sizing Help, Returns & Exchanges, Other), smooth scroll to form.
 - **404** (`main-404`): Linen, giant "404", "Lost in transition."
@@ -178,6 +178,11 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 
 ## 9. Backlog (update as items are done)
 
+### Where we left off (2026-10-07)
+- Everything from this session is on `dev` only — **nothing merged to `main`**. Denny will re-review it all on the dev preview next session, then decide what to publish.
+- Done this session: audit priority #1 (broken links, social icons from theme settings), FAQ chips (progress line, entrance, category deep links), Size chart redesign + "Find my size" (approved).
+- Next up: audit priority #2 (hide invented testimonials) → #3 (Klaviyo newsletter). #4 (policies) waits for Denny's final returns policy.
+
 ### Current priorities (Oct 2026 audit — do in order; no big new features until 1–5 are done)
 1. [x] Fix broken links ✅ Oct 2026: Bodysuits collection created; Waist Trainers/Fajas removed from menu, search and homepage; footer "Shipping & Returns" → `/pages/faq#shipping-returns` (temporary, switch to policy pages in #4); social icons now come from Theme settings → Social media (Instagram set; TikTok exists but Denny must paste its link there; no Pinterest account yet)
 2. [ ] Hide invented testimonials (`real-women`)
@@ -196,7 +201,6 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 - [ ] Whether all bodysuits share one size chart or each model has its own
 
 ### To review later
-- [ ] Size chart redesign + "Find my size" built Oct 2026 — waiting for Denny's review on the dev preview (mobile + desktop)
 - [ ] Later: reuse the size finder on the product page next to the size selector
 - [ ] Priority #4 add-ons (agreed Oct 2026): footer "Shipping & Returns" keeps going to the FAQ (friendlier); add a discreet legal line in the footer's Noir zone (Shipping Policy · Return Policy · Terms · Privacy) for Google/Meta/payment compliance; at the end of the FAQ "Shipping & Returns" category add "Read our full Shipping Policy →" / "Return Policy →" links (links, not chips — chips only filter). FAQ answers must be short, faithful summaries of the policies.
 - [ ] TikTok link: Denny pastes it in Theme settings → Social media when he has it (the icon appears automatically)
