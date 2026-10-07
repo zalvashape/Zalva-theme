@@ -119,6 +119,7 @@ Rules:
 - **Header** (`sections/header.liquid`): fixed, 3 columns (MENU / logo / search-account-bag), handbag cart icon, rotating announcement bar, adaptive colors.
 - **Cabinet menu:** desktop 40% nav + 60% hover image preview; primary links larger, secondary smaller (Deep Brown). Mobile: card layout (Bodysuits hero card + Shop All strip card; Waist Trainers / Fajas removed Oct 2026 until those collections exist) + secondary links (The Story, Size Guide, FAQ, Contact) + Editor's Pick + tagline + socials. Sticky top bar with close.
 - **Search dropdown:** expands from header, popular searches + quick links, live results via `/search/suggest.json` (300ms debounce), compact horizontal cards, sticky input, auto-scroll to top when typing, Champagne progress scrollbar.
+- **Social icons** (`snippets/zs-social-links.liquid`): used in footer + Cabinet menu (mobile and desktop). URLs live in Theme settings → Social media (`settings.social_instagram_url`, `social_tiktok_url`, `social_pinterest_url`); an icon renders only when its URL is set. Never hardcode social links or use `#`.
 - **Footer** (`sections/footer.liquid`): Zone 1 newsletter (Noir; ⚠️ not wired — emails are lost, audit priority #3), Zone 2 link map (Linen, 4 columns), Zone 3 signature (Noir, rotating tagline, payment icons). Back-to-top button. Email click copies to clipboard.
 - **Cart drawer** (`sections/cart-drawer.liquid`): slide from right, 480px desktop / 88vw mobile, free-shipping progress bar ($75), AJAX cart, compact sticky bottom on mobile. **Adding to cart never auto-opens the drawer** → toast "Added to bag · VIEW BAG →" + cart icon pulse.
 
@@ -177,7 +178,7 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 ## 9. Backlog (update as items are done)
 
 ### Current priorities (Oct 2026 audit — do in order; no big new features until 1–5 are done)
-1. [ ] Fix broken links: ~~create Bodysuits collection~~ ✅, ~~remove Waist Trainers/Fajas from menu, search and homepage~~ ✅, ~~fix "Shipping & Returns"~~ ✅ (temporary: footer → `/pages/faq#shipping-returns`, the FAQ opens on that category; switch to the Shopify policy pages in priority #4), fix social links pointing to `#` (footer + Cabinet menu)
+1. [x] Fix broken links ✅ Oct 2026: Bodysuits collection created; Waist Trainers/Fajas removed from menu, search and homepage; footer "Shipping & Returns" → `/pages/faq#shipping-returns` (temporary, switch to policy pages in #4); social icons now come from Theme settings → Social media (Instagram set; TikTok exists but Denny must paste its link there; no Pinterest account yet)
 2. [ ] Hide invented testimonials (`real-women`)
 3. [ ] Connect the footer newsletter to Klaviyo (today the form shows "Thanks!" but discards the email)
 4. [ ] Publish the 3 legal policies (returns, shipping, terms) and align every promise with them (replace "Free 30-day returns" sitewide, including FAQ answers). Status Oct 2026: only Privacy policy exists (Shopify automated). Return & refund, Terms of service, Shipping, Contact information, Legal notice and return rules are all empty. Claude drafts in English → Denny pastes in Admin → Settings → Policies → point footer "Shipping & Returns" to `/policies/shipping-policy` and `/policies/refund-policy`.
@@ -189,6 +190,8 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
 
 ### To review later
+- [ ] **Remind Denny:** he noticed something on the mobile FAQ he wants fixed — ask him what it is right after priority #1 is closed
+- [ ] TikTok link: Denny pastes it in Theme settings → Social media when he has it (the icon appears automatically)
 - [ ] `snippets/color-silhouette.liquid` already exists — check whether it is actually used (product page, collection cards, search, cart drawer) or half-done
 
 ### Waiting on Denny

@@ -1,0 +1,43 @@
+{% comment %}
+  Social icons driven by theme settings (Theme settings → Social media).
+  An icon only renders when its URL is set, so we never link to "#" or to accounts that don't exist.
+
+  @param {string} wrapper_class - class for the wrapper div
+  @param {string} link_class - class for each icon link
+{% endcomment %}
+
+{%- liquid
+  assign instagram_url = settings.social_instagram_url | strip
+  assign tiktok_url = settings.social_tiktok_url | strip
+  assign pinterest_url = settings.social_pinterest_url | strip
+-%}
+
+{%- if instagram_url != blank or tiktok_url != blank or pinterest_url != blank -%}
+  <div class="{{ wrapper_class }}" aria-label="Social">
+    {%- if instagram_url != blank -%}
+      <a class="{{ link_class }}" href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+        </svg>
+      </a>
+    {%- endif -%}
+    {%- if tiktok_url != blank -%}
+      <a class="{{ link_class }}" href="{{ tiktok_url }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10 8v10a3 3 0 1 1-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M14 6c2 2 4 2 6 1v5a6 6 0 0 1-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+    {%- endif -%}
+    {%- if pinterest_url != blank -%}
+      <a class="{{ link_class }}" href="{{ pinterest_url }}" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3C8 3 5 6 5 10c0 3 1.5 5 4 6v4l3-3c3 1 6-1 7-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}

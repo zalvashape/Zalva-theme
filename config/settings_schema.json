@@ -79,5 +79,30 @@
         "default": 4
       }
     ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Icons appear in the footer and the menu only when a link is filled in. Leave a field empty to hide that icon."
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_url",
+        "label": "Instagram",
+        "default": "https://instagram.com/zalvashape"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_url",
+        "label": "TikTok"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_url",
+        "label": "Pinterest"
+      }
+    ]
   }
 ]
