@@ -1,5 +1,7 @@
 # CLAUDE.md — Zalva Shape Shopify Theme
 
+> **For any strategy, design, brand, or decision session, also read `ZALVA_PLAYBOOK.md`. Its §2 Memory protocol is mandatory in every session.**
+
 This file is read automatically at the start of every Claude Code session. It contains everything needed to continue building the Zalva Shape store without losing context. Keep it updated: when a decision is made or a pending item is completed, update the relevant section in the same commit.
 
 ---
