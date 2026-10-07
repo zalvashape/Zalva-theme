@@ -44,6 +44,7 @@
     },
     "category_grid": {
       "type": "category-grid",
+      "disabled": true,
       "settings": {}
     },
     "real_women": {

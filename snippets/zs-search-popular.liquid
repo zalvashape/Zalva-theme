@@ -11,7 +11,7 @@
           <li {{ block.shopify_attributes }}>
             <a
               class="zs-search__popular-link"
-              href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}#{% endif %}"
+              href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}"
             >
               {{ block.settings.label }}
             </a>
@@ -21,12 +21,6 @@
     {% else %}
       <li>
         <a class="zs-search__popular-link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a>
-      </li>
-      <li>
-        <a class="zs-search__popular-link" href="{{ routes.root_url }}collections/waist-trainers">Waist trainers</a>
-      </li>
-      <li>
-        <a class="zs-search__popular-link" href="{{ routes.root_url }}collections/fajas">Fajas</a>
       </li>
       <li>
         <a class="zs-search__popular-link" href="{{ routes.all_products_collection_url }}?sort_by=best-selling">Best sellers</a>

@@ -118,6 +118,7 @@ Format: date — decision — reason. Add new entries at the bottom.
   - Invented testimonials: hide the section (don't delete) until real reviews exist.
   - Before/after slider: **Denny keeps it for now.** Suggested a small "Illustrative image" note under it. Future honest options: (A) "Under the dress" — dress vs. same pose revealing the bodysuit, claim = invisible under clothing, not body change; (B) real testers with consent, labeled "No retouching".
   - Price and SALE badge: pending. Denny will build a pricing table first.
+- 2026-10-07 — Collections not defined yet (count, segmentation, names, concepts). Temporary umbrella collection `bodysuits` (manual) created; Waist Trainers / Fajas removed from menu and search; homepage category grid hidden, not deleted. Final collections get a dedicated session — Denny will gather his material first, then build them all at once. Reason: no links to things that don't exist, and avoid designing a menu twice.
 
 ---
 

@@ -13,20 +13,6 @@
             "url": "/collections/bodysuits"
           }
         },
-        "popular_waist": {
-          "type": "popular_link",
-          "settings": {
-            "label": "Waist trainers",
-            "url": "/collections/waist-trainers"
-          }
-        },
-        "popular_fajas": {
-          "type": "popular_link",
-          "settings": {
-            "label": "Fajas",
-            "url": "/collections/fajas"
-          }
-        },
         "popular_best": {
           "type": "popular_link",
           "settings": {
@@ -37,8 +23,6 @@
       },
       "block_order": [
         "popular_bodysuits",
-        "popular_waist",
-        "popular_fajas",
         "popular_best"
       ]
     }

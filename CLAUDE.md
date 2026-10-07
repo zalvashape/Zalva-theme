@@ -44,6 +44,7 @@ Rules:
 - **Shipping:** Express $15 (1–2 days), Standard $8 (3–5 days), free over $75, US only. Taxes via Shopify Tax.
 - **Returns (decided Oct 2026):** free size exchanges; returns with shipping paid by the customer; only unworn items with tags and hygienic liner intact. Sitewide wording: "Free size exchanges · 30-day returns" (replaces "Free 30-day returns").
 - **Catalog:** Bodysuits only for now (5–10 models planned). Sizes **XS–XXL only** (never promise 3XL–5XL).
+- **Collections:** `bodysuits` (manual, created Oct 2026, contains only Contour Bodysuit) is the temporary umbrella collection. Final collections (how many, segmentation, names, concepts) will be defined in a dedicated session when Denny brings his material. Until then, nav links only to `/collections/bodysuits` and Shop All.
 
 ---
 
@@ -108,7 +109,7 @@ Rules:
 3. `featured-signature` — Contour Bodysuit editorial spread (Linen)
 4. `texture-detail` — 4-image craftsmanship grid ⚠️ copy corrections pending (see §9)
 5. `before-after-slider` — "THE TRANSFORMATION", drag-handle only, auto-demo once, labels "without"/"with" (Cormorant italic, Ivory). Uses AI test images. Denny keeps it for now; pending: small "Illustrative image" note (see playbook §6).
-6. `category-grid` — triptych ⚠️ Waist Trainers / Fajas cards link to collections that don't exist (audit priority #1)
+6. `category-grid` — triptych. **Hidden** (`"disabled": true` in `index.json`) until the real collections are defined; its schema defaults still point to Waist Trainers / Fajas — update them in the collections session.
 7. `real-women` — rotating testimonials, no faces ⚠️ testimonials are invented → decided: hide the section (don't delete) until real reviews exist
 8. `size-inclusivity` — Noir, "XS to XXL. No exceptions."
 9. `editorial-cta` — "It starts with how you feel underneath."
@@ -116,7 +117,7 @@ Rules:
 
 ### Global
 - **Header** (`sections/header.liquid`): fixed, 3 columns (MENU / logo / search-account-bag), handbag cart icon, rotating announcement bar, adaptive colors.
-- **Cabinet menu:** desktop 40% nav + 60% hover image preview; primary links larger, secondary smaller (Deep Brown). Mobile: card layout (Bodysuits, Waist Trainers, Fajas, Shop All) + secondary links (The Story, Size Guide, FAQ, Contact) + Editor's Pick + tagline + socials. Sticky top bar with close.
+- **Cabinet menu:** desktop 40% nav + 60% hover image preview; primary links larger, secondary smaller (Deep Brown). Mobile: card layout (Bodysuits hero card + Shop All strip card; Waist Trainers / Fajas removed Oct 2026 until those collections exist) + secondary links (The Story, Size Guide, FAQ, Contact) + Editor's Pick + tagline + socials. Sticky top bar with close.
 - **Search dropdown:** expands from header, popular searches + quick links, live results via `/search/suggest.json` (300ms debounce), compact horizontal cards, sticky input, auto-scroll to top when typing, Champagne progress scrollbar.
 - **Footer** (`sections/footer.liquid`): Zone 1 newsletter (Noir; ⚠️ not wired — emails are lost, audit priority #3), Zone 2 link map (Linen, 4 columns), Zone 3 signature (Noir, rotating tagline, payment icons). Back-to-top button. Email click copies to clipboard.
 - **Cart drawer** (`sections/cart-drawer.liquid`): slide from right, 480px desktop / 88vw mobile, free-shipping progress bar ($75), AJAX cart, compact sticky bottom on mobile. **Adding to cart never auto-opens the drawer** → toast "Added to bag · VIEW BAG →" + cart icon pulse.
@@ -176,7 +177,7 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 ## 9. Backlog (update as items are done)
 
 ### Current priorities (Oct 2026 audit — do in order; no big new features until 1–5 are done)
-1. [ ] Fix broken links: create Bodysuits collection, remove Waist Trainers/Fajas from menu and homepage, fix "Shipping & Returns" (`/pages/shipping` is 404), fix social links pointing to `#` (footer + Cabinet menu)
+1. [ ] Fix broken links: ~~create Bodysuits collection~~ ✅, ~~remove Waist Trainers/Fajas from menu, search and homepage~~ ✅, fix "Shipping & Returns" (`/pages/shipping` is 404), fix social links pointing to `#` (footer + Cabinet menu)
 2. [ ] Hide invented testimonials (`real-women`)
 3. [ ] Connect the footer newsletter to Klaviyo (today the form shows "Thanks!" but discards the email)
 4. [ ] Publish the 3 legal policies (returns, shipping, terms) and align every promise with them (replace "Free 30-day returns" sitewide)

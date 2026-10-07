@@ -1,4 +1,4 @@
-﻿<div
+<div
   class="zs-header full-width"
   data-zs-header
   data-is-home="{% if request.page_type == 'index' %}true{% else %}false{% endif %}"
@@ -157,12 +157,6 @@
                     <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/bodysuits">Bodysuits</a>
                   </li>
                   <li>
-                    <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/waist-trainers">Waist trainers</a>
-                  </li>
-                  <li>
-                    <a class="zs-search-dropdown__link" href="{{ routes.root_url }}collections/fajas">Fajas</a>
-                  </li>
-                  <li>
                     <a class="zs-search-dropdown__link" href="{{ routes.all_products_collection_url }}?sort_by=best-selling">Best sellers</a>
                   </li>
                   <li>
@@ -247,45 +241,20 @@
               <span class="zs-cabinet-menu__m-card-caption">Sculpting essentials</span>
             </span>
           </a>
+          {% comment %} Waist Trainers / Fajas cards removed until those collections exist (Oct 2026 audit). {% endcomment %}
           <a
-            class="zs-cabinet-menu__m-card zs-cabinet-menu__m-card--hero zs-cabinet-menu__m-card--stagger"
+            class="zs-cabinet-menu__m-card zs-cabinet-menu__m-card--strip zs-cabinet-menu__m-card--shopall zs-cabinet-menu__m-card--stagger"
             style="--cabinet-m-i: 1"
-            href="{{ routes.root_url }}collections/waist-trainers"
+            href="{{ routes.all_products_collection_url }}"
           >
-            <span class="zs-cabinet-menu__m-card-bg" style="background-image: url('{{ cabinet_preview | escape }}');"></span>
-            <span class="zs-cabinet-menu__m-card-overlay"></span>
-            <span class="zs-cabinet-menu__m-card-label">
-              <span class="zs-cabinet-menu__m-card-title">Waist Trainers</span>
-              <span class="zs-cabinet-menu__m-card-caption">Definition redefined</span>
+            <span class="zs-cabinet-menu__m-shopall-inner">
+              <svg class="zs-cabinet-menu__m-shopall-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+              <span class="zs-cabinet-menu__m-card-title zs-cabinet-menu__m-card-title--shop">Shop All</span>
+              <span class="zs-cabinet-menu__m-card-caption zs-cabinet-menu__m-card-caption--shop">Discover everything</span>
             </span>
           </a>
-          <div class="zs-cabinet-menu__m-row-split">
-            <a
-              class="zs-cabinet-menu__m-card zs-cabinet-menu__m-card--narrow zs-cabinet-menu__m-card--stagger"
-              style="--cabinet-m-i: 2"
-              href="{{ routes.root_url }}collections/fajas"
-            >
-              <span class="zs-cabinet-menu__m-card-bg" style="background-image: url('{{ cabinet_preview | escape }}');"></span>
-              <span class="zs-cabinet-menu__m-card-overlay"></span>
-              <span class="zs-cabinet-menu__m-card-label">
-                <span class="zs-cabinet-menu__m-card-title zs-cabinet-menu__m-card-title--sm">Fajas</span>
-                <span class="zs-cabinet-menu__m-card-caption zs-cabinet-menu__m-card-caption--sm">Full coverage</span>
-              </span>
-            </a>
-            <a
-              class="zs-cabinet-menu__m-card zs-cabinet-menu__m-card--narrow zs-cabinet-menu__m-card--shopall zs-cabinet-menu__m-card--stagger"
-              style="--cabinet-m-i: 3"
-              href="{{ routes.all_products_collection_url }}"
-            >
-              <span class="zs-cabinet-menu__m-shopall-inner">
-                <svg class="zs-cabinet-menu__m-shopall-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                </svg>
-                <span class="zs-cabinet-menu__m-card-title zs-cabinet-menu__m-card-title--shop">Shop All</span>
-                <span class="zs-cabinet-menu__m-card-caption zs-cabinet-menu__m-card-caption--shop">Discover everything</span>
-              </span>
-            </a>
-          </div>
         </div>
 
         <nav class="zs-cabinet-menu__m-secondary" aria-label="More links">
@@ -395,38 +364,11 @@
                 <span class="zs-cabinet-menu__link-text">Bodysuits</span>
               </a>
             </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 2">
-              <a
-                class="zs-cabinet-menu__link zs-cabinet-menu__link--thumb-wrap"
-                href="{{ routes.root_url }}collections/waist-trainers"
-                data-cabinet-preview="{{ cabinet_preview | escape }}"
-                data-cabinet-eyebrow="WAIST TRAINERS"
-                data-cabinet-tagline="Define your silhouette."
-              >
-                <span class="zs-cabinet-menu__thumb" aria-hidden="true">
-                  <img src="{{ cabinet_preview | escape }}" width="40" height="52" alt="">
-                </span>
-                <span class="zs-cabinet-menu__link-text">Waist Trainers</span>
-              </a>
-            </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 3">
-              <a
-                class="zs-cabinet-menu__link zs-cabinet-menu__link--thumb-wrap"
-                href="{{ routes.root_url }}collections/fajas"
-                data-cabinet-preview="{{ cabinet_preview | escape }}"
-                data-cabinet-eyebrow="FAJAS"
-                data-cabinet-tagline="Confidence, tailored."
-              >
-                <span class="zs-cabinet-menu__thumb" aria-hidden="true">
-                  <img src="{{ cabinet_preview | escape }}" width="40" height="52" alt="">
-                </span>
-                <span class="zs-cabinet-menu__link-text">Fajas</span>
-              </a>
-            </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--divider zs-cabinet-menu__item--stagger" style="--cabinet-i: 4" aria-hidden="true">
+            {% comment %} Waist Trainers / Fajas removed until those collections exist (Oct 2026 audit). {% endcomment %}
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--divider zs-cabinet-menu__item--stagger" style="--cabinet-i: 2" aria-hidden="true">
               <span class="zs-cabinet-menu__rule"></span>
             </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 5">
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 3">
               <a
                 class="zs-cabinet-menu__link"
                 href="{{ routes.root_url }}pages/about"
@@ -437,7 +379,7 @@
                 The Story
               </a>
             </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 6">
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 4">
               <a
                 class="zs-cabinet-menu__link"
                 href="{{ routes.root_url }}pages/size-guide"
@@ -448,7 +390,7 @@
                 Size Guide
               </a>
             </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 7">
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 5">
               <a
                 class="zs-cabinet-menu__link"
                 href="{{ routes.root_url }}pages/faq"
@@ -459,7 +401,7 @@
                 FAQ
               </a>
             </li>
-            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 8">
+            <li class="zs-cabinet-menu__item zs-cabinet-menu__item--stagger" style="--cabinet-i: 6">
               <a
                 class="zs-cabinet-menu__link"
                 href="{{ routes.root_url }}pages/contact"
@@ -1766,6 +1708,10 @@
 
   .zs-cabinet-menu__m-card--narrow {
     aspect-ratio: 4 / 5;
+  }
+
+  .zs-cabinet-menu__m-card--strip {
+    aspect-ratio: 5 / 2;
   }
 
   .zs-cabinet-menu__m-card-bg {
