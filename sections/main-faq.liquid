@@ -53,6 +53,10 @@
             <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="care-materials">Care &amp; Materials</button>
             <button type="button" class="zs-faq__chip" role="tab" aria-selected="false" data-zs-faq-category="orders-payment">Orders &amp; Payment</button>
           </div>
+          {% comment %} Mobile only: Champagne progress line that shows the chip row scrolls sideways. {% endcomment %}
+          <div class="zs-faq__chips-progress" data-zs-faq-chips-progress aria-hidden="true" hidden>
+            <span class="zs-faq__chips-progress-fill" data-zs-faq-chips-progress-fill></span>
+          </div>
         </div>
       </div>
     </div>
@@ -709,29 +713,84 @@
       window.addEventListener('resize', scheduleThresholdResetCheck, { passive: true });
     }
 
+    // --- Chip row (mobile): progress line, one-time nudge, centering ---
+    const chipsProgress = root.querySelector('[data-zs-faq-chips-progress]');
+    const isMobileChips = () => !window.matchMedia('(min-width: 769px)').matches;
+    const chipsOverflow = () =>
+      !!chipButtons && isMobileChips() && chipButtons.scrollWidth > chipButtons.clientWidth + 1;
+    let chipsProgressRaf = 0;
+
     const updateChipsScrollState = () => {
-      if (!chipButtons) return;
-      if (window.matchMedia('(min-width: 769px)').matches) {
-        chipButtons.classList.remove('is-overflowing', 'is-scrolled-end');
-        return;
-      }
-      const scrollEndThreshold = 4;
-      const hasOverflow = chipButtons.scrollWidth > chipButtons.clientWidth + 1;
-      chipButtons.classList.toggle('is-overflowing', hasOverflow);
-      const atEnd =
-        chipButtons.scrollLeft + chipButtons.clientWidth >=
-        chipButtons.scrollWidth - scrollEndThreshold;
-      chipButtons.classList.toggle('is-scrolled-end', atEnd);
+      if (!chipButtons || !chipsProgress) return;
+      const overflow = chipsOverflow();
+      chipsProgress.hidden = !overflow;
+      if (!overflow) return;
+      const { scrollLeft, scrollWidth, clientWidth } = chipButtons;
+      // Fill width = share of the row that is visible; offset = how far we've scrolled (in fill widths).
+      chipsProgress.style.setProperty('--zf-chips-visible', `${(clientWidth / scrollWidth) * 100}%`);
+      chipsProgress.style.setProperty('--zf-chips-offset', `${(scrollLeft / clientWidth) * 100}%`);
+    };
+
+    const scheduleChipsUpdate = () => {
+      if (chipsProgressRaf) return;
+      chipsProgressRaf = window.requestAnimationFrame(() => {
+        chipsProgressRaf = 0;
+        updateChipsScrollState();
+      });
+    };
+
+    const centerChip = (category, smooth) => {
+      if (!chipsOverflow()) return;
+      const chip = chipButtons.querySelector(`[data-zs-faq-category="${CSS.escape(category)}"]`);
+      if (!chip) return;
+      const left = chip.offsetLeft - (chipButtons.clientWidth - chip.offsetWidth) / 2;
+      chipButtons.scrollTo({ left: Math.max(0, left), behavior: smooth && !prefersReducedMotion ? 'smooth' : 'auto' });
     };
 
     if (chipButtons) {
-      chipButtons.addEventListener('scroll', updateChipsScrollState, { passive: true });
-      window.addEventListener('resize', updateChipsScrollState, { passive: true });
+      chipButtons.addEventListener('scroll', scheduleChipsUpdate, { passive: true });
+      window.addEventListener('resize', scheduleChipsUpdate, { passive: true });
       if (typeof ResizeObserver !== 'undefined') {
-        new ResizeObserver(updateChipsScrollState).observe(chipButtons);
+        new ResizeObserver(scheduleChipsUpdate).observe(chipButtons);
       }
       updateChipsScrollState();
     }
+
+    // Distance from the top of the viewport where the sticky filter bar rests (= fixed header height).
+    const getFilterStickyTop = () => {
+      if (!filterBar) return 0;
+      const top = parseFloat(window.getComputedStyle(filterBar).top);
+      return Number.isFinite(top) ? top : 0;
+    };
+
+    // Select a category, center its chip, and bring the questions into view under the header.
+    // Used by URL deep links (/pages/faq#compression) and by in-answer category buttons.
+    const focusCategory = (category, { scrollPage = true } = {}) => {
+      if (searchInput && searchInput.value) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      activeCategory = category;
+      setActiveChip(category);
+      applyFilters();
+      if (passedThreshold) setPassedThreshold(false);
+      // Instant chip centering when the page itself scrolls, so two smooth scrolls never compete.
+      centerChip(category, !scrollPage);
+      if (!scrollPage || !filterBar) return;
+      const target = filterBar.getBoundingClientRect().top + window.scrollY - getFilterStickyTop();
+      window.scrollTo({ top: Math.max(0, target), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    };
+
+    const getHashCategory = () => {
+      let hash = '';
+      try {
+        hash = decodeURIComponent(window.location.hash.slice(1));
+      } catch (e) {
+        return null;
+      }
+      if (!hash || hash === 'all' || !chipButtons) return null;
+      return chipButtons.querySelector(`[data-zs-faq-category="${CSS.escape(hash)}"]`) ? hash : null;
+    };
 
     chipButtons?.querySelectorAll('[data-zs-faq-category]').forEach((chip) => {
       chip.addEventListener('click', () => {
@@ -739,6 +798,7 @@
         activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
         setActiveChip(activeCategory);
         applyFilters();
+        centerChip(activeCategory, true);
         filterBar?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
@@ -746,26 +806,57 @@
     root.querySelectorAll('[data-zs-faq-jump-category]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const category = btn.getAttribute('data-zs-faq-jump-category');
-        if (!category || !searchInput) return;
-        searchInput.value = '';
-        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-        activeCategory = category;
-        setActiveChip(category);
-        applyFilters();
-        root.querySelector('[data-zs-faq-filter]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!category) return;
+        focusCategory(category);
       });
     });
 
     searchInput?.addEventListener('input', applyFilters);
 
-    // Deep link: /pages/faq#shipping-returns opens with that category pre-selected.
-    const hashCategory = decodeURIComponent(window.location.hash.slice(1));
-    if (hashCategory && chipButtons?.querySelector(`[data-zs-faq-category="${CSS.escape(hashCategory)}"]`)) {
-      activeCategory = hashCategory;
-      setActiveChip(hashCategory);
+    applyFilters();
+
+    // Deep link on arrival: /pages/faq#<category> (e.g. #shipping-returns, #compression, #sizing-fit).
+    const initialHashCategory = getHashCategory();
+    if (initialHashCategory) {
+      activeCategory = initialHashCategory;
+      setActiveChip(initialHashCategory);
+      applyFilters();
+      // Wait for layout and fonts so the scroll target is measured correctly.
+      window.setTimeout(() => focusCategory(initialHashCategory), 350);
     }
 
-    applyFilters();
+    window.addEventListener('hashchange', () => {
+      const category = getHashCategory();
+      if (category) focusCategory(category);
+    });
+
+    // One-time nudge: slide the chip row slightly left and back to hint it scrolls.
+    // Skipped for deep links (the row already moves to the chosen chip) and for reduced motion.
+    if (chipButtons && !initialHashCategory && !prefersReducedMotion && 'IntersectionObserver' in window) {
+      let nudgeCancelled = false;
+      const cancelNudge = () => {
+        nudgeCancelled = true;
+      };
+      chipButtons.addEventListener('pointerdown', cancelNudge, { once: true, passive: true });
+      chipButtons.addEventListener('touchstart', cancelNudge, { once: true, passive: true });
+
+      const nudgeIo = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.6)) return;
+          nudgeIo.disconnect();
+          window.setTimeout(() => {
+            if (nudgeCancelled || !chipsOverflow() || chipButtons.scrollLeft > 0) return;
+            chipButtons.scrollTo({ left: 56, behavior: 'smooth' });
+            window.setTimeout(() => {
+              if (nudgeCancelled) return;
+              chipButtons.scrollTo({ left: 0, behavior: 'smooth' });
+            }, 650);
+          }, 700);
+        },
+        { threshold: [0.6] }
+      );
+      nudgeIo.observe(chipButtons);
+    }
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
     const listZone = faqListZone;
@@ -1155,16 +1246,28 @@
       display: none;
     }
 
-    .zs-faq__chips.is-overflowing:not(.is-scrolled-end)::after {
-      content: '';
+    .zs-faq__chips-progress {
+      position: relative;
+      width: 96px;
+      height: 2px;
+      margin: 16px auto 0;
+      overflow: hidden;
+      background-color: rgba(200, 169, 110, 0.15);
+    }
+
+    .zs-faq__chips-progress[hidden] {
+      display: none;
+    }
+
+    .zs-faq__chips-progress-fill {
       position: absolute;
-      z-index: 0;
-      right: 0;
       top: 0;
-      bottom: 0;
-      width: 24px;
-      background: linear-gradient(to right, transparent, rgba(250, 248, 245, 0.7));
-      pointer-events: none;
+      left: 0;
+      height: 100%;
+      width: var(--zf-chips-visible, 40%);
+      background-color: var(--zf-champagne, #c8a96e);
+      transform: translateX(var(--zf-chips-offset, 0%));
+      will-change: transform;
     }
 
     .zs-faq__chip {
@@ -1179,6 +1282,10 @@
     .zs-faq__chips {
       flex-wrap: wrap;
       justify-content: center;
+    }
+
+    .zs-faq__chips-progress {
+      display: none;
     }
   }
 

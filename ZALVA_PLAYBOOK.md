@@ -57,6 +57,8 @@ Every session starts with no memory except these files. Denny has said he will f
 - **He gives great UX feedback by describing feelings** ("se siente como si abandonaran la página", "aparece muy de golpe", "hace flickering"). Translate those into precise technical causes.
 - **He works in bursts and sometimes pauses for weeks.** When he returns, give a 3-line "dónde quedamos" summary from CLAUDE.md before starting.
 - **He values honesty over flattery.** He respects pushback when it's reasoned. When you were wrong, say so plainly and fix it.
+- **He likes to talk solutions through before any code** ("necesito que me entiendas y que hablemos de posibles soluciones antes de empezar"): restate what you understood, explain the cause, offer options, ask for his ideas, and only build after he confirms.
+- **He thinks ahead about reusability** (e.g. "any future link to the FAQ must behave the same"). Turn those into written rules in CLAUDE.md §5.
 - **He has strong instincts on premium feel — trust them, they've been right often** (see §4).
 
 ---
@@ -118,6 +120,7 @@ Format: date — decision — reason. Add new entries at the bottom.
   - Invented testimonials: hide the section (don't delete) until real reviews exist.
   - Before/after slider: **Denny keeps it for now.** Suggested a small "Illustrative image" note under it. Future honest options: (A) "Under the dress" — dress vs. same pose revealing the bodysuit, claim = invisible under clothing, not body change; (B) real testers with consent, labeled "No retouching".
   - Price and SALE badge: pending. Denny will build a pricing table first.
+- 2026-10-07 — FAQ chips on mobile stay a horizontal scroll row (Denny's preference over wrapping). Hint = Champagne progress line + one-time nudge. Every link into the FAQ targets a category (`/pages/faq#<category>`): chip selected, centered, page scrolls to the questions. "Shipping & Returns" links always go to the FAQ (friendlier than a legal page); full policies linked from the end of that FAQ category and from a discreet legal line in the footer (Denny's idea, refined: policy links are links, not chips).
 - 2026-10-07 — Collections not defined yet (count, segmentation, names, concepts). Temporary umbrella collection `bodysuits` (manual) created; Waist Trainers / Fajas removed from menu and search; homepage category grid hidden, not deleted. Final collections get a dedicated session — Denny will gather his material first, then build them all at once. Reason: no links to things that don't exist, and avoid designing a menu twice.
 
 ---
@@ -143,6 +146,8 @@ Format: date — decision — reason. Add new entries at the bottom.
 - A drag slider listening on the whole image blocked page scroll on mobile; only the handle should be draggable.
 - The audit found BOM characters in `main-product.liquid` and `header.liquid` and broken encoding ("â€”", "Â·") in visible text. Always save UTF-8 without BOM.
 - Colors are hardcoded ~76 times across 28 files; animation reveal logic is copied in 14 sections. Prefer CSS variables and shared snippets for anything new.
+- The old FAQ chip "fade" (`::after` gradient inside the scrolling row) was invisible: too transparent, and an absolutely-positioned pseudo-element inside a scroll container scrolls away with the content. Scroll hints must live outside the scroller (the progress line under the row).
+- Testing: when the Claude browser pane is hidden, the page is `visibilityState: hidden` — requestAnimationFrame, IntersectionObserver and smooth scrolling pause. Animations/nudges can't be verified there; ask Denny to check on his phone. No Node/Python on Denny's PC; for local tests, build a copy of the live page and serve it with a PowerShell HttpListener.
 - Hand-drawn SVG silhouettes never looked right. A Kive-generated image used as a CSS mask worked. For organic illustration, generate an image; don't hand-code paths.
 
 **Kive lessons:**

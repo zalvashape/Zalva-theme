@@ -97,7 +97,8 @@ Rules:
 8. **Shopify schema safety:** NEVER use `\n` inside schema default values — Shopify silently rejects the section. Use comma-separated lists and split with Liquid. Presets use `"category": "Custom"`. If a section exists in the repo but not in Shopify, check the schema first.
 9. **Header script lesson:** `sections/header.liquid` runs one IIFE. A single undeclared variable (e.g. a missing `const cfgEl = root.querySelector('[data-zs-search-config]')`) throws and kills MENU, search, and cart. After editing header JS, re-read the whole script for undeclared references.
 10. **Touch vs scroll:** interactive drags (like the before/after slider) accept pointer input only on the handle, with `touch-action: pan-y` on the container so the page still scrolls on mobile.
-11. **Performance:** `requestAnimationFrame` for scroll/drag work, passive listeners, `loading="lazy"` except above-the-fold (`eager` + `fetchpriority="high"`).
+11. **Links to the FAQ (RULE):** every link into the FAQ from anywhere in the store (footer, product page, cart, policies…) must target its category: `/pages/faq#<category>`. Categories: `sizing-fit`, `compression`, `shipping-returns`, `care-materials`, `orders-payment`. On arrival the FAQ selects that chip, centers it in the mobile row, and scrolls smoothly to the questions under the sticky bar. Inside FAQ answers, use `data-zs-faq-jump-category="<category>"` buttons (same behavior). A new category needs a chip with `data-zs-faq-category` and items with `data-faq-category`.
+12. **Performance:** `requestAnimationFrame` for scroll/drag work, passive listeners, `loading="lazy"` except above-the-fold (`eager` + `fetchpriority="high"`).
 
 ---
 
@@ -126,7 +127,7 @@ Rules:
 ### Pages
 - **Search results** (`main-search`): persistent search bar, product grid, sort, empty state.
 - **Size Guide** (`main-size-guide`): how to measure, chart XS–XXL with inches/cm toggle, between sizes, promise.
-- **FAQ** (`main-faq`): 18 questions, 6 category chips (deep link: `/pages/faq#<category>` pre-selects a chip, e.g. `#shipping-returns`) (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
+- **FAQ** (`main-faq`): 18 questions, 6 category chips. Mobile chip row scrolls sideways with a 96px Champagne progress line under it and a one-time "nudge" (slides left and back; skipped on deep links and reduced motion). (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
 - **Contact** (`main-contact`): 3 cards (email copy-to-clipboard, Instagram, form), FAQ strip, Shopify contact form (subjects: Order Issues, Sizing Help, Returns & Exchanges, Other), smooth scroll to form.
 - **404** (`main-404`): Linen, giant "404", "Lost in transition."
 - **Product page** (`main-product`): architecture built with 8 zones (hero + gallery, The Details, Crafted For, Reviews/Judge.me, Find Your Fit, Pairs Well With, Multi-Outfit placeholder (hidden), Product FAQ). Desktop gallery shows ONE image at a time, thumbnails swap it, NOT sticky. Mobile: carousel with dots.
@@ -190,7 +191,7 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
 
 ### To review later
-- [ ] **Remind Denny:** he noticed something on the mobile FAQ he wants fixed — ask him what it is right after priority #1 is closed
+- [ ] Priority #4 add-ons (agreed Oct 2026): footer "Shipping & Returns" keeps going to the FAQ (friendlier); add a discreet legal line in the footer's Noir zone (Shipping Policy · Return Policy · Terms · Privacy) for Google/Meta/payment compliance; at the end of the FAQ "Shipping & Returns" category add "Read our full Shipping Policy →" / "Return Policy →" links (links, not chips — chips only filter). FAQ answers must be short, faithful summaries of the policies.
 - [ ] TikTok link: Denny pastes it in Theme settings → Social media when he has it (the icon appears automatically)
 - [ ] `snippets/color-silhouette.liquid` already exists — check whether it is actually used (product page, collection cards, search, cart drawer) or half-done
 
