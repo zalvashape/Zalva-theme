@@ -713,7 +713,43 @@
       window.addEventListener('resize', scheduleThresholdResetCheck, { passive: true });
     }
 
-    // --- Chip row (mobile): progress line, one-time nudge, centering ---
+    // --- Eased scrolling (softer than native smooth scroll, same feel on every browser) ---
+    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const scrollTweens = new Map();
+
+    // Animate any scroll position: `read`/`write` get and set it (chip row scrollLeft, page scrollY).
+    const tweenScroll = (key, read, write, to, duration) => {
+      const prev = scrollTweens.get(key);
+      if (prev) window.cancelAnimationFrame(prev);
+      const from = read();
+      const distance = to - from;
+      if (Math.abs(distance) < 1) return;
+      if (prefersReducedMotion || document.hidden) {
+        write(to);
+        return;
+      }
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        write(from + distance * easeInOutCubic(t));
+        if (t < 1) scrollTweens.set(key, window.requestAnimationFrame(step));
+        else scrollTweens.delete(key);
+      };
+      scrollTweens.set(key, window.requestAnimationFrame(step));
+    };
+
+    const stopTween = (key) => {
+      const id = scrollTweens.get(key);
+      if (id) window.cancelAnimationFrame(id);
+      scrollTweens.delete(key);
+    };
+
+    // The visitor's own touch or wheel always wins over an animation in progress.
+    ['wheel', 'touchstart', 'keydown'].forEach((type) => {
+      window.addEventListener(type, () => stopTween('page'), { passive: true });
+    });
+
+    // --- Chip row (mobile): progress line, centering ---
     const chipsProgress = root.querySelector('[data-zs-faq-chips-progress]');
     const isMobileChips = () => !window.matchMedia('(min-width: 769px)').matches;
     const chipsOverflow = () =>
@@ -739,15 +775,28 @@
       });
     };
 
-    const centerChip = (category, smooth) => {
+    const CHIP_CENTER_MS = 650;
+    const PAGE_SCROLL_MS = 1100;
+
+    const centerChip = (category) => {
       if (!chipsOverflow()) return;
       const chip = chipButtons.querySelector(`[data-zs-faq-category="${CSS.escape(category)}"]`);
       if (!chip) return;
+      const maxLeft = chipButtons.scrollWidth - chipButtons.clientWidth;
       const left = chip.offsetLeft - (chipButtons.clientWidth - chip.offsetWidth) / 2;
-      chipButtons.scrollTo({ left: Math.max(0, left), behavior: smooth && !prefersReducedMotion ? 'smooth' : 'auto' });
+      tweenScroll(
+        'chips',
+        () => chipButtons.scrollLeft,
+        (v) => {
+          chipButtons.scrollLeft = v;
+        },
+        Math.min(maxLeft, Math.max(0, left)),
+        CHIP_CENTER_MS
+      );
     };
 
     if (chipButtons) {
+      chipButtons.addEventListener('touchstart', () => stopTween('chips'), { passive: true });
       chipButtons.addEventListener('scroll', scheduleChipsUpdate, { passive: true });
       window.addEventListener('resize', scheduleChipsUpdate, { passive: true });
       if (typeof ResizeObserver !== 'undefined') {
@@ -774,11 +823,16 @@
       setActiveChip(category);
       applyFilters();
       if (passedThreshold) setPassedThreshold(false);
-      // Instant chip centering when the page itself scrolls, so two smooth scrolls never compete.
-      centerChip(category, !scrollPage);
+      centerChip(category);
       if (!scrollPage || !filterBar) return;
       const target = filterBar.getBoundingClientRect().top + window.scrollY - getFilterStickyTop();
-      window.scrollTo({ top: Math.max(0, target), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      tweenScroll(
+        'page',
+        () => window.scrollY,
+        (v) => window.scrollTo(0, v),
+        Math.max(0, target),
+        PAGE_SCROLL_MS
+      );
     };
 
     const getHashCategory = () => {
@@ -798,8 +852,7 @@
         activeCategory = chip.getAttribute('data-zs-faq-category') || 'all';
         setActiveChip(activeCategory);
         applyFilters();
-        centerChip(activeCategory, true);
-        filterBar?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        centerChip(activeCategory);
       });
     });
 
@@ -829,34 +882,6 @@
       const category = getHashCategory();
       if (category) focusCategory(category);
     });
-
-    // One-time nudge: slide the chip row slightly left and back to hint it scrolls.
-    // Skipped for deep links (the row already moves to the chosen chip) and for reduced motion.
-    if (chipButtons && !initialHashCategory && !prefersReducedMotion && 'IntersectionObserver' in window) {
-      let nudgeCancelled = false;
-      const cancelNudge = () => {
-        nudgeCancelled = true;
-      };
-      chipButtons.addEventListener('pointerdown', cancelNudge, { once: true, passive: true });
-      chipButtons.addEventListener('touchstart', cancelNudge, { once: true, passive: true });
-
-      const nudgeIo = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.6)) return;
-          nudgeIo.disconnect();
-          window.setTimeout(() => {
-            if (nudgeCancelled || !chipsOverflow() || chipButtons.scrollLeft > 0) return;
-            chipButtons.scrollTo({ left: 56, behavior: 'smooth' });
-            window.setTimeout(() => {
-              if (nudgeCancelled) return;
-              chipButtons.scrollTo({ left: 0, behavior: 'smooth' });
-            }, 650);
-          }, 700);
-        },
-        { threshold: [0.6] }
-      );
-      nudgeIo.observe(chipButtons);
-    }
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
     const listZone = faqListZone;

@@ -127,7 +127,7 @@ Rules:
 ### Pages
 - **Search results** (`main-search`): persistent search bar, product grid, sort, empty state.
 - **Size Guide** (`main-size-guide`): how to measure, chart XS–XXL with inches/cm toggle, between sizes, promise.
-- **FAQ** (`main-faq`): 18 questions, 6 category chips. Mobile chip row scrolls sideways with a 96px Champagne progress line under it and a one-time "nudge" (slides left and back; skipped on deep links and reduced motion). (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
+- **FAQ** (`main-faq`): 18 questions, 6 category chips. Mobile chip row scrolls sideways with a 96px Champagne progress line under it. Chip centering and deep-link page scroll use a custom eased tween (easeInOutCubic, 650ms chips / 1100ms page) — softer than native smooth scroll; user touch/wheel cancels it. The "slide left and back" nudge was tried and rejected by Denny (felt abrupt). (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
 - **Contact** (`main-contact`): 3 cards (email copy-to-clipboard, Instagram, form), FAQ strip, Shopify contact form (subjects: Order Issues, Sizing Help, Returns & Exchanges, Other), smooth scroll to form.
 - **404** (`main-404`): Linen, giant "404", "Lost in transition."
 - **Product page** (`main-product`): architecture built with 8 zones (hero + gallery, The Details, Crafted For, Reviews/Judge.me, Find Your Fit, Pairs Well With, Multi-Outfit placeholder (hidden), Product FAQ). Desktop gallery shows ONE image at a time, thumbnails swap it, NOT sticky. Mobile: carousel with dots.
@@ -191,6 +191,8 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
 
 ### To review later
+- [ ] **NEXT after the FAQ chips:** Size Guide → redesign the size chart (Denny asked for a better version). His notes: when scrolling the chart sideways on mobile the size column (XS, S, M…) leaves the screen — keep it fixed/visible; and there's no hint that the chart scrolls until you move it. Propose the vision first, ideally with a visual preview.
+- [ ] FAQ chip row: pick a replacement for the rejected nudge (options proposed Oct 2026; pending Denny's choice)
 - [ ] Priority #4 add-ons (agreed Oct 2026): footer "Shipping & Returns" keeps going to the FAQ (friendlier); add a discreet legal line in the footer's Noir zone (Shipping Policy · Return Policy · Terms · Privacy) for Google/Meta/payment compliance; at the end of the FAQ "Shipping & Returns" category add "Read our full Shipping Policy →" / "Return Policy →" links (links, not chips — chips only filter). FAQ answers must be short, faithful summaries of the policies.
 - [ ] TikTok link: Denny pastes it in Theme settings → Social media when he has it (the icon appears automatically)
 - [ ] `snippets/color-silhouette.liquid` already exists — check whether it is actually used (product page, collection cards, search, cart drawer) or half-done
