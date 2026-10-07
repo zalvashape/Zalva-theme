@@ -42,7 +42,7 @@ Rules:
 - **Local path:** `C:\Users\Scraftk\Documents\Zalva Project\Zalva-theme`
 - **Apps:** Judge.me (reviews, free), Klaviyo (free plan, not yet wired to forms).
 - **Shipping:** Express $15 (1–2 days), Standard $8 (3–5 days), free over $75, US only. Taxes via Shopify Tax.
-- **Returns (decided Oct 2026):** free size exchanges; returns with shipping paid by the customer; only unworn items with tags and hygienic liner intact. Sitewide wording: "Free size exchanges · 30-day returns" (replaces "Free 30-day returns").
+- **Returns: NOT final.** Working proposal (Oct 2026): free size exchanges; returns with shipping paid by the customer; only unworn items with tags and hygienic liner intact. Denny will confirm the exact policy before launch — don't hardcode new return promises until then; when confirmed, update every mention (announcement bar, cart drawer, product trust line, FAQ, Size Guide "Our promise", policies).
 - **Catalog:** Bodysuits only for now (5–10 models planned). Sizes **XS–XXL only** (never promise 3XL–5XL).
 - **Collections:** `bodysuits` (manual, created Oct 2026, contains only Contour Bodysuit) is the temporary umbrella collection. Final collections (how many, segmentation, names, concepts) will be defined in a dedicated session when Denny brings his material. Until then, nav links only to `/collections/bodysuits` and Shop All.
 
@@ -189,6 +189,11 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 8. [ ] Collection page redesign in Zalva style (with compression indicator on cards)
 9. [ ] Before/after "Illustrative image" note; price/SALE badge (pending Denny's pricing table)
 10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
+
+### Before launch (Denny will provide — then update everything that depends on it)
+- [ ] Official size measurements (bust/waist/hips per size, inches + cm) — current Size Guide numbers are NOT confirmed
+- [ ] Final returns/exchanges policy → then write the 3 policies and align all promises (priority #4)
+- [ ] Whether all bodysuits share one size chart or each model has its own
 
 ### To review later
 - [ ] **NEXT after the FAQ chips:** Size Guide → redesign the size chart (Denny asked for a better version). His notes: when scrolling the chart sideways on mobile the size column (XS, S, M…) leaves the screen — keep it fixed/visible; and there's no hint that the chart scrolls until you move it. Propose the vision first, ideally with a visual preview.
