@@ -74,7 +74,46 @@
         <button type="button" class="zs-size-guide__unit-btn" data-zs-sg-unit="cm" aria-pressed="false">Cm</button>
       </div>
 
-      <div class="zs-size-guide__table-wrap zs-size-guide__reveal" data-sg-delay="2">
+      {% comment %}
+        Size finder: reads the ranges straight from the table below (single source of truth).
+        Hidden without JS (the table alone still works).
+      {% endcomment %}
+      <form class="zs-size-guide__finder zs-size-guide__reveal" data-sg-delay="2" data-zs-sg-finder novalidate hidden>
+        <div class="zs-size-guide__finder-head">
+          <p class="zs-size-guide__eyebrow">Find my size</p>
+          <p class="zs-size-guide__finder-sub">Enter your measurements and we&rsquo;ll match you to your size.</p>
+        </div>
+        <div class="zs-size-guide__finder-fields">
+          {% assign finder_fields = 'bust,waist,hips' | split: ',' %}
+          {% for field in finder_fields %}
+            <label class="zs-size-guide__field">
+              <span class="zs-size-guide__field-label">{{ field | capitalize }}</span>
+              <span class="zs-size-guide__field-control">
+                <input
+                  class="zs-size-guide__field-input"
+                  type="number"
+                  inputmode="decimal"
+                  step="0.1"
+                  min="0"
+                  name="{{ field }}"
+                  placeholder="—"
+                  autocomplete="off"
+                  data-zs-sg-input="{{ field }}"
+                >
+                <span class="zs-size-guide__field-unit" data-zs-sg-unit-label>in</span>
+              </span>
+            </label>
+          {% endfor %}
+          <button type="submit" class="zs-size-guide__finder-btn">Find my size</button>
+        </div>
+        <div class="zs-size-guide__result" data-zs-sg-result aria-live="polite" hidden>
+          <p class="zs-size-guide__result-label" data-zs-sg-result-label>Your size</p>
+          <p class="zs-size-guide__result-size" data-zs-sg-result-size></p>
+          <p class="zs-size-guide__result-note" data-zs-sg-result-note></p>
+        </div>
+      </form>
+
+      <div class="zs-size-guide__table-wrap zs-size-guide__reveal" data-sg-delay="3">
         <table class="zs-size-guide__table" data-zs-sg-table>
           <thead>
             <tr>
@@ -85,37 +124,37 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr data-zs-sg-row="XS">
               <th scope="row">XS</th>
               <td data-zs-sg-measure data-in="31–33" data-cm="79–84">31–33</td>
               <td data-zs-sg-measure data-in="23–25" data-cm="58–64">23–25</td>
               <td data-zs-sg-measure data-in="33–35" data-cm="84–89">33–35</td>
             </tr>
-            <tr>
+            <tr data-zs-sg-row="S">
               <th scope="row">S</th>
               <td data-zs-sg-measure data-in="33–35" data-cm="84–89">33–35</td>
               <td data-zs-sg-measure data-in="25–27" data-cm="64–69">25–27</td>
               <td data-zs-sg-measure data-in="35–37" data-cm="89–94">35–37</td>
             </tr>
-            <tr>
+            <tr data-zs-sg-row="M">
               <th scope="row">M</th>
               <td data-zs-sg-measure data-in="35–37" data-cm="89–94">35–37</td>
               <td data-zs-sg-measure data-in="27–29" data-cm="69–74">27–29</td>
               <td data-zs-sg-measure data-in="37–39" data-cm="94–99">37–39</td>
             </tr>
-            <tr>
+            <tr data-zs-sg-row="L">
               <th scope="row">L</th>
               <td data-zs-sg-measure data-in="37–39" data-cm="94–99">37–39</td>
               <td data-zs-sg-measure data-in="29–31" data-cm="74–79">29–31</td>
               <td data-zs-sg-measure data-in="39–41" data-cm="99–104">39–41</td>
             </tr>
-            <tr>
+            <tr data-zs-sg-row="XL">
               <th scope="row">XL</th>
               <td data-zs-sg-measure data-in="39–42" data-cm="99–107">39–42</td>
               <td data-zs-sg-measure data-in="31–34" data-cm="79–86">31–34</td>
               <td data-zs-sg-measure data-in="41–44" data-cm="104–112">41–44</td>
             </tr>
-            <tr>
+            <tr data-zs-sg-row="XXL">
               <th scope="row">XXL</th>
               <td data-zs-sg-measure data-in="42–45" data-cm="107–114">42–45</td>
               <td data-zs-sg-measure data-in="34–37" data-cm="86–94">34–37</td>
@@ -124,6 +163,9 @@
           </tbody>
         </table>
       </div>
+      <p class="zs-size-guide__table-note zs-size-guide__reveal" data-sg-delay="4">
+        Body measurements, not garment measurements. Tap a size to highlight it.
+      </p>
     </div>
   </section>
 
@@ -207,9 +249,165 @@
 
     const unitBtns = root.querySelectorAll('[data-zs-sg-unit]');
     const measureCells = root.querySelectorAll('[data-zs-sg-measure]');
+    const rows = Array.from(root.querySelectorAll('[data-zs-sg-row]'));
+    const finder = root.querySelector('[data-zs-sg-finder]');
+    const finderInputs = finder ? Array.from(finder.querySelectorAll('[data-zs-sg-input]')) : [];
+    const unitLabels = finder ? finder.querySelectorAll('[data-zs-sg-unit-label]') : [];
+    const resultBox = finder?.querySelector('[data-zs-sg-result]');
+    const resultLabel = finder?.querySelector('[data-zs-sg-result-label]');
+    const resultSize = finder?.querySelector('[data-zs-sg-result-size]');
+    const resultNote = finder?.querySelector('[data-zs-sg-result-note]');
+    const contactUrl = '{{ routes.root_url }}pages/contact';
+    const MEASURES = ['bust', 'waist', 'hips'];
     let activeUnit = 'in';
+    let hasSearched = false;
+
+    // --- Row highlight ---
+    const selectRows = (sizes) => {
+      rows.forEach((row) => {
+        row.classList.toggle('is-selected', sizes.includes(row.getAttribute('data-zs-sg-row')));
+      });
+    };
+
+    rows.forEach((row) => {
+      row.setAttribute('tabindex', '0');
+      const toggle = () => {
+        const size = row.getAttribute('data-zs-sg-row');
+        selectRows(row.classList.contains('is-selected') ? [] : [size]);
+      };
+      row.addEventListener('click', toggle);
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
+
+    // --- Size ranges, read from the table itself (single source of truth) ---
+    // Each cell holds "31–33" style ranges in data-in / data-cm.
+    const parseRange = (text) => {
+      const nums = String(text || '')
+        .split(/[–—-]/)
+        .map((n) => parseFloat(n))
+        .filter((n) => Number.isFinite(n));
+      return nums.length === 2 ? { min: nums[0], max: nums[1] } : null;
+    };
+
+    const getRanges = (unit) =>
+      rows.map((row) => {
+        const cells = row.querySelectorAll('[data-zs-sg-measure]');
+        const ranges = {};
+        MEASURES.forEach((m, i) => {
+          ranges[m] = parseRange(cells[i]?.getAttribute(unit === 'cm' ? 'data-cm' : 'data-in'));
+        });
+        return { size: row.getAttribute('data-zs-sg-row'), ranges };
+      });
+
+    // Where one measurement lands: a single size, "between" two sizes (near a shared edge), or out of range.
+    const locate = (value, measure, table, unit) => {
+      const edge = unit === 'cm' ? 1 : 0.5;
+      const first = table[0].ranges[measure];
+      const last = table[table.length - 1].ranges[measure];
+      if (!first || !last) return null;
+      if (value < first.min - edge) return { lo: 0, hi: 0, below: true };
+      if (value > last.max + edge) return { above: true };
+      for (let i = 0; i < table.length; i += 1) {
+        const r = table[i].ranges[measure];
+        const next = table[i + 1]?.ranges[measure];
+        if (next && Math.abs(value - r.max) <= edge && Math.abs(value - next.min) <= edge) {
+          return { lo: i, hi: i + 1 };
+        }
+        if (value <= r.max + (next ? 0 : edge)) return { lo: i, hi: i };
+      }
+      return { lo: table.length - 1, hi: table.length - 1 };
+    };
+
+    const showResult = ({ label, size, note, highlight }) => {
+      if (!resultBox) return;
+      resultLabel.textContent = label;
+      resultSize.textContent = size || '';
+      resultNote.innerHTML = note;
+      // Restart the soft entrance animation on every new result.
+      resultBox.hidden = true;
+      void resultBox.offsetWidth;
+      resultBox.hidden = false;
+      selectRows(highlight || []);
+    };
+
+    const findSize = () => {
+      const table = getRanges(activeUnit);
+      const entered = finderInputs
+        .map((input) => ({ measure: input.getAttribute('data-zs-sg-input'), value: parseFloat(input.value) }))
+        .filter((e) => Number.isFinite(e.value) && e.value > 0);
+
+      if (entered.length === 0) {
+        showResult({ label: 'Almost there', note: 'Enter at least one measurement to find your size.' });
+        return;
+      }
+
+      const [minOk, maxOk] = activeUnit === 'cm' ? [50, 200] : [20, 80];
+      if (entered.some((e) => e.value < minOk || e.value > maxOk)) {
+        const unitName = activeUnit === 'cm' ? 'centimeters' : 'inches';
+        showResult({ label: 'Check your numbers', note: `That doesn&rsquo;t look quite right. Make sure you&rsquo;re measuring in ${unitName}.` });
+        return;
+      }
+
+      const spots = entered.map((e) => ({ ...e, spot: locate(e.value, e.measure, table, activeUnit) }));
+      const sizes = table.map((t) => t.size);
+
+      if (spots.some((s) => s.spot?.above)) {
+        showResult({
+          label: 'Honest answer',
+          note: `Your measurements are above our current range (up to ${sizes[sizes.length - 1]}). We&rsquo;d rather tell you than sell you the wrong fit. <a href="${contactUrl}">Talk to us</a> &mdash; we&rsquo;ll be honest about what will and won&rsquo;t work for you.`,
+        });
+        return;
+      }
+
+      // A shapewear piece has to fit the fullest point, so the largest size needed wins.
+      const lo = Math.max(...spots.map((s) => s.spot.lo));
+      const hi = Math.max(...spots.map((s) => s.spot.hi));
+      const minLo = Math.min(...spots.map((s) => s.spot.lo));
+      const below = spots.some((s) => s.spot.below);
+      const basedOn = entered.length < MEASURES.length ? ` Based on your ${entered.map((e) => e.measure).join(' and ')}.` : '';
+
+      if (lo !== hi) {
+        showResult({
+          label: 'You’re between',
+          size: `${sizes[lo]} / ${sizes[hi]}`,
+          note: `Choose <strong>${sizes[lo]}</strong> for more sculpting, <strong>${sizes[hi]}</strong> for more comfort.${basedOn}`,
+          highlight: [sizes[lo], sizes[hi]],
+        });
+        return;
+      }
+
+      let note = `Your measurements fall within ${sizes[hi]}.${basedOn}`;
+      if (minLo < hi) {
+        note = `Your measurements span ${sizes[minLo]} to ${sizes[hi]}. We recommend ${sizes[hi]} so it fits comfortably at your fullest point.${basedOn}`;
+      } else if (below) {
+        note = `You&rsquo;re at the smaller end of ${sizes[hi]}, so it may feel a little less sculpting. <a href="${contactUrl}">Talk to us</a> if you&rsquo;d like advice.`;
+      }
+      showResult({ label: 'Your size', size: sizes[hi], note, highlight: [sizes[hi]] });
+    };
+
+    if (finder) {
+      finder.hidden = false;
+      finder.addEventListener('submit', (e) => {
+        e.preventDefault();
+        hasSearched = true;
+        finderInputs.forEach((input) => input.blur());
+        findSize();
+      });
+      // After the first search, the answer follows the numbers as they change.
+      finderInputs.forEach((input) => {
+        input.addEventListener('input', () => {
+          if (hasSearched) findSize();
+        });
+      });
+    }
 
     const applyUnit = (unit) => {
+      const previous = activeUnit;
       activeUnit = unit;
       measureCells.forEach((cell) => {
         const val = unit === 'cm' ? cell.getAttribute('data-cm') : cell.getAttribute('data-in');
@@ -220,6 +418,19 @@
         btn.classList.toggle('is-active', isActive);
         btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       });
+      unitLabels.forEach((label) => {
+        label.textContent = unit;
+      });
+      // Convert anything already typed so the visitor never has to re-enter it.
+      if (previous !== unit) {
+        finderInputs.forEach((input) => {
+          const v = parseFloat(input.value);
+          if (!Number.isFinite(v)) return;
+          const converted = unit === 'cm' ? v * 2.54 : v / 2.54;
+          input.value = String(Math.round(converted * 10) / 10);
+        });
+      }
+      if (hasSearched) findSize();
     };
 
     unitBtns.forEach((btn) => {
@@ -575,7 +786,7 @@
     display: flex;
     gap: 0;
     width: fit-content;
-    margin: 0 0 24px auto;
+    margin: 0 auto 24px;
     padding: 2px;
     border: 1px solid var(--sg-taupe);
     border-radius: 2px;
@@ -601,14 +812,225 @@
     color: var(--sg-noir);
   }
 
+  /* Size finder */
+  .zs-size-guide__finder {
+    max-width: 760px;
+    margin: 0 auto 32px;
+    padding: 28px 20px;
+    background-color: var(--sg-ivory);
+    border: 1px solid rgba(200, 169, 110, 0.35);
+    box-sizing: border-box;
+  }
+
+  .zs-size-guide__finder[hidden] {
+    display: none;
+  }
+
+  .zs-size-guide__finder-head {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .zs-size-guide__finder-head .zs-size-guide__eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .zs-size-guide__finder-sub {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--sg-deep);
+  }
+
+  .zs-size-guide__finder-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+  }
+
+  .zs-size-guide__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .zs-size-guide__field-label {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sg-taupe);
+  }
+
+  .zs-size-guide__field-control {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    border-bottom: 1px solid var(--sg-taupe);
+    transition: border-color 0.3s ease;
+  }
+
+  .zs-size-guide__field-control:focus-within {
+    border-bottom-color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__field-input {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 16px;
+    color: var(--sg-noir);
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .zs-size-guide__field-input::-webkit-outer-spin-button,
+  .zs-size-guide__field-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .zs-size-guide__field-input:focus {
+    outline: none;
+  }
+
+  .zs-size-guide__field-input::placeholder {
+    color: rgba(160, 112, 96, 0.5);
+  }
+
+  .zs-size-guide__field-unit {
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--sg-taupe);
+  }
+
+  .zs-size-guide__finder-btn {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    padding: 16px 24px;
+    border: none;
+    background-color: var(--sg-noir);
+    color: var(--sg-champagne);
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .zs-size-guide__finder-btn:hover,
+  .zs-size-guide__finder-btn:focus-visible {
+    background-color: var(--sg-champagne);
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__finder-btn:focus-visible {
+    outline: 2px solid var(--sg-champagne);
+    outline-offset: 3px;
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__finder {
+      padding: 36px 40px;
+    }
+
+    .zs-size-guide__finder-fields {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      gap: 24px;
+    }
+
+    .zs-size-guide__finder-btn {
+      grid-column: auto;
+      margin-top: 0;
+      padding-inline: 32px;
+    }
+  }
+
+  .zs-size-guide__result {
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(200, 169, 110, 0.35);
+    text-align: center;
+    animation: zs-sg-result-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .zs-size-guide__result[hidden] {
+    display: none;
+  }
+
+  @keyframes zs-sg-result-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 8px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .zs-size-guide__result-label {
+    margin: 0 0 4px;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--sg-champagne);
+  }
+
+  .zs-size-guide__result-size {
+    margin: 0;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 48px;
+    line-height: 1.1;
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__result-size:empty {
+    display: none;
+  }
+
+  .zs-size-guide__result-note {
+    max-width: 460px;
+    margin: 8px auto 0;
+    font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--sg-deep);
+  }
+
+  .zs-size-guide__result-note a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--sg-champagne);
+    text-underline-offset: 3px;
+  }
+
+  /* Size chart — fits the screen on every device (no sideways scroll), so the size column never disappears */
   .zs-size-guide__table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    max-width: 760px;
+    margin-inline: auto;
   }
 
   .zs-size-guide__table {
     width: 100%;
-    min-width: 520px;
+    table-layout: fixed;
     border-collapse: collapse;
     background-color: var(--sg-ivory);
     transition: opacity 0.3s ease;
@@ -619,22 +1041,36 @@
   }
 
   .zs-size-guide__table thead th {
-    padding: 16px;
+    padding: 14px 4px;
     text-align: center;
     font-family: Jost, var(--font-primary--family), system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--sg-champagne);
   }
 
+  .zs-size-guide__table thead th:first-child {
+    width: 22%;
+  }
+
   .zs-size-guide__table tbody th,
   .zs-size-guide__table tbody td {
-    padding: 18px;
+    padding: 16px 4px;
     text-align: center;
     border-bottom: 1px solid rgba(200, 169, 110, 0.2);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, background-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease;
+  }
+
+  .zs-size-guide__table tbody tr {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .zs-size-guide__table tbody tr:focus-visible {
+    outline: 2px solid var(--sg-champagne);
+    outline-offset: -2px;
   }
 
   .zs-size-guide__table tbody th {
@@ -643,6 +1079,55 @@
     font-size: 22px;
     letter-spacing: 0.05em;
     color: var(--sg-noir);
+  }
+
+  @media (hover: hover) {
+    .zs-size-guide__table tbody tr:hover th,
+    .zs-size-guide__table tbody tr:hover td {
+      background-color: rgba(240, 232, 223, 0.6);
+    }
+  }
+
+  .zs-size-guide__table tbody tr.is-selected th,
+  .zs-size-guide__table tbody tr.is-selected td {
+    background-color: var(--sg-linen);
+  }
+
+  .zs-size-guide__table tbody tr.is-selected th {
+    font-style: italic;
+    box-shadow: inset 3px 0 0 var(--sg-champagne);
+  }
+
+  .zs-size-guide__table tbody tr.is-selected td {
+    color: var(--sg-noir);
+  }
+
+  .zs-size-guide__table-note {
+    max-width: 760px;
+    margin: 14px auto 0;
+    text-align: center;
+    font-family: 'Cormorant Garamond', 'Times New Roman', Times, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--sg-taupe);
+  }
+
+  @media (min-width: 769px) {
+    .zs-size-guide__table thead th {
+      padding: 18px 12px;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+    }
+
+    .zs-size-guide__table tbody th,
+    .zs-size-guide__table tbody td {
+      padding: 20px 12px;
+    }
+
+    .zs-size-guide__table tbody th {
+      font-size: 24px;
+    }
   }
 
   .zs-size-guide__table tbody td {
