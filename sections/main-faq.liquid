@@ -57,6 +57,25 @@
           <div class="zs-faq__chips-progress" data-zs-faq-chips-progress aria-hidden="true" hidden>
             <span class="zs-faq__chips-progress-fill" data-zs-faq-chips-progress-fill></span>
           </div>
+          <script>
+            // Runs before first paint so the chips never show static first and then "blink" into the entrance.
+            // Mobile only, not for deep links (/pages/faq#<category>), not with reduced motion.
+            (() => {
+              const chips = document.currentScript.parentElement.querySelector('[data-zs-faq-chips]');
+              const progress = document.currentScript.parentElement.querySelector('[data-zs-faq-chips-progress]');
+              if (!chips || !progress || !window.matchMedia) return;
+              if (!window.matchMedia('(max-width: 768px)').matches) return;
+              if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+              let hash = '';
+              try {
+                hash = decodeURIComponent(window.location.hash.slice(1));
+              } catch (e) {}
+              if (hash && hash !== 'all' && chips.querySelector(`[data-zs-faq-category="${CSS.escape(hash)}"]`)) return;
+              chips.querySelectorAll('.zs-faq__chip').forEach((chip, i) => chip.style.setProperty('--zf-chip-i', String(i)));
+              chips.classList.add('is-entering');
+              progress.classList.add('is-entering');
+            })();
+          </script>
         </div>
       </div>
     </div>
@@ -883,31 +902,18 @@
       if (category) focusCategory(category);
     });
 
-    // One-time entrance on mobile: chips glide in from the right (hinting the row continues that way)
-    // and the progress line rides along. Skipped for deep links (the row already moves to the chosen
-    // chip), reduced motion, and desktop (no overflow there).
-    if (chipButtons && chipsProgress && !initialHashCategory && !prefersReducedMotion && chipsOverflow() && 'IntersectionObserver' in window) {
-      const chipEls = Array.from(chipButtons.querySelectorAll('.zs-faq__chip'));
-      chipEls.forEach((chip, i) => chip.style.setProperty('--zf-chip-i', String(i)));
-
+    // One-time entrance on mobile (chips glide in from the right, progress line rides along).
+    // The classes are added by the small inline script next to the chips, before first paint;
+    // here we only clean them up once the animation is over.
+    if (chipButtons?.classList.contains('is-entering') && chipsProgress) {
       const finishEntrance = () => {
         chipButtons.classList.remove('is-entering');
         chipsProgress.classList.remove('is-entering');
       };
-
-      const entranceIo = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          entranceIo.disconnect();
-          chipButtons.classList.add('is-entering');
-          chipsProgress.classList.add('is-entering');
-          chipsProgress.addEventListener('animationend', finishEntrance, { once: true });
-          // Safety net: never leave the entrance classes on (e.g. animation interrupted by a hidden tab).
-          window.setTimeout(finishEntrance, 2200);
-        },
-        { threshold: 0.5 }
-      );
-      entranceIo.observe(chipButtons);
+      // The progress line finishes last (160ms delay + 1300ms), so clean up when it ends.
+      chipsProgress.addEventListener('animationend', finishEntrance, { once: true });
+      // Safety net: never leave the entrance classes on (e.g. animation paused in a background tab).
+      window.setTimeout(finishEntrance, 2500);
     }
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
