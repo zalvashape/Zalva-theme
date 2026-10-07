@@ -125,7 +125,7 @@ Rules:
 ### Pages
 - **Search results** (`main-search`): persistent search bar, product grid, sort, empty state.
 - **Size Guide** (`main-size-guide`): how to measure, chart XS–XXL with inches/cm toggle, between sizes, promise.
-- **FAQ** (`main-faq`): 18 questions, 6 category chips (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
+- **FAQ** (`main-faq`): 18 questions, 6 category chips (deep link: `/pages/faq#<category>` pre-selects a chip, e.g. `#shipping-returns`) (fade out after 60% of the list and while searching; horizontal scroll on mobile), smart multi-word search with `data-faq-keywords`, one-open accordion, 3 contextual CTAs.
 - **Contact** (`main-contact`): 3 cards (email copy-to-clipboard, Instagram, form), FAQ strip, Shopify contact form (subjects: Order Issues, Sizing Help, Returns & Exchanges, Other), smooth scroll to form.
 - **404** (`main-404`): Linen, giant "404", "Lost in transition."
 - **Product page** (`main-product`): architecture built with 8 zones (hero + gallery, The Details, Crafted For, Reviews/Judge.me, Find Your Fit, Pairs Well With, Multi-Outfit placeholder (hidden), Product FAQ). Desktop gallery shows ONE image at a time, thumbnails swap it, NOT sticky. Mobile: carousel with dots.
@@ -177,10 +177,10 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 ## 9. Backlog (update as items are done)
 
 ### Current priorities (Oct 2026 audit — do in order; no big new features until 1–5 are done)
-1. [ ] Fix broken links: ~~create Bodysuits collection~~ ✅, ~~remove Waist Trainers/Fajas from menu, search and homepage~~ ✅, fix "Shipping & Returns" (`/pages/shipping` is 404), fix social links pointing to `#` (footer + Cabinet menu)
+1. [ ] Fix broken links: ~~create Bodysuits collection~~ ✅, ~~remove Waist Trainers/Fajas from menu, search and homepage~~ ✅, ~~fix "Shipping & Returns"~~ ✅ (temporary: footer → `/pages/faq#shipping-returns`, the FAQ opens on that category; switch to the Shopify policy pages in priority #4), fix social links pointing to `#` (footer + Cabinet menu)
 2. [ ] Hide invented testimonials (`real-women`)
 3. [ ] Connect the footer newsletter to Klaviyo (today the form shows "Thanks!" but discards the email)
-4. [ ] Publish the 3 legal policies (returns, shipping, terms) and align every promise with them (replace "Free 30-day returns" sitewide)
+4. [ ] Publish the 3 legal policies (returns, shipping, terms) and align every promise with them (replace "Free 30-day returns" sitewide, including FAQ answers). Status Oct 2026: only Privacy policy exists (Shopify automated). Return & refund, Terms of service, Shipping, Contact information, Legal notice and return rules are all empty. Claude drafts in English → Denny pastes in Admin → Settings → Policies → point footer "Shipping & Returns" to `/policies/shipping-policy` and `/policies/refund-policy`.
 5. [ ] Clean the product page: broken encoding + BOM in `main-product.liquid`/`header.liquid`, Judge.me placeholder text, hide test product "Bodysuit model 02 (rose)", "2XL" → "XXL"
 6. [ ] Replace stock (Unsplash) photos; remove "Sourced in Italy" (texture-detail #1), "Made in Italy" (featured-signature), "Nothing about this is mass-produced." (texture-detail)
 7. [ ] Sticky "Add to bag" on mobile + shopping CTA visible in the hero

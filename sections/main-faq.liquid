@@ -758,6 +758,13 @@
 
     searchInput?.addEventListener('input', applyFilters);
 
+    // Deep link: /pages/faq#shipping-returns opens with that category pre-selected.
+    const hashCategory = decodeURIComponent(window.location.hash.slice(1));
+    if (hashCategory && chipButtons?.querySelector(`[data-zs-faq-category="${CSS.escape(hashCategory)}"]`)) {
+      activeCategory = hashCategory;
+      setActiveChip(hashCategory);
+    }
+
     applyFilters();
 
     const revealZones = root.querySelectorAll('[data-zs-faq-reveal]');
