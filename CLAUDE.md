@@ -111,7 +111,7 @@ Rules:
 4. `texture-detail` — 4-image craftsmanship grid ⚠️ copy corrections pending (see §9)
 5. `before-after-slider` — "THE TRANSFORMATION", drag-handle only, auto-demo once, labels "without"/"with" (Cormorant italic, Ivory). Uses AI test images. Denny keeps it for now; pending: small "Illustrative image" note (see playbook §6).
 6. `category-grid` — triptych. **Hidden** (`"disabled": true` in `index.json`) until the real collections are defined; its schema defaults still point to Waist Trainers / Fajas — update them in the collections session.
-7. `real-women` — rotating testimonials, no faces ⚠️ testimonials are invented → decided: hide the section (don't delete) until real reviews exist
+7. `real-women` — rotating testimonials, no faces. Testimonials are placeholders (invented). **Decision 2026-10-15 (replaces "hide it"):** Denny keeps them visible for design purposes while the store has no traffic or ads, and wants the section improved; they must be replaced with real reviews (or hidden) before launch / any paid traffic.
 8. `size-inclusivity` — Noir, "XS to XXL. No exceptions."
 9. `editorial-cta` — "It starts with how you feel underneath."
 10. `brand-marquee` — "SCULPTED · SUPPORTED · SEEN"
@@ -185,8 +185,8 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 
 ### Current priorities (Oct 2026 audit — do in order; no big new features until 1–5 are done)
 1. [x] Fix broken links ✅ Oct 2026: Bodysuits collection created; Waist Trainers/Fajas removed from menu, search and homepage; footer "Shipping & Returns" → `/pages/faq#shipping-returns` (temporary, switch to policy pages in #4); social icons now come from Theme settings → Social media (Instagram set; TikTok exists but Denny must paste its link there; no Pinterest account yet)
-2. [ ] Hide invented testimonials (`real-women`)
-3. [ ] Connect the footer newsletter to Klaviyo (today the form shows "Thanks!" but discards the email)
+2. [~] Testimonials (`real-women`): changed 2026-10-15 — keep placeholders for now and **improve the section**; replace with real reviews before launch (see "Before launch")
+3. [ ] Klaviyo → **dedicated full session** (Denny's request 2026-10-15): wire the footer newsletter (today it shows "Thanks!" but discards the email) + the complete standard starter setup and strategy (lists, signup forms, welcome series, abandoned cart/checkout, browse abandonment, post-purchase, etc.)
 4. [ ] Publish the 3 legal policies (returns, shipping, terms) and align every promise with them (replace "Free 30-day returns" sitewide, including FAQ answers). Status Oct 2026: only Privacy policy exists (Shopify automated). Return & refund, Terms of service, Shipping, Contact information, Legal notice and return rules are all empty. Claude drafts in English → Denny pastes in Admin → Settings → Policies → point footer "Shipping & Returns" to `/policies/shipping-policy` and `/policies/refund-policy`.
 5. [ ] Clean the product page: broken encoding + BOM in `main-product.liquid`/`header.liquid`, Judge.me placeholder text, hide test product "Bodysuit model 02 (rose)", "2XL" → "XXL"
 6. [ ] Replace stock (Unsplash) photos; remove "Sourced in Italy" (texture-detail #1), "Made in Italy" (featured-signature), "Nothing about this is mass-produced." (texture-detail)
@@ -199,6 +199,7 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 - [ ] Official size measurements (bust/waist/hips per size, inches + cm) — current Size Guide numbers are NOT confirmed (the "Find my size" finder uses them too; update only the table cells in `main-size-guide.liquid`)
 - [ ] Final returns/exchanges policy → then write the 3 policies and align all promises (priority #4)
 - [ ] Whether all bodysuits share one size chart or each model has its own
+- [ ] Replace placeholder testimonials (`real-women`) with real reviews, or hide the section — required before launch or any ads (FTC fake-review rule)
 
 ### To review later
 - [ ] Later: reuse the size finder on the product page next to the size selector
