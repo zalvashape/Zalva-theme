@@ -195,6 +195,16 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 9. [ ] Before/after "Illustrative image" note; price/SALE badge (pending Denny's pricing table)
 10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
 
+### Design / content / structure review (2026-10-15, Claude) — pending Denny's prioritization
+- Testimonials (`real-women`): editorial redesign (bigger Cormorant quote, Champagne progress line instead of dots like the FAQ, swipe, pause on touch), "Contour Bodysuit · Size M" context line, more specific placeholder quotes. No stars/ratings until real.
+- Product page: description cut mid-word ("smo..."); copy says "light-to-medium" but indicator says Medium; empty product FAQ block (title, no questions) → fill with FAQ deep links or hide; "The details" 4 stacked cards → 2×2 grid on mobile; accordion duplicates "The details"; "Crafted for real bodies" repeats a gallery image; "Find your fit" → embed/link "Find my size".
+- Mobile header: "ZALVA SHAPE" wordmark nearly touches the search icon at 375px.
+- About page: weakest page — Ivory band between header and hero (missing pull-up), gray hero, 3 generic sentences, stock businesswoman photo, generic pillars. Full rewrite after the story interview; interim layout fix possible.
+- Contact: verify hello@zalvashape.com actually receives mail (forwarding still in backlog); confirm "respond within 24 hours" is realistic; 3 stacked cards are long on mobile ("Go to form" card redundant).
+- Homepage structure: 10 sections, no price/add-to-bag until the end; featured-signature should become a real product moment (real image, price, colors, CTA); before/after too tall on desktop (~1180px); size-inclusivity could link to "Find my size"; claims to verify: "tested for the full spectrum of women", "Hand-finished", "Tested on real bodies".
+- Cart drawer: empty bag still shows "$75.00 away from free shipping".
+- Voice: mix of strong lines and generic ones ("Premium Quality", "Designed for You", "Shop Now") → brand-voice pass around "held, not squeezed".
+
 ### Before launch (Denny will provide — then update everything that depends on it)
 - [ ] Official size measurements (bust/waist/hips per size, inches + cm) — current Size Guide numbers are NOT confirmed (the "Find my size" finder uses them too; update only the table cells in `main-size-guide.liquid`)
 - [ ] Final returns/exchanges policy → then write the 3 policies and align all promises (priority #4)
