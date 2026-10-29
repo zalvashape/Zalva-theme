@@ -54,41 +54,66 @@
         "rw_maya": {
           "type": "testimonial",
           "settings": {
-            "quote": "I forgot I was wearing it. I just felt like myself, but better.",
+            "quote": "I wear it on regular days now. A fitted tee, my favorite jeans, school run, groceries. I just feel put together.",
             "author_name": "Maya R.",
-            "author_city": "Houston"
+            "author_city": "Houston",
+            "usual_size": "M",
+            "size_worn": "M",
+            "fit": "True to size",
+            "product_name": "Contour Bodysuit",
+            "color": "Beige"
           }
         },
         "rw_andrea": {
           "type": "testimonial",
           "settings": {
-            "quote": "It's the first thing that makes me feel held, not squeezed.",
+            "quote": "I'm usually between M and L. I went with M for more shaping and it was the right call. I sit through a full workday in it.",
             "author_name": "Andrea P.",
-            "author_city": "Miami"
+            "author_city": "Miami",
+            "usual_size": "M / L",
+            "size_worn": "M",
+            "fit": "Snug, as I wanted",
+            "product_name": "Contour Bodysuit",
+            "color": "Black"
           }
         },
         "rw_jessica": {
           "type": "testimonial",
           "settings": {
-            "quote": "I bought it for an event. I wear it every week now.",
+            "quote": "Bought it for a wedding. Now it's what I reach for under jeans and a sweater, three or four days a week.",
             "author_name": "Jessica T.",
-            "author_city": "Austin"
+            "author_city": "Austin",
+            "usual_size": "S",
+            "size_worn": "S",
+            "fit": "True to size",
+            "product_name": "Contour Bodysuit",
+            "color": "Beige"
           }
         },
         "rw_sofia": {
           "type": "testimonial",
           "settings": {
-            "quote": "I didn't know shapewear could feel like this.",
+            "quote": "The straps don't dig and the leg band stays put, even on long days running errands. That's all I ever wanted from shapewear.",
             "author_name": "Sofia L.",
-            "author_city": "Los Angeles"
+            "author_city": "Los Angeles",
+            "usual_size": "XL",
+            "size_worn": "XL",
+            "fit": "True to size",
+            "product_name": "Contour Bodysuit",
+            "color": "Brown"
           }
         },
         "rw_elena": {
           "type": "testimonial",
           "settings": {
-            "quote": "It's the underwear I never knew I needed.",
+            "quote": "After two kids I stopped buying things that promised to fix me. This doesn't. It just makes my everyday clothes sit the way I like.",
             "author_name": "Elena M.",
-            "author_city": "New York"
+            "author_city": "New York",
+            "usual_size": "L",
+            "size_worn": "L",
+            "fit": "Comfortable",
+            "product_name": "Contour Bodysuit",
+            "color": "Bronze"
           }
         }
       },

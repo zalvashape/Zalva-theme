@@ -111,7 +111,7 @@ Rules:
 4. `texture-detail` — 4-image craftsmanship grid ⚠️ copy corrections pending (see §9)
 5. `before-after-slider` — "THE TRANSFORMATION", drag-handle only, auto-demo once, labels "without"/"with" (Cormorant italic, Ivory). Uses AI test images. Denny keeps it for now; pending: small "Illustrative image" note (see playbook §6).
 6. `category-grid` — triptych. **Hidden** (`"disabled": true` in `index.json`) until the real collections are defined; its schema defaults still point to Waist Trainers / Fajas — update them in the collections session.
-7. `real-women` — rotating testimonials, no faces. Testimonials are placeholders (invented). **Decision 2026-10-15 (replaces "hide it"):** Denny keeps them visible for design purposes while the store has no traffic or ads, and wants the section improved; they must be replaced with real reviews (or hidden) before launch / any paid traffic.
+7. `real-women` — testimonials with fit notes (Option C, chosen by Denny 2026-10-29): one large Cormorant quote at a time + "Usually wears / Wore / Fit" row + author + "Contour Bodysuit · Color"; stories-style Champagne segments (7s fill), swipe, press-and-hold/hover to pause, pauses off-screen; outgoing quote clears before the next enters. Block fields: quote, author_name, author_city, usual_size, size_worn, fit, product_name, color (empty fit fields hide themselves). Copy leans on everyday wear (jeans, workday, errands), not only events — Denny's request. Testimonials are placeholders (invented). **Decision 2026-10-15 (replaces "hide it"):** Denny keeps them visible for design purposes while the store has no traffic or ads, and wants the section improved; they must be replaced with real reviews (or hidden) before launch / any paid traffic.
 8. `size-inclusivity` — Noir, "XS to XXL. No exceptions."
 9. `editorial-cta` — "It starts with how you feel underneath."
 10. `brand-marquee` — "SCULPTED · SUPPORTED · SEEN"
@@ -196,7 +196,7 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 10. [ ] Favicon, social share image, gradual technical cleanup (centralize colors; split the header carefully and last)
 
 ### Design / content / structure review (2026-10-15, Claude) — pending Denny's prioritization
-- Testimonials (`real-women`): editorial redesign (bigger Cormorant quote, Champagne progress line instead of dots like the FAQ, swipe, pause on touch), "Contour Bodysuit · Size M" context line, more specific placeholder quotes. No stars/ratings until real.
+- ~~Testimonials redesign~~ ✅ built 2026-10-29 (Option C) — waiting for Denny's review on the dev preview. No stars/ratings until reviews are real. When Judge.me reviews arrive, ask for usual size / size worn / fit in the review form so this layout keeps working.
 - Product page: description cut mid-word ("smo..."); copy says "light-to-medium" but indicator says Medium; empty product FAQ block (title, no questions) → fill with FAQ deep links or hide; "The details" 4 stacked cards → 2×2 grid on mobile; accordion duplicates "The details"; "Crafted for real bodies" repeats a gallery image; "Find your fit" → embed/link "Find my size".
 - Mobile header: "ZALVA SHAPE" wordmark nearly touches the search icon at 375px.
 - About page: weakest page — Ivory band between header and hero (missing pull-up), gray hero, 3 generic sentences, stock businesswoman photo, generic pillars. Full rewrite after the story interview; interim layout fix possible.
