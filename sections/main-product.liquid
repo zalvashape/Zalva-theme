@@ -1,4 +1,4 @@
-﻿{% liquid
+{% liquid
   assign current_variant = product.selected_or_first_available_variant
   assign featured_media = current_variant.featured_media | default: product.featured_media
   assign product_form_id = 'ProductForm-' | append: section.id
@@ -14,17 +14,26 @@
 
   assign short_description = product.metafields.custom.short_description
   if short_description == blank and product.description != blank
-    assign short_description = product.description | strip_html | truncate: 120
+    # Fallback when the short_description metafield is empty: cut on a word boundary, never mid-word.
+    assign short_description = product.description | strip_html | strip | truncatewords: 22, '…'
   endif
 
-  assign compression_tip = section.settings.compression_tooltip_medium | default: 'Definition without restriction â€” held, not squeezed.'
+  assign compression_tip = section.settings.compression_tooltip_medium | default: 'Definition without restriction — held, not squeezed.'
   if compression_level contains 'light'
     assign compression_tip = section.settings.compression_tooltip_light | default: 'Sculpting without restriction. Perfect for everyday wear.'
   elsif compression_level contains 'strong'
     assign compression_tip = section.settings.compression_tooltip_strong | default: 'Maximum sculpting for fitted silhouettes and special occasions.'
   endif
 
-  assign crafted_image = product.images[1] | default: product.featured_image
+  # "Crafted" image: a chosen editorial/texture shot; otherwise the last product image (least likely to repeat the gallery opener).
+  assign crafted_image = section.settings.crafted_image | default: product.images.last | default: product.featured_image
+
+  assign has_review_app = false
+  for block in section.blocks
+    if block.type == '@app'
+      assign has_review_app = true
+    endif
+  endfor
 
   assign details_metafield = product.metafields.custom.details
   assign fabric_metafield = product.metafields.custom.fabric_care
@@ -48,7 +57,7 @@
   data-section-id="{{ section.id }}"
   {{ section.shopify_attributes }}
 >
-  {% comment %} Zone 1 â€” Hero (gallery + buy box) {% endcomment %}
+  {% comment %} Zone 1 — Hero (gallery + buy box) {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--hero"
     data-zs-page-pull-up
@@ -390,7 +399,7 @@
             </span>
             <span>{{ section.settings.trust_shipping | default: 'Free shipping over $75' }}</span>
           </li>
-          <li class="zs-product__trust-sep" aria-hidden="true">Â·</li>
+          <li class="zs-product__trust-sep" aria-hidden="true">·</li>
           <li class="zs-product__trust-item">
             <span class="zs-product__trust-icon" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" focusable="false">
@@ -399,7 +408,7 @@
             </span>
             <span>{{ section.settings.trust_returns | default: '30-day returns' }}</span>
           </li>
-          <li class="zs-product__trust-sep" aria-hidden="true">Â·</li>
+          <li class="zs-product__trust-sep" aria-hidden="true">·</li>
           <li class="zs-product__trust-item">
             <span class="zs-product__trust-icon" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" focusable="false">
@@ -480,7 +489,7 @@
                 {% elsif section.settings.shipping_fallback != blank %}
                   {{ section.settings.shipping_fallback }}
                 {% else %}
-                  <p>{{ section.settings.shipping_empty | default: 'Orders ship within 1â€“2 business days. Free shipping on orders over $75.' }}</p>
+                  <p>{{ section.settings.shipping_empty | default: 'Orders ship within 1–2 business days. Free shipping on orders over $75.' }}</p>
                 {% endif %}
               </div>
             </div>
@@ -490,7 +499,7 @@
     </div>
   </section>
 
-  {% comment %} Zone 2 â€” Details grid {% endcomment %}
+  {% comment %} Zone 2 — Details grid {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--details"
     data-zs-product-reveal
@@ -526,7 +535,7 @@
     </div>
   </section>
 
-  {% comment %} Zone 3 â€” Crafted for {% endcomment %}
+  {% comment %} Zone 3 — Crafted for {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--crafted"
     data-zs-product-reveal
@@ -557,38 +566,41 @@
           {{ section.settings.crafted_title | default: 'Worn for every chapter.' }}
         </h2>
         <div class="zs-product__crafted-body rte">
-          {{ section.settings.crafted_body | default: '<p>Every seam is placed with intention. Every fabric chosen for breathability and hold. This is shapewear that moves with you â€” not against you.</p>' }}
+          {{ section.settings.crafted_body | default: '<p>Every seam is placed with intention. Every fabric chosen for breathability and hold. This is shapewear that moves with you — not against you.</p>' }}
         </div>
       </div>
     </div>
   </section>
 
-  {% comment %} Zone 4 â€” Reviews {% endcomment %}
-  <section
-    class="zs-product__zone zs-product__zone--reviews"
-    data-zs-product-reveal
-    data-header-bg="#F0E8DF"
-    data-header-text="#1A1A1A"
-    aria-labelledby="zs-product-reviews-heading-{{ section.id }}"
-  >
-    <div class="zs-product__zone-inner zs-product__zone-inner--narrow">
-      {% if section.settings.reviews_eyebrow != blank %}
-        <p class="zs-product__zone-eyebrow">{{ section.settings.reviews_eyebrow }}</p>
-      {% endif %}
-      <h2 id="zs-product-reviews-heading-{{ section.id }}" class="zs-product__zone-title">
-        {{ section.settings.reviews_title | default: 'Worn and loved.' }}
-      </h2>
-      {% comment %}
-        Optional Judge.me widget (enable when snippet exists):
-        {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
-      {% endcomment %}
-      <div id="judgeme_product_reviews" class="zs-product__judgeme-placeholder">
-        <p class="zs-product__judgeme-note">{{ section.settings.reviews_placeholder | default: 'Reviews powered by Judge.me will appear here.' }}</p>
+  {% comment %}
+    Zone 4 — Reviews. Only renders when a review app block (Judge.me "Review Widget") is added to this
+    section in the theme editor, so the page never shows a placeholder box or fake reviews.
+  {% endcomment %}
+  {% if has_review_app %}
+    <section
+      class="zs-product__zone zs-product__zone--reviews"
+      data-zs-product-reveal
+      data-header-bg="#F0E8DF"
+      data-header-text="#1A1A1A"
+      aria-labelledby="zs-product-reviews-heading-{{ section.id }}"
+    >
+      <div class="zs-product__zone-inner zs-product__zone-inner--narrow">
+        {% if section.settings.reviews_eyebrow != blank %}
+          <p class="zs-product__zone-eyebrow">{{ section.settings.reviews_eyebrow }}</p>
+        {% endif %}
+        <h2 id="zs-product-reviews-heading-{{ section.id }}" class="zs-product__zone-title">
+          {{ section.settings.reviews_title | default: 'Worn and loved.' }}
+        </h2>
+        {% for block in section.blocks %}
+          {% if block.type == '@app' %}
+            {% render block %}
+          {% endif %}
+        {% endfor %}
       </div>
-    </div>
-  </section>
+    </section>
+  {% endif %}
 
-  {% comment %} Zone 5 â€” Find your fit {% endcomment %}
+  {% comment %} Zone 5 — Find your fit {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--fit"
     data-zs-product-reveal
@@ -601,12 +613,12 @@
       <h2 id="zs-product-fit-heading-{{ section.id }}" class="zs-product__zone-title zs-product__zone-title--center">
         {{ section.settings.fit_title | default: 'Sized for you.' }}
       </h2>
-      <p class="zs-product__fit-copy">{{ section.settings.fit_copy | default: 'Use our size guide to match your measurements with the perfect size.' }}</p>
-      <a class="zs-product__fit-cta" href="{{ size_guide_url }}">{{ section.settings.fit_cta | default: 'VIEW FULL SIZE GUIDE →' }}</a>
+      <p class="zs-product__fit-copy">{{ section.settings.fit_copy | default: 'Enter your bust, waist and hips and we’ll match you to your size in seconds.' }}</p>
+      <a class="zs-product__fit-cta" href="{{ size_guide_url }}#find-my-size">{{ section.settings.fit_cta | default: 'FIND MY SIZE →' }}</a>
     </div>
   </section>
 
-  {% comment %} Zone 6 â€” Pairs well with {% endcomment %}
+  {% comment %} Zone 6 — Pairs well with {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--rec is-hidden"
     data-zs-product-zone-rec
@@ -627,12 +639,12 @@
         data-zs-product-recommendations
         data-url="{{ routes.product_recommendations_url }}?section_id=zs-product-recommendations&product_id={{ product.id }}&limit=4"
       >
-        <p class="zs-product__rec-loading" aria-live="polite">{{ section.settings.rec_loading | default: 'Loading recommendationsâ€¦' }}</p>
+        <p class="zs-product__rec-loading" aria-live="polite">{{ section.settings.rec_loading | default: 'Loading recommendations…' }}</p>
       </product-recommendations>
     </div>
   </section>
 
-  {% comment %} Zone 7 â€” Multi-outfit {% endcomment %}
+  {% comment %} Zone 7 — Multi-outfit {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--outfit{% unless section.settings.show_multi_outfit %} is-hidden{% endunless %}"
     data-zs-product-reveal
@@ -650,7 +662,7 @@
     </div>
   </section>
 
-  {% comment %} Zone 8 â€” FAQ {% endcomment %}
+  {% comment %} Zone 8 — FAQ {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--faq"
     data-zs-product-reveal
@@ -1701,7 +1713,7 @@
     margin: 0 0 0.75em;
   }
 
-  /* Zone 2 â€” Details */
+  /* Zone 2 — Details */
   .zs-product__zone--details {
     background: var(--zs-linen);
     padding-block: 60px;
@@ -1760,15 +1772,16 @@
     color: var(--zs-ivory);
   }
 
+  /* 2×2 on phones: four short facts shouldn't take a whole screen of scrolling */
   .zs-product__spec-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   @media (min-width: 600px) {
     .zs-product__spec-grid {
-      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
   }
 
@@ -1780,9 +1793,16 @@
   }
 
   .zs-product__spec-card {
+    min-width: 0;
     background: var(--zs-ivory);
-    padding: 24px 20px;
+    padding: 18px 14px;
     border: 1px solid rgba(26, 26, 26, 0.06);
+  }
+
+  @media (min-width: 600px) {
+    .zs-product__spec-card {
+      padding: 24px 20px;
+    }
   }
 
   .zs-product__spec-label {
@@ -1803,7 +1823,7 @@
     margin: 0;
   }
 
-  /* Zone 3 â€” Crafted */
+  /* Zone 3 — Crafted */
   .zs-product__zone--crafted {
     background: var(--zs-ivory);
     padding-block: 60px;
@@ -1851,7 +1871,7 @@
     line-height: 1.8;
   }
 
-  /* Zone 4 â€” Reviews */
+  /* Zone 4 — Reviews */
   .zs-product__zone--reviews {
     background: var(--zs-linen);
     padding-block: 60px;
@@ -1879,7 +1899,7 @@
     margin: 0;
   }
 
-  /* Zone 5 â€” Fit */
+  /* Zone 5 — Fit */
   .zs-product__zone--fit {
     background: var(--zs-ivory);
     padding-block: 60px;
@@ -1925,7 +1945,7 @@
     color: #fff;
   }
 
-  /* Zone 6 â€” Recommendations */
+  /* Zone 6 — Recommendations */
   .zs-product__zone--rec {
     background: var(--zs-ivory);
     padding-block: 60px;
@@ -2009,7 +2029,7 @@
     margin: 0;
   }
 
-  /* Zone 7 â€” Multi-outfit */
+  /* Zone 7 — Multi-outfit */
   .zs-product__zone--outfit {
     background: var(--zs-noir);
     color: var(--zs-ivory);
@@ -2031,7 +2051,7 @@
     margin: 0;
   }
 
-  /* Zone 8 â€” FAQ */
+  /* Zone 8 — FAQ */
   .zs-product__zone--faq {
     background: var(--zs-ivory);
     padding-block: 60px;
@@ -2138,19 +2158,19 @@
     {
       "type": "text",
       "id": "trust_shipping",
-      "label": "Trust â€” shipping",
+      "label": "Trust — shipping",
       "default": "Free Shipping over $75"
     },
     {
       "type": "text",
       "id": "trust_returns",
-      "label": "Trust â€” returns",
+      "label": "Trust — returns",
       "default": "Free Returns"
     },
     {
       "type": "text",
       "id": "trust_checkout",
-      "label": "Trust â€” checkout",
+      "label": "Trust — checkout",
       "default": "Secure Checkout"
     },
     {
@@ -2184,11 +2204,11 @@
       "type": "text",
       "id": "shipping_empty",
       "label": "Shipping empty message",
-      "default": "Orders ship within 1â€“2 business days. Free shipping on orders over $75."
+      "default": "Orders ship within 1–2 business days. Free shipping on orders over $75."
     },
     {
       "type": "header",
-      "content": "Zone 2 â€” Details"
+      "content": "Zone 2 — Details"
     },
     {
       "type": "text",
@@ -2252,7 +2272,13 @@
     },
     {
       "type": "header",
-      "content": "Zone 3 â€” Crafted for"
+      "content": "Zone 3 — Crafted for"
+    },
+    {
+      "type": "image_picker",
+      "id": "crafted_image",
+      "label": "Image",
+      "info": "Best: a fabric/texture or lifestyle shot not used in the gallery. Empty = last product image."
     },
     {
       "type": "text",
@@ -2270,11 +2296,11 @@
       "type": "richtext",
       "id": "crafted_body",
       "label": "Body",
-      "default": "<p>Every seam is placed with intention. Every fabric chosen for breathability and hold. This is shapewear that moves with you â€” not against you.</p>"
+      "default": "<p>Every seam is placed with intention. Every fabric chosen for breathability and hold. This is shapewear that moves with you — not against you.</p>"
     },
     {
       "type": "header",
-      "content": "Zone 4 â€” Reviews"
+      "content": "Zone 4 — Reviews"
     },
     {
       "type": "text",
@@ -2291,12 +2317,13 @@
     {
       "type": "text",
       "id": "reviews_placeholder",
-      "label": "Placeholder copy",
+      "label": "Placeholder copy (unused)",
+      "info": "The reviews area only appears when the Judge.me Review Widget app block is added to this section.",
       "default": "Reviews powered by Judge.me will appear here."
     },
     {
       "type": "header",
-      "content": "Zone 5 â€” Find your fit"
+      "content": "Zone 5 — Find your fit"
     },
     {
       "type": "text",
@@ -2314,17 +2341,18 @@
       "type": "textarea",
       "id": "fit_copy",
       "label": "Copy",
-      "default": "Use our size guide to match your measurements with the perfect size."
+      "default": "Enter your bust, waist and hips and we’ll match you to your size in seconds."
     },
     {
       "type": "text",
       "id": "fit_cta",
       "label": "CTA label",
-      "default": "View size guide"
+      "info": "Links to the Find my size tool on the Size Guide page.",
+      "default": "Find my size"
     },
     {
       "type": "header",
-      "content": "Zone 6 â€” Recommendations"
+      "content": "Zone 6 — Recommendations"
     },
     {
       "type": "text",
@@ -2342,11 +2370,11 @@
       "type": "text",
       "id": "rec_loading",
       "label": "Loading message",
-      "default": "Loading recommendationsâ€¦"
+      "default": "Loading recommendations…"
     },
     {
       "type": "header",
-      "content": "Zone 7 â€” Multi-outfit"
+      "content": "Zone 7 — Multi-outfit"
     },
     {
       "type": "checkbox",
@@ -2374,7 +2402,7 @@
     },
     {
       "type": "header",
-      "content": "Zone 8 â€” FAQ"
+      "content": "Zone 8 — FAQ"
     },
     {
       "type": "text",
@@ -2390,6 +2418,9 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@app"
+    },
     {
       "type": "faq",
       "name": "FAQ item",
@@ -2418,7 +2449,7 @@
           "type": "faq",
           "settings": {
             "question": "How does the compression feel?",
-            "answer": "<p>Our medium compression provides definition without restriction — held, not squeezed. Many customers tell us they forget they're wearing it after just a few minutes.</p>"
+            "answer": "<p>Medium compression: you feel held through the waist and hips without feeling squeezed.</p>"
           }
         },
         {
@@ -2439,14 +2470,7 @@
           "type": "faq",
           "settings": {
             "question": "How do I care for it?",
-            "answer": "<p>Hand-wash in cold water with mild detergent. Lay flat to dry. Avoid bleach and the dryer to preserve compression and seamless construction.</p>"
-          }
-        },
-        {
-          "type": "faq",
-          "settings": {
-            "question": "What if it doesn't fit?",
-            "answer": "<p>We offer free 30-day returns and exchanges. If it's not perfect, we'll make it right.</p>"
+            "answer": "<p>Follow the care label on your piece.</p>"
           }
         }
       ]

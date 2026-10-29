@@ -11,6 +11,58 @@
   "sections": {
     "main": {
       "type": "main-product",
+      "blocks": {
+        "faq_size": {
+          "type": "faq",
+          "settings": {
+            "question": "Which size should I choose?",
+            "answer": "<p>Enter your bust, waist and hips in <a href=\"/pages/size-guide#find-my-size\" title=\"Find my size\">Find my size</a> and we’ll match you to your size. Between two sizes? Choose the smaller one for more sculpting, the larger one for more comfort.</p>"
+          }
+        },
+        "faq_compression": {
+          "type": "faq",
+          "settings": {
+            "question": "How does the compression feel?",
+            "answer": "<p>Medium compression: you feel held through the waist and hips without feeling squeezed. <a href=\"/pages/faq#compression\" title=\"Compression FAQ\">More about compression</a>.</p>"
+          }
+        },
+        "faq_invisible": {
+          "type": "faq",
+          "settings": {
+            "question": "Will it show under fitted clothes?",
+            "answer": "<p>Its seamless construction is made to sit smooth under fitted pieces, from jeans and a tee to a slip dress.</p>"
+          }
+        },
+        "faq_everyday": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I wear it every day?",
+            "answer": "<p>Yes. It’s made for ordinary days as much as special ones: a full workday, errands, dinner out.</p>"
+          }
+        },
+        "faq_care": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I care for it?",
+            "answer": "<p>Follow the care label on your piece. Tips for keeping its shape and hold are in our <a href=\"/pages/faq#care-materials\" title=\"Care FAQ\">care guide</a>.</p>"
+          }
+        },
+        "faq_shipping": {
+          "type": "faq",
+          "settings": {
+            "question": "How fast is shipping?",
+            "answer": "<p>Standard shipping (3–5 business days) is $8 and Express (1–2 business days) is $15, free on orders over $75 within the US. For exchanges and returns, see <a href=\"/pages/faq#shipping-returns\" title=\"Shipping and returns FAQ\">Shipping &amp; Returns</a>.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_size",
+        "faq_compression",
+        "faq_invisible",
+        "faq_everyday",
+        "faq_care",
+        "faq_shipping"
+      ],
       "settings": {}
     }
   },

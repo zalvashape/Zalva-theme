@@ -78,7 +78,7 @@
         Size finder: reads the ranges straight from the table below (single source of truth).
         Hidden without JS (the table alone still works).
       {% endcomment %}
-      <form class="zs-size-guide__finder zs-size-guide__reveal" data-sg-delay="2" data-zs-sg-finder novalidate hidden>
+      <form id="find-my-size" class="zs-size-guide__finder zs-size-guide__reveal" data-sg-delay="2" data-zs-sg-finder novalidate hidden>
         <div class="zs-size-guide__finder-head">
           <p class="zs-size-guide__eyebrow">Find my size</p>
           <p class="zs-size-guide__finder-sub">Enter your measurements and we&rsquo;ll match you to your size.</p>
@@ -392,6 +392,16 @@
 
     if (finder) {
       finder.hidden = false;
+      // Arriving from the product page (/pages/size-guide#find-my-size): the finder was hidden until now,
+      // so the browser may not have scrolled to it. Bring it into view under the fixed header.
+      if (window.location.hash === '#find-my-size') {
+        window.setTimeout(() => {
+          finder.scrollIntoView({
+            block: 'start',
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          });
+        }, 300);
+      }
       finder.addEventListener('submit', (e) => {
         e.preventDefault();
         hasSearched = true;
@@ -824,6 +834,11 @@
 
   .zs-size-guide__finder[hidden] {
     display: none;
+  }
+
+  /* Deep link /pages/size-guide#find-my-size lands below the fixed header */
+  .zs-size-guide__finder {
+    scroll-margin-top: calc(var(--zs-header-stack, 104px) + 24px);
   }
 
   .zs-size-guide__finder-head {
