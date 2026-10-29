@@ -198,6 +198,15 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 ### Design / content / structure review (2026-10-15, Claude) — pending Denny's prioritization
 - ~~Testimonials redesign~~ ✅ built 2026-10-29 (Option C) — waiting for Denny's review on the dev preview. No stars/ratings until reviews are real. When Judge.me reviews arrive, ask for usual size / size worn / fit in the review form so this layout keeps working.
 - ~~Product page cleanup~~ ✅ 2026-10-29 (see priority #5). Still open: buy-box accordion (Details / Fabric & Care / Shipping) duplicates "The details" — consider merging; embed the size finder next to the size selector later.
+- Product page review (2026-10-29), pending Denny's decisions:
+  - ⚠️ Contour Bodysuit now has 25 variants, sizes **XS–XL only (no XXL)** while the homepage says "XS to XXL. No exceptions." and the Size Guide/finder include XXL → confirm the real size range and align everything.
+  - No variant images: default color is Beige but all 5 photos show the black bodysuit; choosing a color never changes the photo.
+  - Size is preselected (XS) → easy wrong-size orders; prefer no preselection + "Select a size" prompt.
+  - "Bronze" isn't in `snippets/product-color-hex.liquid` → falls back to gray #b0b0b0 (looks white).
+  - Hero/buy box looked washed out for ~2–4s on load in Claude's browser (reveal animation?) — verify on a real phone.
+  - "Our philosophy" (crafted zone): generic copy repeated sitewide → turn into "Wear it every day" (everyday outfits, ties to the hidden multi-outfit zone) or 3 concrete product features once specs are confirmed.
+  - Zone order: move "Find your fit" right after the buy box/details, before philosophy.
+  - Trust line still says "Free Returns" (returns policy not final).
 - Mobile header: "ZALVA SHAPE" wordmark nearly touches the search icon at 375px.
 - About page: weakest page — Ivory band between header and hero (missing pull-up), gray hero, 3 generic sentences, stock businesswoman photo, generic pillars. Full rewrite after the story interview; interim layout fix possible.
 - Contact: verify hello@zalvashape.com actually receives mail (forwarding still in backlog); confirm "respond within 24 hours" is realistic; 3 stacked cards are long on mobile ("Go to form" card redundant).
