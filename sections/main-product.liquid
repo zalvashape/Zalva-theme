@@ -1900,16 +1900,18 @@
   }
 
   /* Zone 5 — Fit */
+  /* Compact band: a short message + one action doesn't need a full-screen block */
   .zs-product__zone--fit {
     background: var(--zs-ivory);
-    padding-block: 60px;
+    padding-block: 40px;
     padding-inline: 16px;
     text-align: center;
+    border-top: 1px solid rgba(200, 169, 110, 0.25);
   }
 
   @media (min-width: 990px) {
     .zs-product__zone--fit {
-      padding-block: 80px;
+      padding-block: 56px;
     }
   }
 
@@ -1918,31 +1920,39 @@
     margin-inline: auto;
   }
 
-  .zs-product__fit-copy {
-    font-family: var(--zs-font-sans);
-    font-size: 15px;
-    line-height: 1.75;
-    margin: 0 0 24px;
-    color: rgba(26, 26, 26, 0.85);
+  .zs-product__zone--fit .zs-product__zone-title {
+    margin-bottom: 10px;
   }
 
+  .zs-product__fit-copy {
+    font-family: var(--zs-font-sans);
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0 0 20px;
+    color: var(--zs-deep-brown, #3d2b24);
+  }
+
+  /* Brand primary button: Noir + Champagne, hover inverts */
   .zs-product__fit-cta {
     display: inline-block;
     font-family: var(--zs-font-sans);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    padding: 14px 32px;
+    padding: 15px 32px;
     border: 1px solid var(--zs-noir);
-    color: var(--zs-noir);
+    background: var(--zs-noir);
+    color: var(--zs-champagne);
     text-decoration: none;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
 
-  .zs-product__fit-cta:hover {
-    background: var(--zs-noir);
-    color: #fff;
+  .zs-product__fit-cta:hover,
+  .zs-product__fit-cta:focus-visible {
+    background: var(--zs-champagne);
+    border-color: var(--zs-champagne);
+    color: var(--zs-noir);
   }
 
   /* Zone 6 — Recommendations */
@@ -2067,7 +2077,69 @@
 
   .zs-product__faq-list {
     text-align: left;
-    border-top: 1px solid rgba(26, 26, 26, 0.12);
+    border-top: 1px solid rgba(200, 169, 110, 0.25);
+  }
+
+  /* Product FAQ reads like the main FAQ page: Cormorant questions, Champagne hairlines and "+" */
+  .zs-product__zone--faq .zs-product__accordion-item {
+    border-bottom: 1px solid rgba(200, 169, 110, 0.25);
+    padding-block: 14px;
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-trigger {
+    min-height: 44px;
+    padding: 4px 0;
+    gap: 20px;
+    font-family: var(--zs-font-serif);
+    font-size: clamp(18px, 2vw, 22px);
+    font-weight: 300;
+    letter-spacing: 0;
+    line-height: 1.4;
+    text-transform: none;
+    color: var(--zs-noir);
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-icon::before,
+  .zs-product__zone--faq .zs-product__accordion-icon::after {
+    background: var(--zs-champagne);
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-item.is-open .zs-product__accordion-icon {
+    transform: rotate(45deg);
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-item.is-open .zs-product__accordion-icon::after {
+    transform: translate(-50%, -50%);
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-body {
+    padding: 12px 0 8px;
+    font-family: var(--zs-font-serif);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    color: var(--zs-deep-brown, #3d2b24);
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-body p {
+    margin: 0;
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-body a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--zs-champagne);
+    text-underline-offset: 3px;
+  }
+
+  .zs-product__zone--faq .zs-product__accordion-trigger:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 4px;
   }
 
   .zs-product__zone--faq .zs-product__zone-inner--narrow {
