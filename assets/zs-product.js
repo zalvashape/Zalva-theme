@@ -28,6 +28,19 @@
   const moneyFormat = priceEl?.getAttribute('data-money-format') || '${{amount}}';
   const form = root.querySelector('.zs-product__form');
   const submitBtn = form?.querySelector('[data-zs-product-submit]');
+  const sizeHint = root.querySelector('[data-zs-size-hint]');
+
+  // Size starts unselected (set by Liquid with .is-size-missing) so nobody buys XS by accident.
+  const sizeIndex = parseInt(form?.getAttribute('data-size-option-index') ?? '-1', 10);
+  if (form?.classList.contains('is-size-missing') && sizeIndex >= 0) {
+    selectedOptions[sizeIndex] = null;
+  }
+  const isSizeMissing = () => sizeIndex >= 0 && !selectedOptions[sizeIndex];
+
+  const setSizeMissingUI = (missing) => {
+    form?.classList.toggle('is-size-missing', missing);
+    if (!missing && sizeHint) sizeHint.hidden = true;
+  };
 
   const formatMoney = (cents) => {
     if (typeof cents !== 'number') return '';
@@ -271,14 +284,44 @@
         }
       });
 
+      if (isSizeMissing()) {
+        // Color changed before a size was picked: update the color label and photo, keep "Select a size".
+        updatePartialSelection();
+        return;
+      }
+      setSizeMissingUI(false);
       const variant = findVariant();
       if (variant) updateVariantUI(variant);
     });
   });
 
+  // While no size is chosen: show the chosen color's name and photo, keep the button asking for a size.
+  function updatePartialSelection() {
+    const colorIdx = product.options.findIndex(
+      (o) => o.toLowerCase() === 'color' || o.toLowerCase() === 'colour'
+    );
+    if (colorIdx >= 0) {
+      const colorLabel = root.querySelector('[data-zs-selected-label="color"]');
+      if (colorLabel) colorLabel.textContent = selectedOptions[colorIdx] || '';
+      const withMedia = product.variants.find(
+        (v) => v[`option${colorIdx + 1}`] === selectedOptions[colorIdx] && v.featured_media?.id
+      );
+      if (withMedia) setActiveMedia(withMedia.featured_media.id);
+    }
+    if (submitBtn && !submitBtn.classList.contains('is-loading') && !submitBtn.classList.contains('is-success')) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'SELECT A SIZE';
+    }
+    updateSoldOutStates();
+  }
+
   updateSoldOutStates();
-  const initial = findVariant();
-  if (initial) updateVariantUI(initial);
+  if (isSizeMissing()) {
+    updatePartialSelection();
+  } else {
+    const initial = findVariant();
+    if (initial) updateVariantUI(initial);
+  }
 
   let openAccordion = null;
   const closeAccordion = (item) => {
@@ -361,6 +404,18 @@
         e.preventDefault();
         e.stopImmediatePropagation();
 
+        if (isSizeMissing()) {
+          // Point to the sizes instead of adding a size she never chose.
+          const sizesGroup = root.querySelector('.zs-product__sizes');
+          if (sizeHint) sizeHint.hidden = false;
+          sizesGroup?.classList.remove('is-attention');
+          void sizesGroup?.offsetWidth;
+          sizesGroup?.classList.add('is-attention');
+          sizesGroup?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          sizesGroup?.querySelector('[data-zs-size-btn]:not(.is-sold-out)')?.focus({ preventScroll: true });
+          return;
+        }
+
         const id = variantInput?.value;
         if (!id || submitBtn.disabled) return;
 
@@ -391,12 +446,12 @@
 
           window.setTimeout(() => {
             submitBtn.classList.remove('is-success');
-            submitBtn.textContent = prevText;
+            submitBtn.textContent = findVariant()?.available ? 'ADD TO BAG' : prevText;
             submitBtn.disabled = !findVariant()?.available;
           }, 1000);
         } catch (err) {
           submitBtn.classList.remove('is-loading');
-          submitBtn.textContent = prevText;
+          submitBtn.textContent = findVariant()?.available ? 'ADD TO BAG' : prevText;
           submitBtn.disabled = !findVariant()?.available;
           window.alert(err.message || 'Could not add to bag');
         }

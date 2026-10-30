@@ -49,6 +49,20 @@
   assign spec_4_value = product.metafields.custom.origin | default: section.settings.spec_4_fallback | default: 'Designed for everyday wear'
 
   assign size_guide_url = section.settings.size_guide_url | default: '/pages/size-guide'
+
+  # No size is preselected unless the URL names a variant (?variant=…, e.g. from the cart),
+  # so nobody adds the first size (XS) by accident.
+  assign size_option_index = -1
+  for option in product.options_with_values
+    assign option_name_down = option.name | strip | downcase
+    if option_name_down == 'size'
+      assign size_option_index = forloop.index0
+    endif
+  endfor
+  assign size_preselected = true
+  if size_option_index >= 0 and product.selected_variant == blank
+    assign size_preselected = false
+  endif
 %}
 
 <article
@@ -57,13 +71,24 @@
   data-section-id="{{ section.id }}"
   {{ section.shopify_attributes }}
 >
-  {% comment %} Zone 1 — Hero (gallery + buy box) {% endcomment %}
+  <script>
+    // Opt in to scroll reveals before first paint. Without JS nothing is hidden; and if zs-product.js
+    // never runs, a safety timer shows every zone anyway (defensive visibility).
+    (() => {
+      const article = document.currentScript.parentElement;
+      article.classList.add('zs-product--reveal');
+      window.setTimeout(() => {
+        article.querySelectorAll('[data-zs-product-reveal]').forEach((z) => z.classList.add('is-visible'));
+      }, 2500);
+    })();
+  </script>
+
+  {% comment %} Zone 1 — Hero (gallery + buy box). Never animated in: it's the first thing people see. {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--hero"
     data-zs-page-pull-up
     data-header-bg="#FAF8F5"
     data-header-text="#1A1A1A"
-    data-zs-product-reveal
     aria-label="{{ product.title | escape }}"
   >
     <div class="zs-product__hero-inner">
@@ -267,7 +292,8 @@
           </p>
         </div>
 
-        {% form 'product', product, id: product_form_id, class: 'zs-product__form', data_zs_ajax_cart_form: true %}
+        {%- capture product_form_class -%}zs-product__form{% unless size_preselected %} is-size-missing{% endunless %}{%- endcapture -%}
+        {% form 'product', product, id: product_form_id, class: product_form_class, data_zs_ajax_cart_form: true, data_size_option_index: size_option_index %}
           <input type="hidden" name="id" value="{{ current_variant.id }}" id="VariantId-{{ section.id }}">
           <input type="hidden" name="quantity" value="1">
 
@@ -342,7 +368,7 @@
                 <legend class="zs-product__option-legend zs-product__option-legend--size">
                   <span class="zs-product__option-prefix">SIZE:</span>
                   <span class="zs-product__option-selected" data-zs-selected-label="size">
-                    {{ current_variant.options[forloop.index0] }}
+                    {%- if size_preselected -%}{{ current_variant.options[forloop.index0] }}{%- endif -%}
                   </span>
                   <a class="zs-product__size-guide" href="{{ size_guide_url }}">SIZE GUIDE →</a>
                 </legend>
@@ -352,7 +378,7 @@
                       assign option_index = forloop.parentloop.index0
                       assign current_opt = current_variant.options[option_index]
                       assign checked = false
-                      if current_opt == value
+                      if size_preselected and current_opt == value
                         assign checked = true
                       endif
                     %}
@@ -369,6 +395,9 @@
                     </button>
                   {% endfor %}
                 </div>
+                <p class="zs-product__size-hint" data-zs-size-hint role="status" aria-live="polite" hidden>
+                  Choose your size to continue.
+                </p>
               </fieldset>
             {% endfor %}
           {% endunless %}
@@ -378,9 +407,11 @@
             name="add"
             class="zs-product__submit"
             data-zs-product-submit
-            {% unless current_variant.available %}disabled{% endunless %}
+            {% if size_preselected %}{% unless current_variant.available %}disabled{% endunless %}{% endif %}
           >
-            {% if current_variant.available %}
+            {% if size_preselected == false %}
+              SELECT A SIZE
+            {% elsif current_variant.available %}
               ADD TO BAG
             {% else %}
               SOLD OUT
@@ -535,6 +566,24 @@
     </div>
   </section>
 
+  {% comment %} Zone 5 — Find your fit {% endcomment %}
+  <section
+    class="zs-product__zone zs-product__zone--fit"
+    data-zs-product-reveal
+    aria-labelledby="zs-product-fit-heading-{{ section.id }}"
+  >
+    <div class="zs-product__fit-inner">
+      {% if section.settings.fit_eyebrow != blank %}
+        <p class="zs-product__zone-eyebrow">{{ section.settings.fit_eyebrow }}</p>
+      {% endif %}
+      <h2 id="zs-product-fit-heading-{{ section.id }}" class="zs-product__zone-title zs-product__zone-title--center">
+        {{ section.settings.fit_title | default: 'Sized for you.' }}
+      </h2>
+      <p class="zs-product__fit-copy">{{ section.settings.fit_copy | default: 'Enter your bust, waist and hips and we’ll match you to your size in seconds.' }}</p>
+      <a class="zs-product__fit-cta" href="{{ size_guide_url }}#find-my-size">{{ section.settings.fit_cta | default: 'FIND MY SIZE →' }}</a>
+    </div>
+  </section>
+
   {% comment %} Zone 3 — Crafted for {% endcomment %}
   <section
     class="zs-product__zone zs-product__zone--crafted"
@@ -599,24 +648,6 @@
       </div>
     </section>
   {% endif %}
-
-  {% comment %} Zone 5 — Find your fit {% endcomment %}
-  <section
-    class="zs-product__zone zs-product__zone--fit"
-    data-zs-product-reveal
-    aria-labelledby="zs-product-fit-heading-{{ section.id }}"
-  >
-    <div class="zs-product__fit-inner">
-      {% if section.settings.fit_eyebrow != blank %}
-        <p class="zs-product__zone-eyebrow">{{ section.settings.fit_eyebrow }}</p>
-      {% endif %}
-      <h2 id="zs-product-fit-heading-{{ section.id }}" class="zs-product__zone-title zs-product__zone-title--center">
-        {{ section.settings.fit_title | default: 'Sized for you.' }}
-      </h2>
-      <p class="zs-product__fit-copy">{{ section.settings.fit_copy | default: 'Enter your bust, waist and hips and we’ll match you to your size in seconds.' }}</p>
-      <a class="zs-product__fit-cta" href="{{ size_guide_url }}#find-my-size">{{ section.settings.fit_cta | default: 'FIND MY SIZE →' }}</a>
-    </div>
-  </section>
 
   {% comment %} Zone 6 — Pairs well with {% endcomment %}
   <section
@@ -1526,6 +1557,42 @@
     gap: 8px;
   }
 
+  /* No size chosen yet: gentle Champagne pulse on the size buttons when "Select a size" is tapped */
+  .zs-product__sizes.is-attention .zs-product__size-btn:not(.is-sold-out) {
+    animation: zs-product-size-attention 0.9s ease;
+  }
+
+  @keyframes zs-product-size-attention {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(200, 169, 110, 0);
+    }
+    35% {
+      box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.55);
+    }
+  }
+
+  .zs-product__size-hint {
+    margin: 10px 0 0;
+    font-family: var(--zs-font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--zs-warm-taupe);
+  }
+
+  /* Shop Pay buys whatever variant the form holds, so it waits until a size is chosen */
+  .zs-product__form.is-size-missing .shopify-payment-button {
+    opacity: 0.45;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-product__sizes.is-attention .zs-product__size-btn {
+      animation: none;
+    }
+  }
+
   .zs-product__size-btn {
     min-width: 56px;
     height: 44px;
@@ -2186,19 +2253,20 @@
   }
 
   /* Reveal */
-  .zs-product [data-zs-product-reveal] {
+  /* Zones start visible; they only wait for the reveal when the pre-paint script opted in (.zs-product--reveal) */
+  .zs-product--reveal [data-zs-product-reveal] {
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  .zs-product [data-zs-product-reveal].is-visible {
+  .zs-product--reveal [data-zs-product-reveal].is-visible {
     opacity: 1;
     transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .zs-product [data-zs-product-reveal] {
+    .zs-product--reveal [data-zs-product-reveal] {
       opacity: 1;
       transform: none;
       transition: none;

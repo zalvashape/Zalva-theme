@@ -43,7 +43,8 @@ Rules:
 - **Apps:** Judge.me (reviews, free), Klaviyo (free plan, not yet wired to forms).
 - **Shipping:** Express $15 (1–2 days), Standard $8 (3–5 days), free over $75, US only. Taxes via Shopify Tax.
 - **Returns: NOT final.** Working proposal (Oct 2026): free size exchanges; returns with shipping paid by the customer; only unworn items with tags and hygienic liner intact. Denny will confirm the exact policy before launch — don't hardcode new return promises until then; when confirmed, update every mention (announcement bar, cart drawer, product trust line, FAQ, Size Guide "Our promise", policies).
-- **Catalog:** Bodysuits only for now (5–10 models planned). Sizes **XS–XXL only** (never promise 3XL–5XL).
+- **Catalog:** Bodysuits only for now (5–10 models planned). **Sizes sold today: XS–XL** (decided 2026-10-29; XXL may come later if stock or demand appears; never promise 3XL–5XL). Don't state a size range as a promise in copy ("XS to XXL. No exceptions." must change) — show the sizes that actually exist.
+- **Shopping flow (decided 2026-10-29):** no quick "add to bag" on homepage/collection cards — a card click opens the product page (like Alo and most premium brands). No size is ever preselected. Shop Pay button stays.
 - **Collections:** `bodysuits` (manual, created Oct 2026, contains only Contour Bodysuit) is the temporary umbrella collection. Final collections (how many, segmentation, names, concepts) will be defined in a dedicated session when Denny brings his material. Until then, nav links only to `/collections/bodysuits` and Shop All.
 
 ---
@@ -174,6 +175,12 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 - Our model is slim, so before/after differences are subtle; a curvier model may be needed.
 - Explore Kive's trained face/character model to keep the same model across all images.
 
+### Product images per color (workflow decided 2026-10-29)
+- Every new bodysuit/garment: generate its images **for each color variant** in Kive, upload them to the product, and assign each color's images to its variants (Admin → product → Variants → image), so choosing a color changes the photo.
+- Until a product has photos for every color, make the color that matches the photos the first/default color.
+- Contour Bodysuit today: 5 photos, all black, no variant images; default color is Beige → needs per-color images (or Black first).
+- Also needed from Kive: a texture/lifestyle shot for the product page "Crafted" image, and everyday-outfit looks for a future "Wear it every day" section.
+
 ---
 
 ## 9. Backlog (update as items are done)
@@ -198,15 +205,12 @@ Kive is connected through MCP (`.mcp.json` → `https://mcp.kive.ai/mcp`). Gener
 ### Design / content / structure review (2026-10-15, Claude) — pending Denny's prioritization
 - ~~Testimonials redesign~~ ✅ built 2026-10-29 (Option C) — waiting for Denny's review on the dev preview. No stars/ratings until reviews are real. When Judge.me reviews arrive, ask for usual size / size worn / fit in the review form so this layout keeps working.
 - ~~Product page cleanup~~ ✅ 2026-10-29 (see priority #5). Still open: buy-box accordion (Details / Fabric & Care / Shipping) duplicates "The details" — consider merging; embed the size finder next to the size selector later.
-- Product page review (2026-10-29), pending Denny's decisions:
-  - ⚠️ Contour Bodysuit now has 25 variants, sizes **XS–XL only (no XXL)** while the homepage says "XS to XXL. No exceptions." and the Size Guide/finder include XXL → confirm the real size range and align everything.
-  - No variant images: default color is Beige but all 5 photos show the black bodysuit; choosing a color never changes the photo.
-  - Size is preselected (XS) → easy wrong-size orders; prefer no preselection + "Select a size" prompt.
-  - "Bronze" isn't in `snippets/product-color-hex.liquid` → falls back to gray #b0b0b0 (looks white).
-  - Hero/buy box looked washed out for ~2–4s on load in Claude's browser (reveal animation?) — verify on a real phone.
-  - "Our philosophy" (crafted zone): generic copy repeated sitewide → turn into "Wear it every day" (everyday outfits, ties to the hidden multi-outfit zone) or 3 concrete product features once specs are confirmed.
-  - Zone order: move "Find your fit" right after the buy box/details, before philosophy.
-  - Trust line still says "Free Returns" (returns policy not final).
+- Product page review (2026-10-29):
+  - ✅ No size preselected: button reads "SELECT A SIZE" until one is chosen; tapping it highlights the sizes + "Choose your size to continue."; Shop Pay dimmed until a size is chosen (it would buy the hidden default variant). A `?variant=` URL still preselects.
+  - ✅ "Bronze" added to `snippets/product-color-hex.liquid` (#a8714a).
+  - ✅ Washed-out load fixed: every zone (including the hero/buy box) started at opacity 0 until the deferred JS ran. Now the hero is never animated, and other zones only hide when an inline pre-paint script adds `.zs-product--reveal` (2.5s safety timer reveals all).
+  - ✅ "Find your fit" moved right after "The details".
+  - Pending: XXL removed from the store → update homepage "XS to XXL" section + hide the XXL row in the Size Guide (Denny to pick the new copy); per-color images (Kive); "Our philosophy" → "Wear it every day" (needs images); buy-box accordion vs "The details" duplication (recommendation pending Denny); sticky add to bag (recommended, pending yes); color selector redesign options (Denny asked for options); trust line "Free Returns" waits for the returns policy.
 - Mobile header: "ZALVA SHAPE" wordmark nearly touches the search icon at 375px.
 - About page: weakest page — Ivory band between header and hero (missing pull-up), gray hero, 3 generic sentences, stock businesswoman photo, generic pillars. Full rewrite after the story interview; interim layout fix possible.
 - Contact: verify hello@zalvashape.com actually receives mail (forwarding still in backlog); confirm "respond within 24 hours" is realistic; 3 stacked cards are long on mobile ("Go to form" card redundant).
