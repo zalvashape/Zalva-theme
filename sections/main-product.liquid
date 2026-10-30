@@ -465,12 +465,17 @@
             </h2>
             <div class="zs-product__accordion-panel" data-zs-product-accordion-panel hidden>
               <div class="zs-product__accordion-body rte">
+                {% comment %} The four key facts (formerly the separate "The details" section) {% endcomment %}
+                <dl class="zs-product__facts">
+                  <div><dt>{{ spec_1_label }}</dt><dd>{{ spec_1_value }}</dd></div>
+                  <div><dt>{{ spec_2_label }}</dt><dd>{{ spec_2_value }}</dd></div>
+                  <div><dt>{{ spec_3_label }}</dt><dd>{{ spec_3_value }}</dd></div>
+                  <div><dt>{{ spec_4_label }}</dt><dd>{{ spec_4_value }}</dd></div>
+                </dl>
                 {% if details_metafield != blank %}
                   {{ details_metafield | metafield_tag }}
                 {% elsif section.settings.details_fallback != blank %}
                   {{ section.settings.details_fallback }}
-                {% else %}
-                  <p>{{ section.settings.details_empty | default: 'Premium sculpting construction designed for all-day comfort.' }}</p>
                 {% endif %}
               </div>
             </div>
@@ -495,7 +500,9 @@
                 {% elsif section.settings.fabric_fallback != blank %}
                   {{ section.settings.fabric_fallback }}
                 {% else %}
-                  <p>{{ section.settings.fabric_empty | default: 'Hand wash cold. Lay flat to dry. Do not bleach or iron.' }}</p>
+                  {% comment %} No invented care steps: only the confirmed fabric + the garment label {% endcomment %}
+                  <p><strong>Fabric:</strong> {{ spec_3_value }}.</p>
+                  <p>Follow the care label inside your piece. <a href="/pages/faq#care-materials">Care tips</a></p>
                 {% endif %}
               </div>
             </div>
@@ -520,7 +527,8 @@
                 {% elsif section.settings.shipping_fallback != blank %}
                   {{ section.settings.shipping_fallback }}
                 {% else %}
-                  <p>{{ section.settings.shipping_empty | default: 'Orders ship within 1–2 business days. Free shipping on orders over $75.' }}</p>
+                  <p>Standard (3–5 business days) $8 · Express (1–2 business days) $15. Free shipping on US orders over $75.</p>
+                  <p><a href="/pages/faq#shipping-returns">Exchanges &amp; returns</a></p>
                 {% endif %}
               </div>
             </div>
@@ -530,7 +538,28 @@
     </div>
   </section>
 
-  {% comment %} Zone 2 — Details grid {% endcomment %}
+  {% comment %}
+    Sticky add to bag (phones only). Appears once the main button scrolls out of view and mirrors it:
+    "Select a size" scrolls back to the sizes; with a size it adds to the bag (same toast as the main button).
+  {% endcomment %}
+    <div class="zs-product__sticky" data-zs-sticky-atc aria-hidden="true">
+      <div class="zs-product__sticky-info">
+        <span class="zs-product__sticky-title">{{ product.title }}</span>
+        <span class="zs-product__sticky-meta">
+          <span data-zs-sticky-price>{{ current_variant.price | money }}</span>
+          <span class="zs-product__sticky-variant" data-zs-sticky-variant></span>
+        </span>
+      </div>
+      <button type="button" class="zs-product__sticky-btn" data-zs-sticky-btn tabindex="-1">
+        {%- if size_preselected -%}ADD TO BAG{%- else -%}SELECT A SIZE{%- endif -%}
+      </button>
+    </div>
+
+  {% comment %}
+    Zone 2 — Details grid. Hidden by default since Oct 2026: its four facts now live in the
+    "Details" accordion next to the buy button (no duplicated content). Toggle in the theme editor.
+  {% endcomment %}
+  {% if section.settings.show_details_zone %}
   <section
     class="zs-product__zone zs-product__zone--details"
     data-zs-product-reveal
@@ -565,6 +594,7 @@
       </div>
     </div>
   </section>
+  {% endif %}
 
   {% comment %} Zone 5 — Find your fit {% endcomment %}
   <section
@@ -1557,6 +1587,117 @@
     gap: 8px;
   }
 
+  /* Sticky add to bag — phones only, slides up once the main button is out of view */
+  .zs-product__sticky {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .zs-product__sticky {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: rgba(250, 248, 245, 0.97);
+      border-top: 1px solid rgba(200, 169, 110, 0.35);
+      box-shadow: 0 -8px 24px rgba(26, 26, 26, 0.06);
+      transform: translate3d(0, 110%, 0);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+
+    .zs-product__sticky.is-visible {
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* Keep the footer's back-to-top button above the bar */
+    body.zs-sticky-atc-on .zs-footer__back-top {
+      bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  .zs-product__sticky-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .zs-product__sticky-title {
+    font-family: var(--zs-font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.2;
+    color: var(--zs-noir);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .zs-product__sticky-meta {
+    display: flex;
+    gap: 8px;
+    font-family: var(--zs-font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--zs-deep-brown);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .zs-product__sticky-variant:not(:empty)::before {
+    content: '·';
+    margin-right: 8px;
+    color: var(--zs-champagne);
+  }
+
+  .zs-product__sticky-btn {
+    flex-shrink: 0;
+    min-height: 46px;
+    padding: 0 20px;
+    border: 1px solid var(--zs-noir);
+    background: var(--zs-noir);
+    color: var(--zs-champagne);
+    font-family: var(--zs-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .zs-product__sticky-btn:active {
+    background: var(--zs-champagne);
+    border-color: var(--zs-champagne);
+    color: var(--zs-noir);
+  }
+
+  .zs-product__sticky-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .zs-product__sticky-btn:focus-visible {
+    outline: 2px solid var(--zs-champagne);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zs-product__sticky {
+      transition: none;
+    }
+  }
+
   /* No size chosen yet: gentle Champagne pulse on the size buttons when "Select a size" is tapped */
   .zs-product__sizes.is-attention .zs-product__size-btn:not(.is-sold-out) {
     animation: zs-product-size-attention 0.9s ease;
@@ -1778,6 +1919,49 @@
 
   .zs-product__accordion-body p {
     margin: 0 0 0.75em;
+  }
+
+  .zs-product__accordion-body a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--zs-champagne);
+    text-underline-offset: 3px;
+  }
+
+  /* Details tab: the four key facts in a 2×2 grid */
+  .zs-product__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0 0 14px;
+    background: rgba(200, 169, 110, 0.3);
+    border: 1px solid rgba(200, 169, 110, 0.3);
+  }
+
+  .zs-product__facts div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    background: var(--zs-ivory);
+    min-width: 0;
+  }
+
+  .zs-product__facts dt {
+    font-family: var(--zs-font-sans);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--zs-warm-taupe);
+  }
+
+  .zs-product__facts dd {
+    margin: 0;
+    font-family: var(--zs-font-serif);
+    font-size: 17px;
+    line-height: 1.25;
+    color: var(--zs-noir);
   }
 
   /* Zone 2 — Details */
@@ -2331,7 +2515,7 @@
     {
       "type": "text",
       "id": "details_empty",
-      "label": "Details empty message",
+      "label": "Details empty message (unused)",
       "default": "Premium sculpting construction designed for all-day comfort."
     },
     {
@@ -2355,6 +2539,13 @@
       "id": "details_eyebrow",
       "label": "Eyebrow",
       "default": "Specifications"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_details_zone",
+      "label": "Show \"The details\" section",
+      "info": "Off by default: the same four facts appear in the Details tab next to the buy button.",
+      "default": false
     },
     {
       "type": "text",

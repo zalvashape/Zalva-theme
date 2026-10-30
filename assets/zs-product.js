@@ -396,6 +396,62 @@
     revealZones.forEach((z) => z.classList.add('is-visible'));
   }
 
+  // --- Sticky add to bag (phones): mirrors the main button, shows once it scrolls out of view ---
+  const sticky = root.querySelector('[data-zs-sticky-atc]');
+  if (sticky && submitBtn) {
+    const stickyBtn = sticky.querySelector('[data-zs-sticky-btn]');
+    const stickyPrice = sticky.querySelector('[data-zs-sticky-price]');
+    const stickyVariant = sticky.querySelector('[data-zs-sticky-variant]');
+    const phone = window.matchMedia('(max-width: 768px)');
+    let pastButton = false;
+
+    const syncSticky = () => {
+      stickyBtn.textContent = submitBtn.textContent.trim();
+      stickyBtn.disabled = submitBtn.disabled;
+      const price = priceEl?.querySelector('.zs-product__price-sale, .zs-product__price-current');
+      if (price && stickyPrice) stickyPrice.textContent = price.textContent.trim();
+      if (stickyVariant) {
+        const parts = ['color', 'size']
+          .map((kind) => root.querySelector(`[data-zs-selected-label="${kind}"]`)?.textContent.trim())
+          .filter(Boolean);
+        stickyVariant.textContent = parts.join(' / ');
+      }
+    };
+
+    const setStickyVisible = () => {
+      const show = pastButton && phone.matches;
+      sticky.classList.toggle('is-visible', show);
+      sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
+      stickyBtn.tabIndex = show ? 0 : -1;
+      document.body.classList.toggle('zs-sticky-atc-on', show);
+    };
+
+    // The main button's label/price/selection change in many places; observing them keeps one source of truth.
+    const mirror = new MutationObserver(syncSticky);
+    mirror.observe(submitBtn, { childList: true, characterData: true, subtree: true, attributes: true });
+    if (priceEl) mirror.observe(priceEl, { childList: true, subtree: true, characterData: true });
+    root.querySelectorAll('[data-zs-selected-label]').forEach((el) =>
+      mirror.observe(el, { childList: true, characterData: true, subtree: true })
+    );
+    syncSticky();
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          // Only once she has scrolled past the button (not while it's still below, at page load).
+          pastButton = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+          setStickyVisible();
+        },
+        { threshold: 0 }
+      ).observe(submitBtn);
+    }
+    phone.addEventListener?.('change', setStickyVisible);
+
+    // Same behavior as the main button: asks for a size, or adds to the bag.
+    stickyBtn.addEventListener('click', () => submitBtn.click());
+  }
+
   if (form && submitBtn) {
     form.addEventListener(
       'submit',
