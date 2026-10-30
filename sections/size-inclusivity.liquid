@@ -1,10 +1,13 @@
 {% liquid
   assign eyebrow_text = section.settings.eyebrow_text
-  assign headline_line_1 = section.settings.headline_line_1 | default: 'XS to XXL.'
+  assign headline_line_1 = section.settings.headline_line_1 | default: 'Made for real bodies.'
   assign headline_line_2 = section.settings.headline_line_2
   assign subtitle = section.settings.subtitle
-  assign sizes_raw = section.settings.size_list | default: 'XS, S, M, L, XL, XXL'
+  # Size pills are optional and off by default: the site doesn't promise a size range in copy.
+  assign sizes_raw = section.settings.size_list | strip
   assign sizes = sizes_raw | split: ','
+  assign cta_label = section.settings.cta_label | strip
+  assign cta_link = section.settings.cta_link | default: '/pages/size-guide#find-my-size'
 %}
 
 <div
@@ -21,11 +24,16 @@
       <span class="size-inclusivity-line-2">{{ headline_line_2 }}</span>
     </h2>
     <p class="size-inclusivity-subtitle">{{ subtitle }}</p>
-    <div class="size-inclusivity-sizes">
-      {% for size in sizes %}
-        <span class="size-inclusivity-pill">{{ size | strip }}</span>
-      {% endfor %}
-    </div>
+    {% if sizes_raw != blank %}
+      <div class="size-inclusivity-sizes">
+        {% for size in sizes %}
+          <span class="size-inclusivity-pill">{{ size | strip }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if cta_label != blank %}
+      <a class="size-inclusivity-cta" href="{{ cta_link }}">{{ cta_label }}</a>
+    {% endif %}
   </div>
 </div>
 
@@ -36,13 +44,18 @@
 .size-inclusivity-accent { width: 40px; height: 1px; margin: 0 auto 56px; background: #C8A96E; transform: scaleX(1); transform-origin: center; }
 .size-inclusivity-eyebrow { font-family: Jost, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: #D4B5A0; margin: 0 0 48px; opacity: 1; transform: translate3d(0, 0, 0); }
 .size-inclusivity-headline { margin: 0; padding: 0; }
-.size-inclusivity-line-1, .size-inclusivity-line-2 { display: block; font-family: 'Cormorant Garamond', serif; font-size: clamp(56px, 8.5vw, 120px); line-height: 1.05; letter-spacing: 0.01em; opacity: 1; transform: translate3d(0, 0, 0); }
+.size-inclusivity-line-1, .size-inclusivity-line-2 { display: block; font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 7vw, 96px); text-wrap: balance; line-height: 1.05; letter-spacing: 0.01em; opacity: 1; transform: translate3d(0, 0, 0); }
 .size-inclusivity-line-1 { font-weight: 200; color: #FAF8F5; }
 .size-inclusivity-line-2 { font-weight: 300; font-style: italic; color: #C8A96E; }
 .size-inclusivity-subtitle { font-family: Jost, sans-serif; font-weight: 300; font-size: clamp(14px, 1.2vw, 16px); letter-spacing: 0.15em; line-height: 1.7; color: #D4B5A0; max-width: 580px; margin: 40px auto 0; opacity: 1; transform: translate3d(0, 0, 0); }
 .size-inclusivity-sizes { margin-top: 80px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .size-inclusivity-pill { display: inline-flex; align-items: center; padding: 12px 22px; border: 1px solid #C8A96E; border-radius: 100px; color: #FAF8F5; font-family: Jost, sans-serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s ease; opacity: 1; transform: translate3d(0, 0, 0); }
 .size-inclusivity-pill:hover { background: #C8A96E; color: #1A1A1A; }
+/* On Noir the primary button inverts: Champagne fill + Noir text, hover → Ivory */
+.size-inclusivity-cta { display: inline-block; margin-top: 56px; padding: 16px 36px; background: #C8A96E; color: #1A1A1A; border: 1px solid #C8A96E; font-family: Jost, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; opacity: 1; transform: translate3d(0, 0, 0); }
+.size-inclusivity-cta:hover, .size-inclusivity-cta:focus-visible { background: #FAF8F5; border-color: #FAF8F5; color: #1A1A1A; }
+.size-inclusivity-cta:focus-visible { outline: 2px solid #C8A96E; outline-offset: 4px; }
+.size-inclusivity.is-visible .size-inclusivity-cta { animation: size-inclusivity-rise 0.8s ease forwards; animation-delay: 0.75s; }
 .size-inclusivity.is-visible .size-inclusivity-accent { animation: size-inclusivity-accent-grow 0.9s ease forwards; }
 .size-inclusivity.is-visible .size-inclusivity-eyebrow { animation: size-inclusivity-rise 0.8s ease forwards; animation-delay: 0.15s; }
 .size-inclusivity.is-visible .size-inclusivity-line-1 { animation: size-inclusivity-rise 0.85s ease forwards; animation-delay: 0.3s; }
@@ -71,7 +84,8 @@
 .size-inclusivity.reveal-settled .size-inclusivity-line-1,
 .size-inclusivity.reveal-settled .size-inclusivity-line-2,
 .size-inclusivity.reveal-settled .size-inclusivity-subtitle,
-.size-inclusivity.reveal-settled .size-inclusivity-pill {
+.size-inclusivity.reveal-settled .size-inclusivity-pill,
+.size-inclusivity.reveal-settled .size-inclusivity-cta {
   animation: none !important;
   opacity: 1 !important;
   transform: none !important;
@@ -83,7 +97,8 @@
   .size-inclusivity .size-inclusivity-line-1,
   .size-inclusivity .size-inclusivity-line-2,
   .size-inclusivity .size-inclusivity-subtitle,
-  .size-inclusivity .size-inclusivity-pill {
+  .size-inclusivity .size-inclusivity-pill,
+  .size-inclusivity .size-inclusivity-cta {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -215,31 +230,43 @@
       "type": "text",
       "id": "eyebrow_text",
       "label": "Eyebrow",
-      "default": "FOR EVERY BODY"
+      "default": "FIND YOUR FIT"
     },
     {
       "type": "text",
       "id": "headline_line_1",
       "label": "Headline line 1",
-      "default": "XS to XXL."
+      "default": "Made for real bodies."
     },
     {
       "type": "text",
       "id": "headline_line_2",
       "label": "Headline line 2",
-      "default": "No exceptions."
+      "default": "Find your size in seconds."
     },
     {
       "type": "text",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "Designed, fitted, and tested for the full spectrum of women."
+      "default": "Enter your bust, waist and hips. We'll match you to your size."
     },
     {
       "type": "text",
       "id": "size_list",
-      "label": "Sizes (comma-separated)",
-      "default": "XS, S, M, L, XL, XXL"
+      "label": "Size pills (optional, comma-separated)",
+      "info": "Leave empty (recommended): the site doesn't promise a size range in copy."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Find my size"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "info": "Empty = Find my size on the Size Guide page."
     }
   ],
   "presets": [

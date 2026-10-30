@@ -122,8 +122,12 @@
     "size_inclusivity": {
       "type": "size-inclusivity",
       "settings": {
-        "headline_line_1": "XS to XXL.",
-        "size_list": "XS, S, M, L, XL, XXL"
+        "eyebrow_text": "FIND YOUR FIT",
+        "headline_line_1": "Made for real bodies.",
+        "headline_line_2": "Find your size in seconds.",
+        "subtitle": "Enter your bust, waist and hips. We'll match you to your size.",
+        "size_list": "",
+        "cta_label": "Find my size"
       }
     },
     "editorial_cta": {
